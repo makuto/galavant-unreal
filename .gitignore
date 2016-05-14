@@ -60,3 +60,6 @@ GalavantUnreal/DerivedDataCache/*
 # KDevelop 4 Project Files
 GalavantUnreal/.kdev4/*
 *.kdev4
+
+# Third party libraries (TODO: Figure out how best to do this)
+GalavantUnreal/ThirdParty/*

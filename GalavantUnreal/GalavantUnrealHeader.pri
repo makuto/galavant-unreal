@@ -7185,5 +7185,7 @@ HEADERS += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealCharacter.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealGameMode.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealPlayerController.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunk.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunkManager.h" \
  
 

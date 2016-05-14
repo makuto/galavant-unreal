@@ -3033,6 +3033,9 @@
 /home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/BootstrapPackagedGame/Inc/BootstrapPackagedGame
 /home/macoy/Downloads/UnrealEngine/Engine/Source/Programs/Windows/BootstrapPackagedGame
 /home/macoy/Downloads/UnrealEngine/Engine/Source
+/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/galavant/src/thirdPartyWrapper
+/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/polyvox/library/PolyVoxCore/include
+/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/polyvox/library/PolyVoxUtil/include
 /home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Source
 /home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/GalavantUnreal
 /home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core/Public
@@ -3281,3 +3284,7 @@
 /home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/PacketHandlers/PacketHandler
 /home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine
 /home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Source/GalavantUnreal
+/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Source/CustomMeshComponent/Classes
+/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Source/CustomMeshComponent/Public
+/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/CustomMeshComponent
+/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Source/CustomMeshComponent

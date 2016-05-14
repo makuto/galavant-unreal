@@ -3036,6 +3036,9 @@
     <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/BootstrapPackagedGame/Inc/BootstrapPackagedGame" />
     <Include Path="/home/macoy/Downloads/UnrealEngine/Engine/Source/Programs/Windows/BootstrapPackagedGame" />
     <Include Path="/home/macoy/Downloads/UnrealEngine/Engine/Source" />
+    <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/galavant/src/thirdPartyWrapper" />
+    <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/polyvox/library/PolyVoxCore/include" />
+    <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/polyvox/library/PolyVoxUtil/include" />
     <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Source" />
     <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/GalavantUnreal" />
     <Include Path="/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core/Public" />
@@ -3284,6 +3287,10 @@
     <Include Path="/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/PacketHandlers/PacketHandler" />
     <Include Path="/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine" />
     <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Source/GalavantUnreal" />
+    <Include Path="/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Source/CustomMeshComponent/Classes" />
+    <Include Path="/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Source/CustomMeshComponent/Public" />
+    <Include Path="/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/CustomMeshComponent" />
+    <Include Path="/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Source/CustomMeshComponent" />
   </WorkspaceParserPaths>
   <Project Name="UE4Client" Path="Intermediate/ProjectFiles/UE4Client.project" Active="No" />
   <Project Name="UE4Editor" Path="Intermediate/ProjectFiles/UE4Editor.project" Active="No" />
