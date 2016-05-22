@@ -16,6 +16,13 @@ class GALAVANTUNREAL_API ATestPolyVoxChunkManager : public AActor
 	USceneComponent *SceneComponent;
 
 	TArray<ATestPolyVoxChunk *> Chunks;
+
+	float ChunkSpawnRadius;
+	int MaxNumChunks;
+
+	FVector ChunkSize;
+
+	float TimeSinceLastUpdate;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -29,5 +36,9 @@ public:
 
 	// Make sure Tick() is called in the editor
 	virtual bool ShouldTickIfViewportsOnly() const;
+
+	virtual ATestPolyVoxChunk *CreateChunk(FVector& location, FRotator& rotation);
+
+	void SetChunkSpawnRadius(float radius);
 	
 };

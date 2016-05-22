@@ -14,7 +14,7 @@
 
 const int CELL_X = 32;
 const int CELL_Y = 32;
-const int CELL_Z = 64;
+const int CELL_Z = 64; // In Unreal, Z is up axis
 
 
 void createSphereInVolume(PolyVox::SimpleVolume<uint8_t>& volData, float fRadius)
@@ -233,6 +233,9 @@ void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale,
 	// Free voxel data and surface mesh (this won't happen in actual game, but we don't need it in this case)
 	delete newCell;
 
+	// Set ChunkSize, which can be used to know how large the chunk is in-game (for positioning)
+	ChunkSize.Set(CELL_X * meshScale, CELL_Y * meshScale, CELL_Z * meshScale);
+
 	std::cout << "Creating ATestPolyVoxChunk done\n";
 }
 
@@ -257,6 +260,16 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)
 		Mesh->AttachTo(SceneComponent, "Mesh", EAttachLocation::SnapToTargetIncludingScale, false);
 }
 
+// Construct the chunk and geo for its current world position
+void ATestPolyVoxChunk::Construct()
+{
+	FVector worldPosition = SceneComponent->GetComponentLocation();
+	int testSeed = 5318008;
+	ConstructForPosition(worldPosition, 0.1f, testSeed, 100.f);
+	TimeSinceLastUpdate = 0.f;
+	LastUpdatedPosition = worldPosition;
+}
+
 // Called when the game starts or when spawned
 void ATestPolyVoxChunk::BeginPlay()
 {
@@ -267,11 +280,7 @@ void ATestPolyVoxChunk::BeginPlay()
 	UE_LOG(LogTemp, Log, TEXT("Start Pos: %s"), *startPosition.ToString());
 
 	// Construct chunk
-	FVector worldPosition = SceneComponent->GetComponentLocation();
-	int testSeed = 5318008;
-	ConstructForPosition(worldPosition, 0.1f, testSeed, 100.f);
-	TimeSinceLastUpdate = 0.f;
-	LastUpdatedPosition = worldPosition;
+	Construct();
 }
 
 // Called every frame
@@ -294,8 +303,7 @@ void ATestPolyVoxChunk::Tick( float DeltaTime )
 		LastUpdatedPosition = worldPosition;
 
 		// Update the chunk
-		int testSeed = 5318008;
-		ConstructForPosition(worldPosition, 0.1f, testSeed, 100.f);
+		Construct();
 	}
 
 	/*// This is just testing if I can move things around in game
@@ -305,3 +313,7 @@ void ATestPolyVoxChunk::Tick( float DeltaTime )
 	SceneComponent->AddLocalOffset(deltaLocation, false, NULL, ETeleportType::TeleportPhysics);*/
 }
 
+FVector& ATestPolyVoxChunk::GetChunkSize()
+{
+	return ChunkSize;
+}

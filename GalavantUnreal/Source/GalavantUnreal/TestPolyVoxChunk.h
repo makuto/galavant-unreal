@@ -9,6 +9,13 @@
 
 #include "TestPolyVoxChunk.generated.h"
 
+/*struct ChunkConstructionParams
+{
+	float 	NoiseScale;
+	float 	MeshScale;
+	int 	Seed;
+};*/
+
 
 UCLASS()
 class GALAVANTUNREAL_API ATestPolyVoxChunk : public AActor
@@ -23,6 +30,11 @@ class GALAVANTUNREAL_API ATestPolyVoxChunk : public AActor
 
 	FVector LastUpdatedPosition;
 	float 	TimeSinceLastUpdate;
+
+	// The length, width, and height of the Chunk in Unreal units (i.e. after mesh scaling)
+	FVector ChunkSize;
+
+	//ChunkConstructionParams ConstructionParams;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -36,6 +48,11 @@ public:
 
 	// Make sure Tick() is called in the editor
 	virtual bool ShouldTickIfViewportsOnly() const;
+
+	FVector& GetChunkSize();
+
+	// Construct the chunk and geo for its current world position
+	void Construct();
 
 private:
 	void ConstructForPosition(FVector Position, float noiseScale, int seed, float meshScale);
