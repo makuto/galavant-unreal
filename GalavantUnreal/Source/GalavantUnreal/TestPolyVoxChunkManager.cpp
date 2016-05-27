@@ -5,11 +5,11 @@
 
 #include "TestPolyVoxChunk.h"
 
-
 // Sets default values
 ATestPolyVoxChunkManager::ATestPolyVoxChunkManager()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if
+	// you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Create components
@@ -20,34 +20,33 @@ ATestPolyVoxChunkManager::ATestPolyVoxChunkManager()
 
 	ChunkSpawnRadius = 12800.f;
 	MaxNumChunks = 10;
-	TimeSinceLastUpdate = 9999.f; // Mark as needing update
+	TimeSinceLastUpdate = 9999.f;  // Mark as needing update
 }
 
-bool ATestPolyVoxChunkManager::ShouldTickIfViewportsOnly() const
-{
-	return true;
-}
-
-ATestPolyVoxChunk * ATestPolyVoxChunkManager::CreateChunk(FVector& location, FRotator& rotation)
+bool ATestPolyVoxChunkManager::ShouldTickIfViewportsOnly() const { return true; }
+ATestPolyVoxChunk *ATestPolyVoxChunkManager::CreateChunk(FVector &location, FRotator &rotation)
 {
 	FActorSpawnParameters spawnParams;
 	spawnParams.Owner = this;
-	ATestPolyVoxChunk *newChunk = (ATestPolyVoxChunk *) GetWorld()->SpawnActor<ATestPolyVoxChunk>(location, rotation, spawnParams);
+	ATestPolyVoxChunk *newChunk = (ATestPolyVoxChunk *)GetWorld()->SpawnActor<ATestPolyVoxChunk>(
+		location, rotation, spawnParams);
 
 	newChunk->Construct();
 
 	if (newChunk)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Spawned chunk named '%s' with size %s"), *newChunk->GetHumanReadableName(), *newChunk->GetChunkSize().ToString());
+		UE_LOG(LogGalavantUnreal, Log, TEXT("Spawned chunk named '%s' with size %s"),
+			   *newChunk->GetHumanReadableName(), *newChunk->GetChunkSize().ToString());
 	}
 	else
-		UE_LOG(LogTemp, Log, TEXT("ERROR: Failed to spawn new chunk!"));
+		UE_LOG(LogGalavantUnreal, Log, TEXT("ERROR: Failed to spawn new chunk!"));
 
 	return newChunk;
 }
 
 // Generates a list of points where chunks should be placed for location and spawnRadius
-int GeneratePointsForChunkSpawn(TArray<FVector>& pointsOut, FVector& location, float spawnRadius, FVector chunkSize)
+int GeneratePointsForChunkSpawn(TArray<FVector> &pointsOut, FVector &location, float spawnRadius,
+								FVector chunkSize)
 {
 	int numPositions = 0;
 	int numChunksWidth = spawnRadius / chunkSize[0];
@@ -62,7 +61,7 @@ int GeneratePointsForChunkSpawn(TArray<FVector>& pointsOut, FVector& location, f
 			newChunkLocation[0] += x * chunkSize[0];
 			newChunkLocation[1] += y * chunkSize[1];
 
-			// Because I'm dumb and just generated a rectangular grid, cull points in radius so that 
+			// Because I'm dumb and just generated a rectangular grid, cull points in radius so that
 			//  it's circular
 			float chunkHalfWidth = chunkSize.Size() / 2;
 			if (FVector::Dist(location, newChunkLocation) + chunkHalfWidth > spawnRadius)
@@ -83,7 +82,7 @@ void ATestPolyVoxChunkManager::BeginPlay()
 
 	FVector location(400.f, 0.f, 0.f);
 	FRotator rotation(0.f, 0.f, 0.f);
-	
+
 	// Test creating a chunk
 	ATestPolyVoxChunk *newChunk = CreateChunk(location, rotation);
 
@@ -98,9 +97,9 @@ void ATestPolyVoxChunkManager::BeginPlay()
 }
 
 // Called every frame
-void ATestPolyVoxChunkManager::Tick( float DeltaTime )
+void ATestPolyVoxChunkManager::Tick(float DeltaTime)
 {
-	Super::Tick( DeltaTime );
+	Super::Tick(DeltaTime);
 
 	const float UPDATE_FREQUENCY = 1.f;
 
@@ -127,7 +126,9 @@ void ATestPolyVoxChunkManager::Tick( float DeltaTime )
 			// If the chunk is outside the spawn radius, destroy it
 			if (FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth > ChunkSpawnRadius)
 			{
-				UE_LOG(LogTemp, Log, TEXT("Destroying chunk '%s' (%f units away)"), *chunk->GetHumanReadableName(), FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth);
+				UE_LOG(LogGalavantUnreal, Log, TEXT("Destroying chunk '%s' (%f units away)"),
+					   *chunk->GetHumanReadableName(),
+					   FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth);
 				chunk->Destroy();
 				Chunks.RemoveAtSwap(i);
 			}
@@ -135,9 +136,10 @@ void ATestPolyVoxChunkManager::Tick( float DeltaTime )
 
 		// Create needed chunks in spawn radius
 		TArray<FVector> requiredChunkPositions;
-		GeneratePointsForChunkSpawn(requiredChunkPositions, worldPosition, ChunkSpawnRadius, ChunkSize);
+		GeneratePointsForChunkSpawn(requiredChunkPositions, worldPosition, ChunkSpawnRadius,
+									ChunkSize);
 
-		for (auto& newChunkPosition : requiredChunkPositions)
+		for (auto &newChunkPosition : requiredChunkPositions)
 		{
 			// Make sure we don't spawn too many chunks
 			if (Chunks.Num() > MaxNumChunks)
@@ -167,7 +169,4 @@ void ATestPolyVoxChunkManager::Tick( float DeltaTime )
 	}
 }
 
-void ATestPolyVoxChunkManager::SetChunkSpawnRadius(float radius)
-{
-	ChunkSpawnRadius = radius;
-}
+void ATestPolyVoxChunkManager::SetChunkSpawnRadius(float radius) { ChunkSpawnRadius = radius; }

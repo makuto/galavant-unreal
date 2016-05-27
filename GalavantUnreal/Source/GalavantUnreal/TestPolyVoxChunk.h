@@ -7,6 +7,8 @@
 #include "CustomMeshComponent.h"
 #include "Components/SceneComponent.h"
 
+#include "GeneratedMeshComponent.h"
+
 #include "TestPolyVoxChunk.generated.h"
 
 /*struct ChunkConstructionParams
@@ -16,46 +18,48 @@
 	int 	Seed;
 };*/
 
-
 UCLASS()
 class GALAVANTUNREAL_API ATestPolyVoxChunk : public AActor
 {
 	GENERATED_BODY()
 
-	TArray<FCustomMeshTriangle> Triangles;
-	
+	TArray<FGeneratedMeshTriangle> Triangles;
+
 	UCustomMeshComponent *Mesh;
 
 	USceneComponent *SceneComponent;
 
 	FVector LastUpdatedPosition;
-	float 	TimeSinceLastUpdate;
+	float TimeSinceLastUpdate;
 
 	// The length, width, and height of the Chunk in Unreal units (i.e. after mesh scaling)
 	FVector ChunkSize;
 
-	//ChunkConstructionParams ConstructionParams;
-	
-public:	
+	// ChunkConstructionParams ConstructionParams;
+
+public:
+	// Allow viewing/changing the Material of the generated mesh in editor (if placed in a level at
+	// construction)
+	UPROPERTY(VisibleAnywhere, Category = Materials)
+	UGeneratedMeshComponent *GeneratedMesh;
+
 	// Sets default values for this actor's properties
 	ATestPolyVoxChunk();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
 	// Called every frame
-	virtual void Tick( float DeltaSeconds ) override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	// Make sure Tick() is called in the editor
 	virtual bool ShouldTickIfViewportsOnly() const;
 
-	FVector& GetChunkSize();
+	FVector &GetChunkSize();
 
 	// Construct the chunk and geo for its current world position
 	void Construct();
 
 private:
 	void ConstructForPosition(FVector Position, float noiseScale, int seed, float meshScale);
-	
-	
 };

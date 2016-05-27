@@ -10,6 +10,9 @@ public class GalavantUnreal : ModuleRules
 	{
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 
+		// For GeneratedMeshComponent
+		PrivateDependencyModuleNames.AddRange(new string[] { "RHI", "RenderCore", "ShaderCore" });
+
 		// CustomMeshComponent, for voxel testing
 		PrivateDependencyModuleNames.AddRange(new string[] {"CustomMeshComponent"});
 		PrivateIncludePathModuleNames.AddRange(new string[] {"CustomMeshComponent"});
