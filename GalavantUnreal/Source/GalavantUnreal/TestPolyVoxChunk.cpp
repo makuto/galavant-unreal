@@ -315,7 +315,7 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)
 
 	// Set material (this must be run in constructor)
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(
-		TEXT("/Game/StarterContent/Materials/M_Tech_Hex_Tile_Pulse.M_Tech_Hex_Tile_Pulse"));
+		TEXT("/Game/StarterContent/Materials/M_Ceramic_Tile_Checker.M_Ceramic_Tile_Checker"));
 	GeneratedMesh->SetMaterial(0, Material.Object);
 
 	// Set collision
@@ -343,6 +343,12 @@ void ATestPolyVoxChunk::BeginPlay()
 
 	// Construct chunk
 	Construct();
+
+	// Make sure that collision is updated. This is necessary for chunks made manually in the
+	// editor, but doesn't seem to be necessary for chunks spawned by the chunk manager
+	SetActorEnableCollision(true);
+	GeneratedMesh->UpdateBodySetup();
+	GeneratedMesh->UpdateCollision();
 }
 
 // Called every frame
@@ -350,7 +356,7 @@ void ATestPolyVoxChunk::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	const float CHUNK_UPDATE_FREQUENCY = 0.5f;
+	const float CHUNK_UPDATE_FREQUENCY = 0.125f;
 
 	FVector worldPosition = SceneComponent->GetComponentLocation();
 
