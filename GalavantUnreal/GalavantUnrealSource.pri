@@ -5315,6 +5315,7 @@ SOURCES += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealCharacter.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealGameMode.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealMain.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealPlayerController.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GeneratedMeshComponent.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunk.cpp" \

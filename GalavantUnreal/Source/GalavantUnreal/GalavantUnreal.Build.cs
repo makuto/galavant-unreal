@@ -24,10 +24,21 @@ public class GalavantUnreal : ModuleRules
 		// Directory the file you're reading right now is in
 		var current_directory = Path.GetDirectoryName(RulesCompiler.GetModuleFilename(this.GetType().Name));
 
+		// Galavant
+		{
+			var galavant_src_path = Path.GetFullPath(Path.Combine(current_directory, "../../ThirdParty/galavant/src"));
+			var galavant_lib_path = Path.GetFullPath(Path.Combine(current_directory, "../../ThirdParty/galavant/src/lib/libGalavant.a"));
+			
+			Console.WriteLine("Galavant Src: {0}\n\tLib: {1}", galavant_src_path, galavant_lib_path);
+			
+			PublicIncludePaths.Add(galavant_src_path);
+			PublicAdditionalLibraries.Add(galavant_lib_path);
+		}
+
 		// Galavant third party wrapper
 		{
 			var gala_thirdPartyWrapper_src_path = Path.GetFullPath(Path.Combine(current_directory, "../../ThirdParty/galavant/src/thirdPartyWrapper"));
-			var gala_thirdPartyWrapper_lib_path = Path.GetFullPath(Path.Combine(current_directory, "../../ThirdParty/galavant/src/thirdPartyWrapper/lib/libThirdPartyWrapper.a"));
+			var gala_thirdPartyWrapper_lib_path = Path.GetFullPath(Path.Combine(current_directory, "../../ThirdParty/galavant/src/thirdPartyWrapper/lib/libGalaThirdPartyWrapper.a"));
 			
 			Console.WriteLine("Galavant ThirdPartyWrapper Src: {0}\n\tLib: {1}", gala_thirdPartyWrapper_src_path, gala_thirdPartyWrapper_lib_path);
 			

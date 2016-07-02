@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "GalavantUnreal.h"
 #include "TestPolyVoxChunkManager.h"
 
@@ -23,7 +21,12 @@ ATestPolyVoxChunkManager::ATestPolyVoxChunkManager()
 	TimeSinceLastUpdate = 9999.f;  // Mark as needing update
 }
 
-bool ATestPolyVoxChunkManager::ShouldTickIfViewportsOnly() const { return true; }
+// Disabled, because you cannot programmatically create objects in editor mode, unfortunately
+bool ATestPolyVoxChunkManager::ShouldTickIfViewportsOnly() const
+{
+	return false;
+}
+
 ATestPolyVoxChunk *ATestPolyVoxChunkManager::CreateChunk(FVector &location, FRotator &rotation)
 {
 	FActorSpawnParameters spawnParams;
@@ -169,4 +172,7 @@ void ATestPolyVoxChunkManager::Tick(float DeltaTime)
 	}
 }
 
-void ATestPolyVoxChunkManager::SetChunkSpawnRadius(float radius) { ChunkSpawnRadius = radius; }
+void ATestPolyVoxChunkManager::SetChunkSpawnRadius(float radius)
+{
+	ChunkSpawnRadius = radius;
+}
