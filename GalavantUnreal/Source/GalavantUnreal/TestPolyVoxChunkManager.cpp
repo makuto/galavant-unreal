@@ -16,15 +16,52 @@ ATestPolyVoxChunkManager::ATestPolyVoxChunkManager()
 	// Establish component relationships
 	RootComponent = SceneComponent;
 
+	PropertiesChanged = false;
+
+	// Property defaults
 	ChunkSpawnRadius = 12800.f;
 	MaxNumChunks = 10;
+
 	TimeSinceLastUpdate = 9999.f;  // Mark as needing update
+}
+
+void ATestPolyVoxChunkManager::Destroyed()
+{
+	FlushPersistentDebugLines(GetWorld());
 }
 
 // Disabled, because you cannot programmatically create objects in editor mode, unfortunately
 bool ATestPolyVoxChunkManager::ShouldTickIfViewportsOnly() const
 {
 	return false;
+}
+
+void ATestPolyVoxChunkManager::DrawDebugVisualizations(TArray<FVector> *chunkPositions = nullptr)
+{
+	UWorld *world = GetWorld();
+	FVector worldPosition = SceneComponent->GetComponentLocation();
+
+	FlushPersistentDebugLines(world);
+	DrawDebugSphere(world, worldPosition, ChunkSpawnRadius, 32, FColor(255, 0, 0), true);
+
+	// If provided, draw the expected chunk positions
+	if (chunkPositions)
+	{
+		for (auto &position : (*chunkPositions))
+		{
+			const float POINT_SCALE = 10.f;
+			DrawDebugPoint(world, position, POINT_SCALE, FColor(0, 0, 255), true, 0.f);
+		}
+	}
+}
+
+void ATestPolyVoxChunkManager::PostEditChangeProperty(struct FPropertyChangedEvent &e)
+{
+	PropertiesChanged = true;
+
+	DrawDebugVisualizations();
+
+	Super::PostEditChangeProperty(e);
 }
 
 ATestPolyVoxChunk *ATestPolyVoxChunkManager::CreateChunk(FVector &location, FRotator &rotation)
@@ -99,6 +136,34 @@ void ATestPolyVoxChunkManager::BeginPlay()
 	newChunk->Destroy();
 }
 
+void ATestPolyVoxChunkManager::DestroyUnneededChunks()
+{
+	FVector worldPosition = SceneComponent->GetComponentLocation();
+
+	// Delete any chunks outside spawn radius
+	for (int i = Chunks.Num() - 1; i >= 0; i--)
+	{
+		ATestPolyVoxChunk *chunk = Chunks[i];
+		if (!chunk)
+			continue;
+
+		FVector chunkPosition = chunk->GetActorLocation();
+
+		// Used to center chunk position so as to make the radius check better
+		float chunkHalfWidth = chunk->GetChunkSize().Size() / 2;
+
+		// If the chunk is outside the spawn radius, destroy it
+		if (FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth > ChunkSpawnRadius)
+		{
+			UE_LOG(LogGalavantUnreal, Log, TEXT("Destroying chunk '%s' (%f units away)"),
+				   *chunk->GetHumanReadableName(),
+				   FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth);
+			chunk->Destroy();
+			Chunks.RemoveAtSwap(i);
+		}
+	}
+}
+
 // Called every frame
 void ATestPolyVoxChunkManager::Tick(float DeltaTime)
 {
@@ -106,36 +171,19 @@ void ATestPolyVoxChunkManager::Tick(float DeltaTime)
 
 	const float UPDATE_FREQUENCY = 1.f;
 
+	FVector worldPosition = SceneComponent->GetComponentLocation();
+
 	TimeSinceLastUpdate += DeltaTime;
 
-	if (TimeSinceLastUpdate > UPDATE_FREQUENCY)
+	if ((TimeSinceLastUpdate > UPDATE_FREQUENCY &&
+		 worldPosition.Equals(LastUpdatedPosition, 0.1f) == false) ||
+		PropertiesChanged)
 	{
-		FVector worldPosition = SceneComponent->GetComponentLocation();
-
 		TimeSinceLastUpdate = 0.f;
+		LastUpdatedPosition = worldPosition;
+		PropertiesChanged = false;
 
-		// Delete any chunks outside spawn radius
-		for (int i = Chunks.Num() - 1; i >= 0; i--)
-		{
-			ATestPolyVoxChunk *chunk = Chunks[i];
-			if (!chunk)
-				continue;
-
-			FVector chunkPosition = chunk->GetActorLocation();
-
-			// Used to center chunk position so as to make  the radius check better
-			float chunkHalfWidth = chunk->GetChunkSize().Size() / 2;
-
-			// If the chunk is outside the spawn radius, destroy it
-			if (FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth > ChunkSpawnRadius)
-			{
-				UE_LOG(LogGalavantUnreal, Log, TEXT("Destroying chunk '%s' (%f units away)"),
-					   *chunk->GetHumanReadableName(),
-					   FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth);
-				chunk->Destroy();
-				Chunks.RemoveAtSwap(i);
-			}
-		}
+		DestroyUnneededChunks();
 
 		// Create needed chunks in spawn radius
 		TArray<FVector> requiredChunkPositions;
@@ -169,6 +217,8 @@ void ATestPolyVoxChunkManager::Tick(float DeltaTime)
 					Chunks.Add(newChunk);
 			}
 		}
+
+		DrawDebugVisualizations(&requiredChunkPositions);
 	}
 }
 

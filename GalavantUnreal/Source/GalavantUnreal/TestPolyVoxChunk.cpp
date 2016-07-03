@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "GalavantUnreal.h"
 #include "TestPolyVoxChunk.h"
 
@@ -12,9 +10,9 @@
 #include <iostream>
 #include <stdlib.h>
 
-const int CELL_X = 128; //32;
-const int CELL_Y = 128; //32;
-const int CELL_Z = 256; //64;  // In Unreal, Z is up axis
+const int CELL_X = 32;  // 32;
+const int CELL_Y = 32;  // 32;
+const int CELL_Z = 128;  // 64;  // In Unreal, Z is up axis
 
 /*
 TODO: Copy the DynamicMeshComponent from this page and use it instead (supports both collision and
@@ -97,7 +95,7 @@ void createRandomInSphereVolume(PolyVox::SimpleVolume<uint8_t>& volData, float f
 typedef std::vector<uint8_t> NoiseStrip;
 typedef std::vector<NoiseStrip*> NoiseMap;
 void get2dNoiseMapForPosition(NoiseMap* map, int width, int height, float xOffset, float yOffset,
-							  float scale, int seed)
+							  float scale, int32 seed)
 {
 	if (!map)
 		return;
@@ -176,7 +174,7 @@ float lerp(float startA, float stopA, float pointA, float startB, float stopB)
 }
 
 void createHeightNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, float yOffset,
-					   float zOffset, float scale, int seed)
+					   float zOffset, float scale, int32 seed)
 {
 	std::cout << "Using noise\n";
 
@@ -247,7 +245,7 @@ public:
 		delete volData;
 	}
 
-	int generate(float newX, float newY, float newZ, float scale, int seed, float meshScale)
+	int generate(float newX, float newY, float newZ, float scale, int32 seed, float meshScale)
 	{
 		if (!volData)
 			return -1;
@@ -363,7 +361,7 @@ void setSurfaceMeshToRender(
 	std::cout << "Surf mesh done\n";
 }
 
-void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale, int seed,
+void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale, int32 seed,
 											 float meshScale)
 {
 	FGeneratedMeshTriangle emptyTriangle;
@@ -375,7 +373,8 @@ void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale,
 		return;
 
 	// Generate surface mesh for position
-	int numVertices = newCell->generate(Position.X, Position.Y, Position.Z, noiseScale, seed, meshScale);
+	int numVertices =
+		newCell->generate(Position.X, Position.Y, Position.Z, noiseScale, seed, meshScale);
 
 	// Initialize Unreal triangle buffer
 	Triangles.Init(emptyTriangle, numVertices);
@@ -402,12 +401,28 @@ bool ATestPolyVoxChunk::ShouldTickIfViewportsOnly() const
 {
 	return true;
 }
+
+void ATestPolyVoxChunk::PostEditChangeProperty(struct FPropertyChangedEvent& e)
+{
+	PropertiesChanged = true;
+
+	// If the mesh is disappering, then you are forgetting to call this
+	Super::PostEditChangeProperty(e);
+}
+
 // Sets default values
 ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if
 	// you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	PropertiesChanged = false;
+
+	// Properties defaults
+	MeshScale = 100.f;
+	NoiseScale = 0.01f;
+	NoiseSeed = 5138008;
 
 	// Create components
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
@@ -421,21 +436,28 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)
 
 	// Set material (this must be run in constructor)
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(
-		TEXT("/Game/StarterContent/Materials/M_Ceramic_Tile_Checker.M_Ceramic_Tile_Checker"));
+		TEXT("/Game/Materials/TriplanarTest1.TriplanarTest1"));
 	GeneratedMesh->SetMaterial(0, Material.Object);
 
 	// Set collision
 	SetActorEnableCollision(true);
 }
 
+void ATestPolyVoxChunk::Destroyed(void)
+{
+	FlushPersistentDebugLines(GetWorld());
+}
+
 // Construct the chunk and geo for its current world position
 void ATestPolyVoxChunk::Construct()
 {
 	FVector worldPosition = SceneComponent->GetComponentLocation();
-	float noiseScale = 0.1f;
-	int testSeed = 5318008;
-	float meshScale = 100.f;
-	ConstructForPosition(worldPosition, noiseScale, testSeed, meshScale);
+	float noiseScale = NoiseScale;
+	int32 seed = NoiseSeed;
+	float meshScale = MeshScale;
+
+	ConstructForPosition(worldPosition, noiseScale, seed, meshScale);
+
 	TimeSinceLastUpdate = 0.f;
 	LastUpdatedPosition = worldPosition;
 }
@@ -471,20 +493,32 @@ void ATestPolyVoxChunk::Tick(float DeltaTime)
 	TimeSinceLastUpdate += DeltaTime;
 
 	// If we've changed positions in the last n ticks
-	if (worldPosition.Equals(LastUpdatedPosition, 0.1f) == false &&
-		TimeSinceLastUpdate >= CHUNK_UPDATE_FREQUENCY)
+	if ((worldPosition.Equals(LastUpdatedPosition, 0.1f) == false &&
+		 TimeSinceLastUpdate >= CHUNK_UPDATE_FREQUENCY) ||
+		PropertiesChanged)
 	{
 		// Reset timer and update the position
 		TimeSinceLastUpdate = 0.f;
 		LastUpdatedPosition = worldPosition;
+		PropertiesChanged = false;
 
 		// Update the chunk
 		Construct();
 
 		// Debug noise
 		FlushPersistentDebugLines(GetWorld());
-		drawDebugPointsForPosition(GetWorld(), worldPosition, 0.1f, 5138008, 100.f);
+		drawDebugPointsForPosition(GetWorld(), worldPosition, NoiseScale, NoiseSeed, MeshScale);
 	}
+
+	/*	// TESTING ONLY
+		static float timeSinceLastSeedUpdate = 0.f;
+		timeSinceLastSeedUpdate += DeltaTime;
+		if (timeSinceLastSeedUpdate > 0.5f)
+		{
+			timeSinceLastSeedUpdate = 0.f;
+			NoiseSeed += 237;
+			Construct();
+		}*/
 
 	/*// This is just testing if I can move things around in game
 	float speed = 100.f;

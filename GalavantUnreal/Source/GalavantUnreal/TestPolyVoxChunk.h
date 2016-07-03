@@ -11,13 +11,6 @@
 
 #include "TestPolyVoxChunk.generated.h"
 
-/*struct ChunkConstructionParams
-{
-	float 	NoiseScale;
-	float 	MeshScale;
-	int 	Seed;
-};*/
-
 UCLASS()
 class GALAVANTUNREAL_API ATestPolyVoxChunk : public AActor
 {
@@ -31,11 +24,22 @@ class GALAVANTUNREAL_API ATestPolyVoxChunk : public AActor
 
 	FVector LastUpdatedPosition;
 	float TimeSinceLastUpdate;
+	bool PropertiesChanged;  // If any UProperties change, this is set to true
 
 	// The length, width, and height of the Chunk in Unreal units (i.e. after mesh scaling)
 	FVector ChunkSize;
 
-	// ChunkConstructionParams ConstructionParams;
+	// The scale of the simplex noise
+	UPROPERTY(EditAnywhere)
+	float NoiseScale;
+
+	// The multiplier which will scale the mesh after its surface has been extracted
+	UPROPERTY(EditAnywhere)
+	float MeshScale;
+
+	// The seed to provide simplex noise
+	UPROPERTY(EditAnywhere)
+	int32 NoiseSeed;
 
 public:
 	// Allow viewing/changing the Material of the generated mesh in editor (if placed in a level at
@@ -54,6 +58,11 @@ public:
 
 	// Make sure Tick() is called in the editor
 	virtual bool ShouldTickIfViewportsOnly() const;
+
+	// Insure that if properties change, the chunk immediately updates
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent &e);
+
+	virtual void Destroyed();
 
 	FVector &GetChunkSize();
 

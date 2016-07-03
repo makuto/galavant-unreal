@@ -17,16 +17,27 @@ class GALAVANTUNREAL_API ATestPolyVoxChunkManager : public AActor
 
 	TArray<ATestPolyVoxChunk *> Chunks;
 
+	float TimeSinceLastUpdate;
+	FVector LastUpdatedPosition;
+
+	bool PropertiesChanged;
+	
+	// All chunks within this radius around the ChunkManager will be spawned
+	UPROPERTY(EditAnywhere)
 	float ChunkSpawnRadius;
-	int MaxNumChunks;
+
+	// The maximum number of chunks that this ChunkManager can have exist at one time
+	UPROPERTY(EditAnywhere)
+	int32 MaxNumChunks;
 
 	FVector ChunkSize;
 
-	float TimeSinceLastUpdate;
 
 public:
 	// Sets default values for this actor's properties
 	ATestPolyVoxChunkManager();
+
+	virtual void Destroyed();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -39,5 +50,14 @@ public:
 
 	virtual ATestPolyVoxChunk *CreateChunk(FVector &location, FRotator &rotation);
 
+	// Ensure that if properties are changed, the manager immediately updates
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e);
+
 	void SetChunkSpawnRadius(float radius);
+
+private:
+	void DestroyUnneededChunks();
+
+	void DrawDebugVisualizations(TArray<FVector> *chunkPositions);
+
 };
