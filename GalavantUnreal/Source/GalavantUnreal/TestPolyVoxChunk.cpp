@@ -10,8 +10,8 @@
 #include <iostream>
 #include <stdlib.h>
 
-const int CELL_X = 32;  // 32;
-const int CELL_Y = 32;  // 32;
+const int CELL_X = 32;   // 32;
+const int CELL_Y = 32;   // 32;
 const int CELL_Z = 128;  // 64;  // In Unreal, Z is up axis
 
 /*
@@ -173,6 +173,29 @@ float lerp(float startA, float stopA, float pointA, float startB, float stopB)
 	return (((pointA - startA) * (stopB - startB)) / (stopA - startA)) + startB;
 }
 
+void create3dNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, float yOffset,
+				   float zOffset, float scale, int32 seed)
+{
+	static gv::Noise3d noiseGenerator(seed);
+	for (int z = 0; z < volData->getDepth(); z++)
+	{
+		for (int y = 0; y < volData->getHeight(); y++)
+		{
+			for (int x = 0; x < volData->getWidth(); x++)
+			{
+				float noiseX = (x + xOffset) * scale;
+				float noiseY = (y + yOffset) * scale;
+				float noiseZ = (z + zOffset) * scale;
+
+				uint8_t value = noiseGenerator.scaledOctaveNoise3d(noiseX, noiseY, noiseZ, 0, 255,
+																   10, 0.1f, 0.55f, 2);
+
+				volData->setVoxelAt(x, y, z, value);
+			}
+		}
+	}
+}
+
 void createHeightNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, float yOffset,
 					   float zOffset, float scale, int32 seed)
 {
@@ -254,6 +277,7 @@ public:
 
 		// createSphereInVolume(*volData, 30);
 		// createRandomInSphereVolume(*volData, 30);
+		//create3dNoise(volData, newX / meshScale, newY / meshScale, newZ / meshScale, scale, seed);
 		createHeightNoise(volData, newX / meshScale, newY / meshScale, newZ / meshScale, scale,
 						  seed);
 
@@ -402,6 +426,7 @@ bool ATestPolyVoxChunk::ShouldTickIfViewportsOnly() const
 	return true;
 }
 
+#if WITH_EDITOR
 void ATestPolyVoxChunk::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 {
 	PropertiesChanged = true;
@@ -409,6 +434,7 @@ void ATestPolyVoxChunk::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 	// If the mesh is disappering, then you are forgetting to call this
 	Super::PostEditChangeProperty(e);
 }
+#endif
 
 // Sets default values
 ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)
@@ -421,7 +447,7 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)
 
 	// Properties defaults
 	MeshScale = 100.f;
-	NoiseScale = 0.01f;
+	NoiseScale = 0.04f;
 	NoiseSeed = 5138008;
 
 	// Create components

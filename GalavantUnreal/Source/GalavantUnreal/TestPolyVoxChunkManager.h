@@ -50,9 +50,11 @@ public:
 
 	virtual ATestPolyVoxChunk *CreateChunk(FVector &location, FRotator &rotation);
 
+#if WITH_EDITOR
 	// Ensure that if properties are changed, the manager immediately updates
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e);
-
+#endif
+	
 	void SetChunkSpawnRadius(float radius);
 
 private:

@@ -59,9 +59,11 @@ public:
 	// Make sure Tick() is called in the editor
 	virtual bool ShouldTickIfViewportsOnly() const;
 
+#if WITH_EDITOR
 	// Insure that if properties change, the chunk immediately updates
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent &e);
-
+#endif
+	
 	virtual void Destroyed();
 
 	FVector &GetChunkSize();

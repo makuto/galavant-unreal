@@ -36,54 +36,6 @@ bool ATestPolyVoxChunkManager::ShouldTickIfViewportsOnly() const
 	return false;
 }
 
-void ATestPolyVoxChunkManager::DrawDebugVisualizations(TArray<FVector> *chunkPositions = nullptr)
-{
-	UWorld *world = GetWorld();
-	FVector worldPosition = SceneComponent->GetComponentLocation();
-
-	FlushPersistentDebugLines(world);
-	DrawDebugSphere(world, worldPosition, ChunkSpawnRadius, 32, FColor(255, 0, 0), true);
-
-	// If provided, draw the expected chunk positions
-	if (chunkPositions)
-	{
-		for (auto &position : (*chunkPositions))
-		{
-			const float POINT_SCALE = 10.f;
-			DrawDebugPoint(world, position, POINT_SCALE, FColor(0, 0, 255), true, 0.f);
-		}
-	}
-}
-
-void ATestPolyVoxChunkManager::PostEditChangeProperty(struct FPropertyChangedEvent &e)
-{
-	PropertiesChanged = true;
-
-	DrawDebugVisualizations();
-
-	Super::PostEditChangeProperty(e);
-}
-
-ATestPolyVoxChunk *ATestPolyVoxChunkManager::CreateChunk(FVector &location, FRotator &rotation)
-{
-	FActorSpawnParameters spawnParams;
-	spawnParams.Owner = this;
-	ATestPolyVoxChunk *newChunk = (ATestPolyVoxChunk *)GetWorld()->SpawnActor<ATestPolyVoxChunk>(
-		location, rotation, spawnParams);
-
-	newChunk->Construct();
-
-	if (newChunk)
-	{
-		UE_LOG(LogGalavantUnreal, Log, TEXT("Spawned chunk named '%s' with size %s"),
-			   *newChunk->GetHumanReadableName(), *newChunk->GetChunkSize().ToString());
-	}
-	else
-		UE_LOG(LogGalavantUnreal, Log, TEXT("ERROR: Failed to spawn new chunk!"));
-
-	return newChunk;
-}
-
 // Generates a list of points where chunks should be placed for location and spawnRadius
 int GeneratePointsForChunkSpawn(TArray<FVector> &pointsOut, FVector &location, float spawnRadius,
 								FVector chunkSize)
@@ -114,6 +66,65 @@ int GeneratePointsForChunkSpawn(TArray<FVector> &pointsOut, FVector &location, f
 
 	return numPositions;
 }
+
+void ATestPolyVoxChunkManager::DrawDebugVisualizations(TArray<FVector> *chunkPositions = nullptr)
+{
+	UWorld *world = GetWorld();
+	FVector worldPosition = SceneComponent->GetComponentLocation();
+
+	FlushPersistentDebugLines(world);
+	DrawDebugSphere(world, worldPosition, ChunkSpawnRadius, 32, FColor(255, 0, 0), true);
+
+	// If provided, draw the expected chunk positions
+	if (chunkPositions)
+	{
+		for (auto &position : (*chunkPositions))
+		{
+			const float POINT_SCALE = 10.f;
+			DrawDebugPoint(world, position, POINT_SCALE, FColor(0, 0, 255), true, 0.f);
+		}
+	}
+}
+
+#if WITH_EDITOR
+void ATestPolyVoxChunkManager::PostEditChangeProperty(struct FPropertyChangedEvent &e)
+{
+	PropertiesChanged = true;
+
+	// This doesn't work because the chunk size might not actually be known yet
+	/*// Create needed chunks in spawn radius
+	TArray<FVector> requiredChunkPositions;
+	FVector worldPosition = SceneComponent->GetComponentLocation();
+	GeneratePointsForChunkSpawn(requiredChunkPositions, worldPosition, ChunkSpawnRadius, ChunkSize);
+
+	std::cout << requiredChunkPositions.Num() << "\n";*/
+
+	DrawDebugVisualizations();
+
+	Super::PostEditChangeProperty(e);
+}
+#endif
+
+ATestPolyVoxChunk *ATestPolyVoxChunkManager::CreateChunk(FVector &location, FRotator &rotation)
+{
+	FActorSpawnParameters spawnParams;
+	spawnParams.Owner = this;
+	ATestPolyVoxChunk *newChunk = (ATestPolyVoxChunk *)GetWorld()->SpawnActor<ATestPolyVoxChunk>(
+		location, rotation, spawnParams);
+
+	newChunk->Construct();
+
+	if (newChunk)
+	{
+		UE_LOG(LogGalavantUnreal, Log, TEXT("Spawned chunk named '%s' with size %s"),
+			   *newChunk->GetHumanReadableName(), *newChunk->GetChunkSize().ToString());
+	}
+	else
+		UE_LOG(LogGalavantUnreal, Log, TEXT("ERROR: Failed to spawn new chunk!"));
+
+	return newChunk;
+}
+
 
 // Called when the game starts or when spawned
 void ATestPolyVoxChunkManager::BeginPlay()
