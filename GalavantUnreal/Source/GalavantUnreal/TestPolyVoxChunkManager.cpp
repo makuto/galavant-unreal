@@ -21,6 +21,7 @@ ATestPolyVoxChunkManager::ATestPolyVoxChunkManager()
 	// Property defaults
 	ChunkSpawnRadius = 12800.f;
 	MaxNumChunks = 10;
+	Use3dNoise = false;
 
 	TimeSinceLastUpdate = 9999.f;  // Mark as needing update
 }
@@ -111,6 +112,8 @@ ATestPolyVoxChunk *ATestPolyVoxChunkManager::CreateChunk(FVector &location, FRot
 	spawnParams.Owner = this;
 	ATestPolyVoxChunk *newChunk = (ATestPolyVoxChunk *)GetWorld()->SpawnActor<ATestPolyVoxChunk>(
 		location, rotation, spawnParams);
+
+	newChunk->SetUse3dNoise(Use3dNoise);
 
 	newChunk->Construct();
 

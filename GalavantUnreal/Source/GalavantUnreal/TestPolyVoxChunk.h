@@ -19,7 +19,6 @@ class GALAVANTUNREAL_API ATestPolyVoxChunk : public AActor
 	TArray<FGeneratedMeshTriangle> Triangles;
 
 	UCustomMeshComponent *Mesh;
-
 	USceneComponent *SceneComponent;
 
 	FVector LastUpdatedPosition;
@@ -40,6 +39,10 @@ class GALAVANTUNREAL_API ATestPolyVoxChunk : public AActor
 	// The seed to provide simplex noise
 	UPROPERTY(EditAnywhere)
 	int32 NoiseSeed;
+
+	// Use 3D simplex noise to generate the chunk rather than 2D heightmap noise
+	UPROPERTY(EditAnywhere)
+	bool Use3dNoise;
 
 public:
 	// Allow viewing/changing the Material of the generated mesh in editor (if placed in a level at
@@ -63,7 +66,7 @@ public:
 	// Insure that if properties change, the chunk immediately updates
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent &e);
 #endif
-	
+
 	virtual void Destroyed();
 
 	FVector &GetChunkSize();
@@ -71,6 +74,12 @@ public:
 	// Construct the chunk and geo for its current world position
 	void Construct();
 
+	void StopConstruction();
+
+	void SetUse3dNoise(bool newValue);
+	void SetAsyncConstruction(bool newValue);
+
 private:
-	void ConstructForPosition(FVector Position, float noiseScale, int seed, float meshScale);
+	void ConstructForPosition(FVector Position, float noiseScale, int seed, float meshScale,
+							  bool use3dNoise);
 };

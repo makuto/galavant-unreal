@@ -30,6 +30,10 @@ class GALAVANTUNREAL_API ATestPolyVoxChunkManager : public AActor
 	UPROPERTY(EditAnywhere)
 	int32 MaxNumChunks;
 
+	// Generate chunks using 3D simplex noise rather than 2D heightmap nosie
+	UPROPERTY(EditAnywhere)
+	bool Use3dNoise;
+
 	FVector ChunkSize;
 
 

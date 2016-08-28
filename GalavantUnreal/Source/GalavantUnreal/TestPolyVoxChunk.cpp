@@ -246,6 +246,22 @@ void createHeightNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, f
 	}
 }
 
+struct CellGenerationParams
+{
+	float newX;
+	float newY;
+	float newZ;
+
+	// Scale the X, Y, and Z parameters before inputting them into the noise function
+	float scale;
+
+	int32 seed;
+
+	bool use3dNoise;
+
+	float meshScale;
+};
+
 class cell
 {
 public:
@@ -268,18 +284,21 @@ public:
 		delete volData;
 	}
 
-	int generate(float newX, float newY, float newZ, float scale, int32 seed, float meshScale)
+	int generate(CellGenerationParams& params)
 	{
 		if (!volData)
 			return -1;
 
-		std::cout << "Generating Noise " << newX << " , " << newY << " , " << newZ << "\n";
+		std::cout << "Generating Noise " << params.newX << " , " << params.newY << " , "
+				  << params.newZ << "\n";
 
-		// createSphereInVolume(*volData, 30);
-		// createRandomInSphereVolume(*volData, 30);
-		//create3dNoise(volData, newX / meshScale, newY / meshScale, newZ / meshScale, scale, seed);
-		createHeightNoise(volData, newX / meshScale, newY / meshScale, newZ / meshScale, scale,
-						  seed);
+		if (params.use3dNoise)
+			create3dNoise(volData, params.newX / params.meshScale, params.newY / params.meshScale,
+						  params.newZ / params.meshScale, params.scale, params.seed);
+		else
+			createHeightNoise(volData, params.newX / params.meshScale,
+							  params.newY / params.meshScale, params.newZ / params.meshScale,
+							  params.scale, params.seed);
 
 		std::cout << "done\n";
 		std::cout << "Creating surface extrator\n";
@@ -386,7 +405,7 @@ void setSurfaceMeshToRender(
 }
 
 void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale, int32 seed,
-											 float meshScale)
+											 float meshScale, bool use3dNoise)
 {
 	FGeneratedMeshTriangle emptyTriangle;
 
@@ -397,8 +416,9 @@ void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale,
 		return;
 
 	// Generate surface mesh for position
-	int numVertices =
-		newCell->generate(Position.X, Position.Y, Position.Z, noiseScale, seed, meshScale);
+	CellGenerationParams params = {Position.X, Position.Y, Position.Z, noiseScale,
+								   seed,	   use3dNoise, meshScale};
+	int numVertices = newCell->generate(params);
 
 	// Initialize Unreal triangle buffer
 	Triangles.Init(emptyTriangle, numVertices);
@@ -437,7 +457,7 @@ void ATestPolyVoxChunk::PostEditChangeProperty(struct FPropertyChangedEvent& e)
 #endif
 
 // Sets default values
-ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)
+ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)  //, StopTaskCounter(0)
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if
 	// you don't need it.
@@ -449,6 +469,7 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)
 	MeshScale = 100.f;
 	NoiseScale = 0.04f;
 	NoiseSeed = 5138008;
+	Use3dNoise = false;
 
 	// Create components
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
@@ -461,9 +482,9 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)
 								EAttachLocation::SnapToTargetIncludingScale, false);
 
 	// Set material (this must be run in constructor)
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> Material(
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> material(
 		TEXT("/Game/Materials/TriplanarTest1.TriplanarTest1"));
-	GeneratedMesh->SetMaterial(0, Material.Object);
+	GeneratedMesh->SetMaterial(0, material.Object);
 
 	// Set collision
 	SetActorEnableCollision(true);
@@ -481,8 +502,9 @@ void ATestPolyVoxChunk::Construct()
 	float noiseScale = NoiseScale;
 	int32 seed = NoiseSeed;
 	float meshScale = MeshScale;
+	bool use3dNoise = Use3dNoise;
 
-	ConstructForPosition(worldPosition, noiseScale, seed, meshScale);
+	ConstructForPosition(worldPosition, noiseScale, seed, meshScale, use3dNoise);
 
 	TimeSinceLastUpdate = 0.f;
 	LastUpdatedPosition = worldPosition;
@@ -557,4 +579,10 @@ void ATestPolyVoxChunk::Tick(float DeltaTime)
 FVector& ATestPolyVoxChunk::GetChunkSize()
 {
 	return ChunkSize;
+}
+
+void ATestPolyVoxChunk::SetUse3dNoise(bool newValue)
+{
+	Use3dNoise = newValue;
+	PropertiesChanged = true;
 }
