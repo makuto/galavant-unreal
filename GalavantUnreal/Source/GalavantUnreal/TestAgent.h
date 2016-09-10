@@ -11,12 +11,13 @@ class GALAVANTUNREAL_API ATestAgent : public AActor
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	USceneComponent *SceneComponent;
-
-	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent *Mesh;
 	
 public:	
+	// Gross
+	UPROPERTY(EditAnywhere)
+	USceneComponent *SceneComponent;
+
 	// Sets default values for this actor's properties
 	ATestAgent();
 
@@ -25,4 +26,6 @@ public:
 	
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
+
+	ATestAgent* Clone(FVector& location, FRotator& rotation, FActorSpawnParameters& spawnParams);
 };

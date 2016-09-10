@@ -20,11 +20,12 @@ ATestAgent::ATestAgent()
 
 	// Set default mesh and material
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> mesh(
-		TEXT("/Game/StarterContent/Architecture/Pillar_50x500.Pillar_50x500"));
+	    TEXT("/Game/StarterContent/Props/SM_MatPreviewMesh_02.SM_MatPreviewMesh_02"));
+	// TEXT("/Game/StarterContent/Architecture/Pillar_50x500.Pillar_50x500"));
 	Mesh->StaticMesh = mesh.Object;
 
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> material(
-		TEXT("/Game/Materials/TriplanarTest1.TriplanarTest1"));
+	    TEXT("/Game/Materials/SolidTestMaterial.SolidTestMaterial"));
 	Mesh->SetMaterial(0, material.Object);
 }
 
@@ -39,12 +40,20 @@ void ATestAgent::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector worldPosition = SceneComponent->GetComponentLocation();
-	FVector deltaLocation(0.f, 0.f, 0.f);
+	// FVector worldPosition = SceneComponent->GetComponentLocation();
+	// FVector deltaLocation(0.f, 0.f, 0.f);
 
-	static float fLifetime = 0.f;
+	// static float fLifetime = 0.f;
 
-	deltaLocation.Y = DeltaTime * 100.f;
+	// deltaLocation.Y = DeltaTime * 100.f;
 
-	SceneComponent->AddLocalOffset(deltaLocation, false, NULL, ETeleportType::None);
+	// SceneComponent->AddLocalOffset(deltaLocation, false, NULL, ETeleportType::None);
+}
+
+ATestAgent* ATestAgent::Clone(FVector& location, FRotator& rotation,
+                              FActorSpawnParameters& spawnParams)
+{
+	ATestAgent* newTestAgent =
+	    (ATestAgent*)GetWorld()->SpawnActor<ATestAgent>(location, rotation, spawnParams);
+	return newTestAgent;
 }
