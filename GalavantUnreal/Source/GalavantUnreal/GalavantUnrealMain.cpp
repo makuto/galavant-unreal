@@ -31,7 +31,7 @@ void AGalavantUnrealMain::InitializeGalavant(void)
 	EntityList testEntities;
 	EntityComponentSystem.GetNewEntities(testEntities, numTestEntities);
 
-	TestMovementComponentList newEntityMovementComponents;
+	TestMovementComponent::TestMovementComponentList newEntityMovementComponents;
 	newEntityMovementComponents.resize(numTestEntities);
 
 	int i = 0;

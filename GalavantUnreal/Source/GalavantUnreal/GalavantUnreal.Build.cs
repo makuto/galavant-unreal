@@ -47,53 +47,5 @@ public class GalavantUnreal : ModuleRules
 			Console.WriteLine("Lib: {0}", lib);
 			PublicAdditionalLibraries.Add(Path.Combine(current_directory, lib));
 		}
-
-		// // TODO: mmadson: get rid of this bullshit, put it into simple libs and srcs array and iterate
-		// // Galavant
-		// {
-		// 	var galavant_src_path = Path.GetFullPath(Path.Combine(current_directory, 
-		// 		"../../ThirdParty/galavant/src"));
-		// 	var galavant_lib_path = Path.GetFullPath(Path.Combine(current_directory, 
-		// 		"../../ThirdParty/galavant/lib/libGalavant.a"));
-			
-		// 	Console.WriteLine("Galavant Src: {0}\n\tLib: {1}", galavant_src_path, galavant_lib_path);
-			
-		// 	PublicIncludePaths.Add(galavant_src_path);
-		// 	PublicAdditionalLibraries.Add(galavant_lib_path);
-		// }
-
-		// // Galavant third party wrapper
-		// {
-		// 	var gala_thirdPartyWrapper_src_path = Path.GetFullPath(Path.Combine(current_directory, 
-		// 		"../../ThirdParty/galavant/src/thirdPartyWrapper"));
-		// 	var gala_thirdPartyWrapper_lib_path = Path.GetFullPath(Path.Combine(current_directory, 
-		// 		"../../ThirdParty/galavant/lib/thirdPartyWrapper/libGalaThirdPartyWrapper.a"));
-			
-		// 	Console.WriteLine("Galavant ThirdPartyWrapper Src: {0}\n\tLib: {1}", 
-		// 		gala_thirdPartyWrapper_src_path, gala_thirdPartyWrapper_lib_path);
-			
-		// 	PublicIncludePaths.Add(gala_thirdPartyWrapper_src_path);
-		// 	PublicAdditionalLibraries.Add(gala_thirdPartyWrapper_lib_path);
-		// }
-
-		// // PolyVox Voxel Library
-		// {
-		// 	var polyvox_core_src_path = Path.GetFullPath(Path.Combine(current_directory, 
-		// 		"../../ThirdParty/polyvox/library/PolyVoxCore/include"));
-		// 	var polyvox_core_lib_path = Path.GetFullPath(Path.Combine(current_directory, 
-		// 		"../../ThirdParty/polyvox/build/library/PolyVoxCore/libPolyVoxCore"));
-		// 	var polyvox_util_src_path = Path.GetFullPath(Path.Combine(current_directory, 
-		// 		"../../ThirdParty/polyvox/library/PolyVoxUtil/include"));
-		// 	var polyvox_util_lib_path = Path.GetFullPath(Path.Combine(current_directory, 
-		// 		"../../ThirdParty/polyvox/build/library/PolyVoxUtil/libPolyVoxUtil"));
-			
-		// 	Console.WriteLine("PolyVox Core Src: {0}\n\tLib: {1}", polyvox_core_src_path, polyvox_core_lib_path);
-		// 	Console.WriteLine("PolyVox Util Src: {0}\n\tLib: {1}", polyvox_util_src_path, polyvox_util_lib_path);
-			
-		// 	PublicIncludePaths.Add(polyvox_core_src_path);
-		// 	PublicAdditionalLibraries.Add(polyvox_core_lib_path);
-		// 	PublicIncludePaths.Add(polyvox_util_src_path);
-		// 	PublicAdditionalLibraries.Add(polyvox_util_lib_path);
-		// }
 	}
 }

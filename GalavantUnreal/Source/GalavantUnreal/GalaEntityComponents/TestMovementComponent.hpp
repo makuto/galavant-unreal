@@ -18,8 +18,6 @@ struct TestMovementComponentData
 	FVector Position;
 };
 
-typedef std::vector<PooledComponent<TestMovementComponentData> > TestMovementComponentList;
-
 class TestMovementComponent : public PooledComponentManager<TestMovementComponentData>
 {
 private:
@@ -29,10 +27,14 @@ private:
 	AActor* CreateDefaultActor(FVector& location);
 
 protected:
-	virtual void SubscribeEntity(PooledComponent<TestMovementComponentData>& component);
-	virtual void UnsubscribeEntity(PooledComponent<TestMovementComponentData>& component);
+	typedef std::vector<PooledComponent<TestMovementComponentData>*> TestMovementComponentRefList;
+
+	virtual void SubscribeEntitiesInternal(TestMovementComponentRefList& components);
+	virtual void UnsubscribeEntitiesInternal(TestMovementComponentRefList& components);
 
 public:
+	typedef std::vector<PooledComponent<TestMovementComponentData> > TestMovementComponentList;
+
 	TestMovementComponent(void);
 	virtual ~TestMovementComponent(void);
 	void Initialize(ATestAgent* defaultTestActor);

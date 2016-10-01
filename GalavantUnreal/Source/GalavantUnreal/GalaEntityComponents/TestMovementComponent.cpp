@@ -36,8 +36,6 @@ void TestMovementComponent::Update(float deltaSeconds)
 	static FRandomStream randomStream;
 	const float SPEED = 500.f;
 
-	// UE_LOG(LogGalavantUnreal, Log, TEXT("Update TestMovementComponent"));
-
 	PooledComponentManager::FragmentedPoolIterator it = PooledComponentManager::NULL_POOL_ITERATOR;
 	for (PooledComponent<TestMovementComponentData>* currentComponent = ActivePoolBegin(it);
 	     currentComponent != nullptr && it != PooledComponentManager::NULL_POOL_ITERATOR;
@@ -62,10 +60,6 @@ void TestMovementComponent::Update(float deltaSeconds)
 			                           randomStream.FRandRange(-randomRange, randomRange));
 		}
 
-		// UE_LOG(LogGalavantUnreal, Log,
-		//        TEXT("Entity '%d' change position to %s (world position %s)"),
-		//        currentComponent->entity, *currentPosition.ToString(), *worldPosition.ToString());
-
 		deltaLocation = currentPosition - worldPosition;
 
 		FVector deltaVelocity = deltaLocation.GetSafeNormal(0.1f);
@@ -75,14 +69,24 @@ void TestMovementComponent::Update(float deltaSeconds)
 	}
 }
 
-void TestMovementComponent::SubscribeEntity(PooledComponent<TestMovementComponentData>& component)
+void TestMovementComponent::SubscribeEntitiesInternal(TestMovementComponentRefList& components)
 {
-	if (!component.data.Actor)
-		component.data.Actor = CreateDefaultActor(component.data.Position);
+	for (TestMovementComponentRefList::iterator it = components.begin(); it != components.end();
+	     ++it)
+	{
+		PooledComponent<TestMovementComponentData>* currentComponent = (*it);
+		if (currentComponent && !currentComponent->data.Actor)
+			currentComponent->data.Actor = CreateDefaultActor(currentComponent->data.Position);
+	}
 }
 
-void TestMovementComponent::UnsubscribeEntity(PooledComponent<TestMovementComponentData>& component)
+void TestMovementComponent::UnsubscribeEntitiesInternal(TestMovementComponentRefList& components)
 {
-	if (component.data.Actor)
-		component.data.Actor->Destroy();
+	for (TestMovementComponentRefList::iterator it = components.begin(); it != components.end();
+	     ++it)
+	{
+		PooledComponent<TestMovementComponentData>* currentComponent = (*it);
+		if (currentComponent && currentComponent->data.Actor)
+			currentComponent->data.Actor->Destroy();
+	}
 }
