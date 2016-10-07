@@ -5314,6 +5314,7 @@ SOURCES += \
 	"$$unrealRootPath/Engine/Plugins/Slate/SlateRemote/Source/SlateRemote/Private/Server/SlateRemoteServer.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealCharacter.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealFPCharacter.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealGameMode.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealMain.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealPlayerController.cpp" \

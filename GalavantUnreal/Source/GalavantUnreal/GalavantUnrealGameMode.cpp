@@ -4,16 +4,27 @@
 #include "GalavantUnrealGameMode.h"
 #include "GalavantUnrealPlayerController.h"
 #include "GalavantUnrealCharacter.h"
+#include "GalavantUnrealFPCharacter.h"
 
-AGalavantUnrealGameMode::AGalavantUnrealGameMode()
+AGalavantUnrealGameMode::AGalavantUnrealGameMode() : Super()
 {
 	// use our custom PlayerController class
-	PlayerControllerClass = AGalavantUnrealPlayerController::StaticClass();
+	// PlayerControllerClass = AGalavantUnrealPlayerController::StaticClass();
 
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/TopDownCPP/Blueprints/TopDownCharacter"));
+	// static ConstructorHelpers::FClassFinder<APawn>
+	// PlayerPawnBPClass(TEXT("/Game/TopDownCPP/Blueprints/TopDownCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(
+	    TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
+	         "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));
+	// TEXT("/Game/FirstPersonCPP/Blueprints/GalavantUnrealFPCharacterTrueBP"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
+	}
+	else
+	{
+		UE_LOG(LogGalavantUnreal, Log, TEXT("Player Pawn is NULL!"));
+		DefaultPawnClass = AGalavantUnrealFPCharacter::StaticClass();
 	}
 }

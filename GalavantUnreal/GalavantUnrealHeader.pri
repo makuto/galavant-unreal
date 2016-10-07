@@ -7183,6 +7183,7 @@ HEADERS += \
 	"$$unrealRootPath/Engine/Plugins/Slate/SlateRemote/Source/SlateRemote/Private/Shared/SlateRemoteSettings.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealCharacter.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealFPCharacter.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealGameMode.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealMain.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealPlayerController.h" \

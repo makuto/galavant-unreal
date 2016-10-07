@@ -20,7 +20,7 @@ ATestPolyVoxChunkManager::ATestPolyVoxChunkManager()
 
 	// Property defaults
 	ChunkSpawnRadius = 12800.f;
-	MaxNumChunks = 10;
+	MaxNumChunks = 75;
 	Use3dNoise = false;
 
 	TimeSinceLastUpdate = 9999.f;  // Mark as needing update
@@ -37,9 +37,19 @@ bool ATestPolyVoxChunkManager::ShouldTickIfViewportsOnly() const
 	return false;
 }
 
+FVector ATestPolyVoxChunkManager::GetChunkManagerLocation()
+{
+	FVector worldLocation = SceneComponent->GetComponentLocation();
+
+	// Our chunk manager shouldn't care about the Z axis. Otherwise, player movement in the Z axis
+	// would change our chunk Z axis positioning. If we make 3D chunks (!), this would be removed
+	worldLocation[2] = 0.f;
+	return worldLocation;
+}
+
 // Generates a list of points where chunks should be placed for location and spawnRadius
 int GeneratePointsForChunkSpawn(TArray<FVector> &pointsOut, FVector &location, float spawnRadius,
-								FVector chunkSize)
+                                FVector chunkSize)
 {
 	int numPositions = 0;
 	int numChunksWidth = spawnRadius / chunkSize[0];
@@ -71,7 +81,7 @@ int GeneratePointsForChunkSpawn(TArray<FVector> &pointsOut, FVector &location, f
 void ATestPolyVoxChunkManager::DrawDebugVisualizations(TArray<FVector> *chunkPositions = nullptr)
 {
 	UWorld *world = GetWorld();
-	FVector worldPosition = SceneComponent->GetComponentLocation();
+	FVector worldPosition = GetChunkManagerLocation();
 
 	FlushPersistentDebugLines(world);
 	DrawDebugSphere(world, worldPosition, ChunkSpawnRadius, 32, FColor(255, 0, 0), true);
@@ -111,7 +121,7 @@ ATestPolyVoxChunk *ATestPolyVoxChunkManager::CreateChunk(FVector &location, FRot
 	FActorSpawnParameters spawnParams;
 	spawnParams.Owner = this;
 	ATestPolyVoxChunk *newChunk = (ATestPolyVoxChunk *)GetWorld()->SpawnActor<ATestPolyVoxChunk>(
-		location, rotation, spawnParams);
+	    location, rotation, spawnParams);
 
 	newChunk->SetUse3dNoise(Use3dNoise);
 
@@ -120,14 +130,13 @@ ATestPolyVoxChunk *ATestPolyVoxChunkManager::CreateChunk(FVector &location, FRot
 	if (newChunk)
 	{
 		UE_LOG(LogGalavantUnreal, Log, TEXT("Spawned chunk named '%s' with size %s"),
-			   *newChunk->GetHumanReadableName(), *newChunk->GetChunkSize().ToString());
+		       *newChunk->GetHumanReadableName(), *newChunk->GetChunkSize().ToString());
 	}
 	else
 		UE_LOG(LogGalavantUnreal, Log, TEXT("ERROR: Failed to spawn new chunk!"));
 
 	return newChunk;
 }
-
 
 // Called when the game starts or when spawned
 void ATestPolyVoxChunkManager::BeginPlay()
@@ -152,7 +161,7 @@ void ATestPolyVoxChunkManager::BeginPlay()
 
 void ATestPolyVoxChunkManager::DestroyUnneededChunks()
 {
-	FVector worldPosition = SceneComponent->GetComponentLocation();
+	FVector worldPosition = GetChunkManagerLocation();
 
 	// Delete any chunks outside spawn radius
 	for (int i = Chunks.Num() - 1; i >= 0; i--)
@@ -170,8 +179,8 @@ void ATestPolyVoxChunkManager::DestroyUnneededChunks()
 		if (FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth > ChunkSpawnRadius)
 		{
 			UE_LOG(LogGalavantUnreal, Log, TEXT("Destroying chunk '%s' (%f units away)"),
-				   *chunk->GetHumanReadableName(),
-				   FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth);
+			       *chunk->GetHumanReadableName(),
+			       FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth);
 			chunk->Destroy();
 			Chunks.RemoveAtSwap(i);
 		}
@@ -185,13 +194,13 @@ void ATestPolyVoxChunkManager::Tick(float DeltaTime)
 
 	const float UPDATE_FREQUENCY = 1.f;
 
-	FVector worldPosition = SceneComponent->GetComponentLocation();
+	FVector worldPosition = GetChunkManagerLocation();
 
 	TimeSinceLastUpdate += DeltaTime;
 
 	if ((TimeSinceLastUpdate > UPDATE_FREQUENCY &&
-		 worldPosition.Equals(LastUpdatedPosition, 0.1f) == false) ||
-		PropertiesChanged)
+	     worldPosition.Equals(LastUpdatedPosition, 0.1f) == false) ||
+	    PropertiesChanged)
 	{
 		TimeSinceLastUpdate = 0.f;
 		LastUpdatedPosition = worldPosition;
@@ -202,7 +211,7 @@ void ATestPolyVoxChunkManager::Tick(float DeltaTime)
 		// Create needed chunks in spawn radius
 		TArray<FVector> requiredChunkPositions;
 		GeneratePointsForChunkSpawn(requiredChunkPositions, worldPosition, ChunkSpawnRadius,
-									ChunkSize);
+		                            ChunkSize);
 
 		for (auto &newChunkPosition : requiredChunkPositions)
 		{

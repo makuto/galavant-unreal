@@ -21,7 +21,7 @@ class GALAVANTUNREAL_API ATestPolyVoxChunkManager : public AActor
 	FVector LastUpdatedPosition;
 
 	bool PropertiesChanged;
-	
+
 	// All chunks within this radius around the ChunkManager will be spawned
 	UPROPERTY(EditAnywhere)
 	float ChunkSpawnRadius;
@@ -35,7 +35,6 @@ class GALAVANTUNREAL_API ATestPolyVoxChunkManager : public AActor
 	bool Use3dNoise;
 
 	FVector ChunkSize;
-
 
 public:
 	// Sets default values for this actor's properties
@@ -56,14 +55,15 @@ public:
 
 #if WITH_EDITOR
 	// Ensure that if properties are changed, the manager immediately updates
-	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e);
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent &e);
 #endif
-	
+
 	void SetChunkSpawnRadius(float radius);
+
+	FVector GetChunkManagerLocation();
 
 private:
 	void DestroyUnneededChunks();
 
 	void DrawDebugVisualizations(TArray<FVector> *chunkPositions);
-
 };

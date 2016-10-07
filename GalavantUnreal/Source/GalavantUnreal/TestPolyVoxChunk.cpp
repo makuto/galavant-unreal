@@ -10,9 +10,9 @@
 #include <iostream>
 #include <stdlib.h>
 
-const int CELL_X = 32;   // 32;
-const int CELL_Y = 32;   // 32;
-const int CELL_Z = 128;  // 64;  // In Unreal, Z is up axis
+const int CELL_X = 16;   // 32;
+const int CELL_Y = 16;   // 32;
+const int CELL_Z = 64;  // 64;  // In Unreal, Z is up axis
 
 /*
 TODO: Copy the DynamicMeshComponent from this page and use it instead (supports both collision and
@@ -389,11 +389,11 @@ void setSurfaceMeshToRender(
 				pCurrentTriangle->Vertex0.U = 0.0f;
 				pCurrentTriangle->Vertex0.V = 0.0f;
 
-				pCurrentTriangle->Vertex2.U = 1.0f;
-				pCurrentTriangle->Vertex2.V = 0.0f;
-
 				pCurrentTriangle->Vertex1.U = 1.0f;
-				pCurrentTriangle->Vertex1.V = 1.0f;
+				pCurrentTriangle->Vertex1.V = 0.0f;
+
+				pCurrentTriangle->Vertex2.U = 1.0f;
+				pCurrentTriangle->Vertex2.V = 1.0f;
 				triangleType = 1;
 				break;
 		}
@@ -467,7 +467,7 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)  //,
 
 	// Properties defaults
 	MeshScale = 100.f;
-	NoiseScale = 0.04f;
+	NoiseScale = 0.008f;
 	NoiseSeed = 5138008;
 	Use3dNoise = false;
 

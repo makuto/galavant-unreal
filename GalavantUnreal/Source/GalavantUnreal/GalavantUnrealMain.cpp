@@ -19,6 +19,8 @@ void AGalavantUnrealMain::InitializeGalavant(void)
 	FRotator rotation(0.f, 0.f, 0.f);
 	FActorSpawnParameters spawnParams;
 
+	// ATestAgent* testAgentTemplate = (ATestAgent*)ATestAgent::StaticClass();
+
 	ATestAgent* testAgent =
 	    (ATestAgent*)GetWorld()->SpawnActor<ATestAgent>(location, rotation, spawnParams);
 
