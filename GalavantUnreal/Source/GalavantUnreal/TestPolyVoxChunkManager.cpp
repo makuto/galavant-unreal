@@ -54,12 +54,17 @@ int GeneratePointsForChunkSpawn(TArray<FVector> &pointsOut, FVector &location, f
 	int numPositions = 0;
 	int numChunksWidth = spawnRadius / chunkSize[0];
 
+	// Align player location to grid
+	FVector gridLocation(location);
+	for (int i = 0; i < 2; i++)
+		gridLocation[i] -= (int)gridLocation[i] % (int)chunkSize[i];
+
 	for (int x = -numChunksWidth; x < numChunksWidth; x++)
 	{
 		int numChunksLength = spawnRadius / chunkSize[1];
 		for (int y = -numChunksLength; y < numChunksLength; y++)
 		{
-			FVector newChunkLocation(location);
+			FVector newChunkLocation(gridLocation);
 
 			newChunkLocation[0] += x * chunkSize[0];
 			newChunkLocation[1] += y * chunkSize[1];
@@ -67,7 +72,7 @@ int GeneratePointsForChunkSpawn(TArray<FVector> &pointsOut, FVector &location, f
 			// Because I'm dumb and just generated a rectangular grid, cull points in radius so that
 			//  it's circular
 			float chunkHalfWidth = chunkSize.Size() / 2;
-			if (FVector::Dist(location, newChunkLocation) + chunkHalfWidth > spawnRadius)
+			if (FVector::Dist(gridLocation, newChunkLocation) + chunkHalfWidth > spawnRadius)
 				continue;
 
 			pointsOut.Add(newChunkLocation);
