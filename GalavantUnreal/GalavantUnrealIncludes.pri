@@ -1,8 +1,12 @@
 INCLUDEPATH += \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source \
+	Source \
+	Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/GalavantUnreal \
+	Source/GalavantUnreal \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core/Public/Internationalization \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core/Public/Async \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core/Public/Concurrency \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core/Public/Containers \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core/Public/Delegates \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core/Public/GenericPlatform \
@@ -20,31 +24,36 @@ INCLUDEPATH += \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core/Public/UObject \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core/Public/Linux \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Core \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/CoreUObject/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/CoreUObject/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/CoreUObject/Public/Blueprint \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/CoreUObject/Public/Internationalization \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/CoreUObject/Public/Misc \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/CoreUObject/Public/Serialization \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/CoreUObject/Public/Templates \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/CoreUObject/Public/UObject \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/CoreUObject \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/CoreUObject \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/CoreUObject \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/AI \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/AI/Navigation \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/Animation \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/EdGraph \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/Features \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/Internationalization \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/Net \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/PacketHandlers \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/Performance \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/Slate \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/Tests \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/VisualLogger \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine/Public/AI/Navigation \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/Engine \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/Engine \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Json/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Json/Public/Dom \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Json/Public/Policies \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Json/Public/Serialization \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/Json \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Json \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/SlateCore/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/SlateCore/Public/Animation \
@@ -61,15 +70,14 @@ INCLUDEPATH += \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/SlateCore/Public/Textures \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/SlateCore/Public/Types \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/SlateCore/Public/Widgets \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/SlateCore \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/SlateCore \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/SlateCore \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/InputCore/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/InputCore/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/InputCore \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/InputCore \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/InputCore \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/SlateCore \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Framework \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Widgets \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Framework/Application \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Framework/Commands \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Framework/Docking \
@@ -78,9 +86,10 @@ INCLUDEPATH += \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Framework/Notifications \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Framework/Styling \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Framework/Text \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Framework/Views \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Framework/Text/Android \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Framework/Text/IOS \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Framework/Views \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Widgets \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Widgets/Colors \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Widgets/Docking \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Widgets/Images \
@@ -91,48 +100,64 @@ INCLUDEPATH += \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Widgets/Notifications \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Widgets/Text \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate/Public/Widgets/Views \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/Slate \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/Slate \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Slate \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Messaging/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Messaging/Public/Deprecated \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Messaging/Public/Helpers \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/Messaging \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Messaging \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/RenderCore/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/RenderCore \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/RenderCore \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/RHI/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/RHI \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/RHI \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/ShaderCore/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/ShaderCore \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/ShaderCore \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/AssetRegistry/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/AssetRegistry \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/AssetRegistry \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/CookingStats/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/CookingStats \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/EngineMessages/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/EngineMessages/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/EngineMessages \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/EngineMessages \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/EngineMessages \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/EngineSettings/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/EngineSettings/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/EngineSettings \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/EngineSettings \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/EngineSettings \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/SynthBenchmark/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/SynthBenchmark/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/SynthBenchmark \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/SynthBenchmark \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Renderer/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/Renderer \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Renderer \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/SynthBenchmark \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/AIModule/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/AIModule/Classes \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/AIModule \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/AIModule \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/AIModule \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/GameplayTags/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/GameplayTags/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/GameplayTags \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/GameplayTags \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/GameplayTags \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/GameplayTasks/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/GameplayTasks/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/GameplayTasks \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/GameplayTasks \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/GameplayTasks \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/AIModule \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/DatabaseSupport/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/DatabaseSupport \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/DatabaseSupport \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/PacketHandlers/PacketHandler/Classes \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/PacketHandlers/PacketHandler/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/PacketHandler \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/PacketHandlers/PacketHandler \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/PacketHandlers/ReliabilityHandlerComponent/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/ReliabilityHandlerComponent \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/PacketHandlers/ReliabilityHandlerComponent \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/HardwareSurvey/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/HardwareSurvey \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/HardwareSurvey \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Programs/UnrealLightmass/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UnrealEd/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UnrealEd/Public \
@@ -147,82 +172,94 @@ INCLUDEPATH += \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UnrealEd/Public/Settings \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UnrealEd/Public/Tests \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UnrealEd/Public/Toolkits \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/UnrealEd \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/UnrealEd \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UnrealEd \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/BspMode/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/BspMode \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/BspMode \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/DirectoryWatcher/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/DirectoryWatcher \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/DirectoryWatcher \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/Documentation/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/Documentation \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/Documentation \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Projects/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Projects/Public/Interfaces \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/Projects \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Projects \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/SandboxFile/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/SandboxFile \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/SandboxFile \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/EditorStyle/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/EditorStyle/Public/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/EditorStyle/Public/Interfaces \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/EditorStyle \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/EditorStyle \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/EditorStyle \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/SourceControl/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/SourceControl/Public/Tests \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/SourceControl \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/SourceControl \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UnrealEdMessages/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UnrealEdMessages/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/UnrealEdMessages \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/UnrealEdMessages \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UnrealEdMessages \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/GameplayDebugger/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/AIModule/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/Settings/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/GameplayAbilities/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/GameplayDebugger/Classes \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/GameplayDebugger \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/GameplayDebugger \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/BlueprintGraph/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/BlueprintGraph/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/BlueprintGraph \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/BlueprintGraph \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/BlueprintGraph \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Online/HTTP/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Online/HTTP/Public/Android \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Online/HTTP/Public/Apple \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Online/HTTP/Public/GenericPlatform \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Online/HTTP/Public/HTML5 \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Online/HTTP/Public/Interfaces \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Online/HTTP/Public/Linux \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Online/HTTP/Public/Windows \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/HTTP \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Online/HTTP \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/UnrealAudio/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/UnrealAudio \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/UnrealAudio \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Niagara/Classes \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Niagara/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/Niagara \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/MovieScene/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/MovieScene \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/MovieScene \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Niagara \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/VectorVM/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/VectorVM \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/VectorVM \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/FunctionalTesting/Classes \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/FunctionalTesting/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/FunctionalTesting \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/FunctionalTesting \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/AutomationController/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/AutomationController/Public/Interfaces \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/AutomationController \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/AutomationController \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Internationalization/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Internationalization/Public/Serialization \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/Internationalization \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Internationalization \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UserFeedback/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/UserFeedback \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UserFeedback \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/CollectionManager/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/CollectionManager \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/CollectionManager \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/NiagaraEditor/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/NiagaraEditor \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/GraphEditor/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/GraphEditor/Public/KismetNodes \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/GraphEditor \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/IntroTutorials/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/IntroTutorials \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/IntroTutorials \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/GraphEditor \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/LevelEditor/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/Settings/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/Settings \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/LevelEditor \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/NiagaraEditor \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/AddContentDialog/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/AddContentDialog \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/AddContentDialog \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/AddContentDialog \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/UnrealEd \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/MeshUtilities/Public \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/MeshUtilities \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Developer/MeshUtilities \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/Kismet/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/Kismet/Public \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/Kismet/Public/Nodes \
+	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/Kismet/Public/Profiler \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/Kismet/Public/WorkflowOrientedApp \
-	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/Kismet \
+	/home/macoy/Downloads/UnrealEngine/Engine/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/Kismet \
 	/home/macoy/Downloads/UnrealEngine/Engine/Source/Editor/Kismet \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/PacketHandlers/PacketHandler/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/PacketHandlers/PacketHandler \
-	/home/macoy/Downloads/UnrealEngine/Engine/Source/Runtime/Engine \
 	/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Source/CustomMeshComponent/Classes \
 	/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Source/CustomMeshComponent/Public \
-	/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Intermediate/Build/Linux/x86_64-unknown-linux-gnu/UE4Editor/Inc/CustomMeshComponent \
+	/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/CustomMeshComponent \
 	/home/macoy/Downloads/UnrealEngine/Engine/Plugins/Runtime/CustomMeshComponent/Source/CustomMeshComponent \
 

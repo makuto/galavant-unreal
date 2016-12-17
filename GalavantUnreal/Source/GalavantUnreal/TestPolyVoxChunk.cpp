@@ -10,8 +10,8 @@
 #include <iostream>
 #include <stdlib.h>
 
-const int CELL_X = 16;   // 32;
-const int CELL_Y = 16;   // 32;
+const int CELL_X = 16;  // 32;
+const int CELL_Y = 16;  // 32;
 const int CELL_Z = 64;  // 64;  // In Unreal, Z is up axis
 
 /*
@@ -25,7 +25,7 @@ void createSphereInVolume(PolyVox::SimpleVolume<uint8_t>& volData, float fRadius
 {
 	// This vector hold the position of the center of the volume
 	PolyVox::Vector3DFloat v3dVolCenter(volData.getWidth() / 2, volData.getHeight() / 2,
-										volData.getDepth() / 2);
+	                                    volData.getDepth() / 2);
 
 	// This three-level for loop iterates over every voxel in the volume
 	for (int z = 0; z < volData.getDepth(); z++)
@@ -60,7 +60,7 @@ void createRandomInSphereVolume(PolyVox::SimpleVolume<uint8_t>& volData, float f
 {
 	// This vector hold the position of the center of the volume
 	PolyVox::Vector3DFloat v3dVolCenter(volData.getWidth() / 2, volData.getHeight() / 2,
-										volData.getDepth() / 2);
+	                                    volData.getDepth() / 2);
 
 	// This three-level for loop iterates over every voxel in the volume
 	for (int z = 0; z < volData.getDepth(); z++)
@@ -95,7 +95,7 @@ void createRandomInSphereVolume(PolyVox::SimpleVolume<uint8_t>& volData, float f
 typedef std::vector<uint8_t> NoiseStrip;
 typedef std::vector<NoiseStrip*> NoiseMap;
 void get2dNoiseMapForPosition(NoiseMap* map, int width, int height, float xOffset, float yOffset,
-							  float scale, int32 seed)
+                              float scale, int32 seed)
 {
 	if (!map)
 		return;
@@ -120,7 +120,7 @@ void get2dNoiseMapForPosition(NoiseMap* map, int width, int height, float xOffse
 				break;
 
 			float noiseValue = noiseGenerator.scaledOctaveNoise2d(
-				(x + xOffset) * scale, (y + yOffset) * scale, 0, 255, 10, 0.1f, 0.55f, 2);
+			    (x + xOffset) * scale, (y + yOffset) * scale, 0, 255, 10, 0.1f, 0.55f, 2);
 
 			if (x >= currentStrip->size())
 				currentStrip->push_back(noiseValue);
@@ -143,12 +143,12 @@ uint8_t get2dNoiseMapValue(NoiseMap* map, int x, int y)
 }
 
 void drawDebugPointsForPosition(UWorld* world, FVector& position, float noiseScale, int noiseSeed,
-								float meshScale)
+                                float meshScale)
 {
 	const float POINT_SCALE = 10.f;
 	static NoiseMap noiseMap;
 	get2dNoiseMapForPosition(&noiseMap, CELL_X, CELL_Y, position.X, position.Y, noiseScale,
-							 noiseSeed);
+	                         noiseSeed);
 
 	for (int y = 0; y < noiseMap.size(); y++)
 	{
@@ -161,7 +161,7 @@ void drawDebugPointsForPosition(UWorld* world, FVector& position, float noiseSca
 		{
 			float noiseValue = get2dNoiseMapValue(&noiseMap, x, y);
 			FVector point((x * meshScale) + position.X, (y * meshScale) + position.Y,
-						  (noiseValue / 255) * CELL_Z * meshScale);
+			              (noiseValue / 255) * CELL_Z * meshScale);
 
 			DrawDebugPoint(world, point, POINT_SCALE, FColor(255, 0, 0), true, 0.f);
 		}
@@ -174,7 +174,7 @@ float lerp(float startA, float stopA, float pointA, float startB, float stopB)
 }
 
 void create3dNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, float yOffset,
-				   float zOffset, float scale, int32 seed)
+                   float zOffset, float scale, int32 seed)
 {
 	static gv::Noise3d noiseGenerator(seed);
 	for (int z = 0; z < volData->getDepth(); z++)
@@ -188,7 +188,7 @@ void create3dNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, float
 				float noiseZ = (z + zOffset) * scale;
 
 				uint8_t value = noiseGenerator.scaledOctaveNoise3d(noiseX, noiseY, noiseZ, 0, 255,
-																   10, 0.1f, 0.55f, 2);
+				                                                   10, 0.1f, 0.55f, 2);
 
 				volData->setVoxelAt(x, y, z, value);
 			}
@@ -197,7 +197,7 @@ void create3dNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, float
 }
 
 void createHeightNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, float yOffset,
-					   float zOffset, float scale, int32 seed)
+                       float zOffset, float scale, int32 seed)
 {
 	std::cout << "Using noise\n";
 
@@ -205,7 +205,7 @@ void createHeightNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, f
 	// this static functionality
 	static NoiseMap noiseMap;
 	get2dNoiseMapForPosition(&noiseMap, volData->getWidth(), volData->getHeight(), xOffset, yOffset,
-							 scale, seed);
+	                         scale, seed);
 
 	for (int z = 0; z < volData->getDepth(); z++)
 	{
@@ -232,15 +232,15 @@ void createHeightNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, f
 				 and the noise value
 				 */
 				uint8_t relativeValue = z > noiseHeightValue ?
-											lerp(halfDepth, volData->getDepth(), z, noiseValue, 0) :
-											lerp(0, halfDepth, z, 255, noiseValue);
+				                            lerp(halfDepth, volData->getDepth(), z, noiseValue, 0) :
+				                            lerp(0, halfDepth, z, 255, noiseValue);
 
 				volData->setVoxelAt(x, y, z, relativeValue);
 
 				/*if ((float) z / volData->getDepth() < noiseValue / 255.f)
-					volData->setVoxelAt(x, y, z, 255);
+				    volData->setVoxelAt(x, y, z, 255);
 				else
-					volData->setVoxelAt(x, y, z, 0); */
+				    volData->setVoxelAt(x, y, z, 0); */
 			}
 		}
 	}
@@ -275,7 +275,7 @@ public:
 	{
 		std::cout << "Creating volume\n";
 		volData = new PolyVox::SimpleVolume<uint8_t>(PolyVox::Region(
-			PolyVox::Vector3DInt32(0, 0, 0), PolyVox::Vector3DInt32(CELL_X, CELL_Y, CELL_Z)));
+		    PolyVox::Vector3DInt32(0, 0, 0), PolyVox::Vector3DInt32(CELL_X, CELL_Y, CELL_Z)));
 		std::cout << "done\n";
 	}
 	~cell()
@@ -290,15 +290,15 @@ public:
 			return -1;
 
 		std::cout << "Generating Noise " << params.newX << " , " << params.newY << " , "
-				  << params.newZ << "\n";
+		          << params.newZ << "\n";
 
 		if (params.use3dNoise)
 			create3dNoise(volData, params.newX / params.meshScale, params.newY / params.meshScale,
-						  params.newZ / params.meshScale, params.scale, params.seed);
+			              params.newZ / params.meshScale, params.scale, params.seed);
 		else
 			createHeightNoise(volData, params.newX / params.meshScale,
-							  params.newY / params.meshScale, params.newZ / params.meshScale,
-							  params.scale, params.seed);
+			                  params.newY / params.meshScale, params.newZ / params.meshScale,
+			                  params.scale, params.seed);
 
 		std::cout << "done\n";
 		std::cout << "Creating surface extrator\n";
@@ -310,7 +310,7 @@ public:
 
 		mesh.clear();
 		PolyVox::MarchingCubesSurfaceExtractor<PolyVox::SimpleVolume<uint8_t> > surfaceExtractor(
-			volData, volData->getEnclosingRegion(), &mesh);
+		    volData, volData->getEnclosingRegion(), &mesh);
 		std::cout << "done\n";
 
 		std::cout << "Executing surface extrator\n";
@@ -322,8 +322,8 @@ public:
 };
 
 void setSurfaceMeshToRender(
-	const PolyVox::SurfaceMesh<PolyVox::PositionMaterialNormal>& surfaceMesh,
-	TArray<FGeneratedMeshTriangle>* Triangles, float scale)
+    const PolyVox::SurfaceMesh<PolyVox::PositionMaterialNormal>& surfaceMesh,
+    TArray<FGeneratedMeshTriangle>* Triangles, float scale)
 {
 	if (!Triangles)
 		return;
@@ -341,7 +341,7 @@ void setSurfaceMeshToRender(
 	int triangleType = 1;
 
 	for (std::vector<uint32_t>::const_iterator it = vecIndices.begin(); it != vecIndices.end();
-		 ++it)  // note that inside the loop we will move forward two (three indices = 1 triangle)
+	     ++it)  // note that inside the loop we will move forward two (three indices = 1 triangle)
 	{
 		// Get the indices for the current triangle
 		const uint32_t index1 = (*it);
@@ -362,11 +362,11 @@ void setSurfaceMeshToRender(
 
 		// Reverse winding order (I think unreal uses the opposite of OpenGL)
 		pCurrentTriangle->Vertex2.Position.Set(
-			v1->position.getX() * scale, v1->position.getY() * scale, v1->position.getZ() * scale);
+		    v1->position.getX() * scale, v1->position.getY() * scale, v1->position.getZ() * scale);
 		pCurrentTriangle->Vertex1.Position.Set(
-			v2->position.getX() * scale, v2->position.getY() * scale, v2->position.getZ() * scale);
+		    v2->position.getX() * scale, v2->position.getY() * scale, v2->position.getZ() * scale);
 		pCurrentTriangle->Vertex0.Position.Set(
-			v3->position.getX() * scale, v3->position.getY() * scale, v3->position.getZ() * scale);
+		    v3->position.getX() * scale, v3->position.getY() * scale, v3->position.getZ() * scale);
 
 		// UV Coordinates
 		// This (sortof) doesn't work! I think I will have to do texture mapping in the
@@ -405,7 +405,7 @@ void setSurfaceMeshToRender(
 }
 
 void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale, int32 seed,
-											 float meshScale, bool use3dNoise)
+                                             float meshScale, bool use3dNoise)
 {
 	FGeneratedMeshTriangle emptyTriangle;
 
@@ -417,7 +417,7 @@ void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale,
 
 	// Generate surface mesh for position
 	CellGenerationParams params = {Position.X, Position.Y, Position.Z, noiseScale,
-								   seed,	   use3dNoise, meshScale};
+	                               seed,       use3dNoise, meshScale};
 	int numVertices = newCell->generate(params);
 
 	// Initialize Unreal triangle buffer
@@ -478,12 +478,16 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)  //,
 	// Establish component relationships
 	RootComponent = SceneComponent;
 	if (SceneComponent->CanAttachAsChild(GeneratedMesh, "GeneratedMesh"))
-		GeneratedMesh->AttachTo(SceneComponent, "GeneratedMesh",
-								EAttachLocation::SnapToTargetIncludingScale, false);
+	{
+		FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
+		                                          EAttachmentRule::SnapToTarget,
+		                                          EAttachmentRule::SnapToTarget, false);
+		GeneratedMesh->AttachToComponent(SceneComponent, attachmentRules, "GeneratedMesh");
+	}
 
 	// Set material (this must be run in constructor)
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> material(
-		TEXT("/Game/Materials/TriplanarTest1.TriplanarTest1"));
+	    TEXT("/Game/Materials/TriplanarTest1.TriplanarTest1"));
 	GeneratedMesh->SetMaterial(0, material.Object);
 
 	// Set collision
@@ -542,8 +546,8 @@ void ATestPolyVoxChunk::Tick(float DeltaTime)
 
 	// If we've changed positions in the last n ticks
 	if ((worldPosition.Equals(LastUpdatedPosition, 0.1f) == false &&
-		 TimeSinceLastUpdate >= CHUNK_UPDATE_FREQUENCY) ||
-		PropertiesChanged)
+	     TimeSinceLastUpdate >= CHUNK_UPDATE_FREQUENCY) ||
+	    PropertiesChanged)
 	{
 		// Reset timer and update the position
 		TimeSinceLastUpdate = 0.f;
@@ -559,14 +563,14 @@ void ATestPolyVoxChunk::Tick(float DeltaTime)
 	}
 
 	/*	// TESTING ONLY
-		static float timeSinceLastSeedUpdate = 0.f;
-		timeSinceLastSeedUpdate += DeltaTime;
-		if (timeSinceLastSeedUpdate > 0.5f)
-		{
-			timeSinceLastSeedUpdate = 0.f;
-			NoiseSeed += 237;
-			Construct();
-		}*/
+	    static float timeSinceLastSeedUpdate = 0.f;
+	    timeSinceLastSeedUpdate += DeltaTime;
+	    if (timeSinceLastSeedUpdate > 0.5f)
+	    {
+	        timeSinceLastSeedUpdate = 0.f;
+	        NoiseSeed += 237;
+	        Construct();
+	    }*/
 
 	/*// This is just testing if I can move things around in game
 	float speed = 100.f;

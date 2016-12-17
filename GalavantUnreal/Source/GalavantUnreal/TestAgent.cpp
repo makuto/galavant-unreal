@@ -16,13 +16,18 @@ ATestAgent::ATestAgent()
 	// Establish component relationships
 	RootComponent = SceneComponent;
 	if (SceneComponent->CanAttachAsChild(Mesh, "Mesh"))
-		Mesh->AttachTo(SceneComponent, "Mesh", EAttachLocation::SnapToTargetIncludingScale, false);
+	{
+		FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
+		                                          EAttachmentRule::SnapToTarget,
+		                                          EAttachmentRule::SnapToTarget, false);
+		Mesh->AttachToComponent(SceneComponent, attachmentRules, TEXT("Mesh"));
+	}
 
 	// Set default mesh and material
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> mesh(
 	    TEXT("/Game/StarterContent/Props/SM_MatPreviewMesh_02.SM_MatPreviewMesh_02"));
 	// TEXT("/Game/StarterContent/Architecture/Pillar_50x500.Pillar_50x500"));
-	Mesh->StaticMesh = mesh.Object;
+	Mesh->SetStaticMesh(mesh.Object);
 
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> material(
 	    TEXT("/Game/Materials/SolidTestMaterial.SolidTestMaterial"));

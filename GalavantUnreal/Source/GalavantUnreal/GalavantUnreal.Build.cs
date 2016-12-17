@@ -22,7 +22,7 @@ public class GalavantUnreal : ModuleRules
 		////////////////////////
 
 		// Directory the file you're reading right now is in
-		var current_directory = Path.GetDirectoryName(RulesCompiler.GetModuleFilename(this.GetType().Name));
+		var current_directory = ModuleDirectory;
 
 		// Includes and libraries relative to current_directory
 		var includes = new string[] {"../../ThirdParty/galavant/src",
