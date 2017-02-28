@@ -494,7 +494,7 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)  //,
 	SetActorEnableCollision(true);
 }
 
-void ATestPolyVoxChunk::Destroyed(void)
+void ATestPolyVoxChunk::Destroyed()
 {
 	FlushPersistentDebugLines(GetWorld());
 }

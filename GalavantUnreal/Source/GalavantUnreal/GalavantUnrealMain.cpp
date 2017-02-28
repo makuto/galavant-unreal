@@ -6,6 +6,7 @@
 #include "entityComponentSystem/EntityTypes.hpp"
 
 // Sets default values
+// TODO: This task shit is ugly :(
 AGalavantUnrealMain::AGalavantUnrealMain()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if
@@ -13,39 +14,86 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void AGalavantUnrealMain::InitializeGalavant(void)
+void AGalavantUnrealMain::InitializeGalavant()
 {
-	FVector location(0.f, 0.f, 0.f);
-	FRotator rotation(0.f, 0.f, 0.f);
-	FActorSpawnParameters spawnParams;
+	// Initialize TestMovementComponent
+	{
+		FVector location(0.f, 0.f, 0.f);
+		FRotator rotation(0.f, 0.f, 0.f);
+		FActorSpawnParameters spawnParams;
 
-	// ATestAgent* testAgentTemplate = (ATestAgent*)ATestAgent::StaticClass();
+		// ATestAgent* testAgentTemplate = (ATestAgent*)ATestAgent::StaticClass();
+		ATestAgent* testAgent =
+		    (ATestAgent*)GetWorld()->SpawnActor<ATestAgent>(location, rotation, spawnParams);
 
-	ATestAgent* testAgent =
-	    (ATestAgent*)GetWorld()->SpawnActor<ATestAgent>(location, rotation, spawnParams);
+		TestMovementComponentManager.Initialize(testAgent, &ResourceLocator);
+	}
 
-	TestMovementComponentManager.Initialize(testAgent);
+	// Initialize PlanComponentManager
+	{
+		PlanComponentManager.Initialize(&WorldStateManager);
+	}
 
 	EntityComponentSystem.AddComponentManager(&TestMovementComponentManager);
+	EntityComponentSystem.AddComponentManager(&PlanComponentManager);
+
+	// Initialize Tasks
+	{
+		testFindResourceTask.Initialize(&ResourceLocator);
+		testMoveToTask.Initialize(&TestMovementComponentManager);
+		testGetResourceTask.Initialize(&testFindResourceTask, &testMoveToTask);
+	}
 
 	// Create a couple test entities
 	int numTestEntities = 20;
-	EntityList testEntities;
+	gv::EntityList testEntities;
 	EntityComponentSystem.GetNewEntities(testEntities, numTestEntities);
 
-	TestMovementComponent::TestMovementComponentList newEntityMovementComponents;
-	newEntityMovementComponents.resize(numTestEntities);
-
-	int i = 0;
-	for (EntityListIterator it = testEntities.begin(); it != testEntities.end(); ++it)
+	// Add Movement components to all of them
 	{
-		newEntityMovementComponents[i].entity = (*it);
-		newEntityMovementComponents[i].data.Actor = nullptr;
-		newEntityMovementComponents[i].data.Position = FVector(0.f, i * 500.f, 0.f);
-		i++;
+		TestMovementComponent::TestMovementComponentList newEntityMovementComponents;
+		newEntityMovementComponents.resize(numTestEntities);
+
+		int i = 0;
+		for (gv::EntityListIterator it = testEntities.begin(); it != testEntities.end(); ++it)
+		{
+			newEntityMovementComponents[i].entity = (*it);
+			newEntityMovementComponents[i].data.Actor = nullptr;
+			newEntityMovementComponents[i].data.WorldPosition.Set(0.f, i * 500.f, 0.f);
+			i++;
+		}
+
+		TestMovementComponentManager.SubscribeEntities(newEntityMovementComponents);
 	}
 
-	TestMovementComponentManager.SubscribeEntities(newEntityMovementComponents);
+	// Test Plan component by adding to half of them, making their goal finding other agents
+	{
+		// Task for each agent: find another agent
+		Htn::Parameter resourceToFind;
+		resourceToFind.IntValue = WorldResourceType::Agent;
+		Htn::ParameterList parameters = {resourceToFind};
+		// TODO: Fuck this static
+		static Htn::Task getResourceTask(&testGetResourceTask);
+		Htn::TaskCall findAgentCall{&getResourceTask, parameters};
+		Htn::TaskCallList findAgentTasks = {findAgentCall};
+
+		gv::PlanComponentManager::PlanComponentList newPlanComponents;
+		newPlanComponents.resize(numTestEntities / 2);
+		int currentEntityIndex = 0;
+
+		for (gv::PooledComponent<gv::PlanComponentData>& currentPlanComponent : newPlanComponents)
+		{
+			currentPlanComponent.entity = testEntities[currentEntityIndex];
+			currentPlanComponent.data.Tasks.insert(currentPlanComponent.data.Tasks.end(),
+			                                       findAgentTasks.begin(), findAgentTasks.end());
+
+			currentEntityIndex += 2;
+			if (currentEntityIndex > newPlanComponents.size())
+				break;
+		}
+
+		PlanComponentManager.SubscribeEntities(newPlanComponents);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -64,6 +112,7 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 
 	GalavantMain.Update(DeltaTime);
 
+	PlanComponentManager.Update(DeltaTime);
 	TestMovementComponentManager.Update(DeltaTime);
 
 	EntityComponentSystem.DestroyEntitiesPendingDestruction();

@@ -33,6 +33,9 @@ public class GalavantUnreal : ModuleRules
 		var libs = new string[] {"../../ThirdParty/galavant/lib/libGalavant.a",
 			"../../ThirdParty/galavant/lib/thirdPartyWrapper/libGalaThirdPartyWrapper.a",
 			"../../ThirdParty/galavant/lib/libGalaEntityComponent.a",
+			"../../ThirdParty/galavant/lib/libGalaAi.a",
+			"../../ThirdParty/galavant/lib/libGalaWorld.a",
+			"../../ThirdParty/galavant/lib/libGalaGame.a",
 			"../../ThirdParty/polyvox/build/library/PolyVoxCore/libPolyVoxCore",
 			"../../ThirdParty/polyvox/build/library/PolyVoxUtil/libPolyVoxUtil"};
 
