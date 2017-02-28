@@ -64,7 +64,7 @@ public:
 			const FGeneratedMeshVertexBuffer*, VertexBuffer, VertexBuffer,
 		{
 			// Initialize the vertex factory's stream components.
-			DataType NewData;
+			FDataType NewData;
 			NewData.PositionComponent = STRUCTMEMBER_VERTEXSTREAMCOMPONENT(VertexBuffer,FDynamicMeshVertex,Position,VET_Float3);
 			NewData.TextureCoordinates.Add(
 				FVertexStreamComponent(VertexBuffer,STRUCT_OFFSET(FDynamicMeshVertex,TextureCoordinate),sizeof(FDynamicMeshVertex),VET_Float2)
@@ -236,7 +236,7 @@ public:
 		PDI->DrawMesh(Mesh);
 	}
 
-	virtual FPrimitiveViewRelevance GetViewRelevance(const FSceneView* View)
+	virtual FPrimitiveViewRelevance GetViewRelevance(const FSceneView* View) const
 	{
 		FPrimitiveViewRelevance Result;
 		Result.bDrawRelevance = IsShown(View);
@@ -408,7 +408,7 @@ void UGeneratedMeshComponent::UpdateBodySetup()
 {
 	if(ModelBodySetup == NULL)
 	{
-		ModelBodySetup = ConstructObject<UBodySetup>(UBodySetup::StaticClass(), this);
+		ModelBodySetup = NewObject<UBodySetup>(this, UBodySetup::StaticClass());
 		ModelBodySetup->CollisionTraceFlag = CTF_UseComplexAsSimple;
 		ModelBodySetup->bMeshCollideAll = true;
 	}

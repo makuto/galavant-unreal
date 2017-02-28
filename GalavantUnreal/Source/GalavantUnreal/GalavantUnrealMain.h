@@ -7,9 +7,12 @@
 #include "GalavantMain.hpp"
 
 #include "entityComponentSystem/EntityComponentManager.hpp"
+#include "game/agent/PlanComponentManager.hpp"
 
 // Testing
 #include "GalaEntityComponents/TestMovementComponent.hpp"
+#include "TestHtn/TestMovementTasks.hpp"
+#include "TestHtn/TestWorldResourceLocator.hpp"
 
 #include "GalavantUnrealMain.generated.h"
 
@@ -20,10 +23,22 @@ class GALAVANTUNREAL_API AGalavantUnrealMain : public AActor
 
 	gv::GalavantMain GalavantMain;
 
-	EntityComponentManager EntityComponentSystem;
+	// Entity Components
+	gv::EntityComponentManager EntityComponentSystem;
 	TestMovementComponent TestMovementComponentManager;
+	gv::PlanComponentManager PlanComponentManager;
 
-	void InitializeGalavant(void);
+	// World
+	gv::WorldStateManager WorldStateManager;
+	TestWorldResourceLocator ResourceLocator;
+
+	// Hierarchical Task Networks
+	// TODO: How should this work?
+	TestFindResourceTask testFindResourceTask;
+	TestMoveToTask testMoveToTask;
+	TestGetResourceTask testGetResourceTask;
+
+	void InitializeGalavant();
 
 public:
 	// Sets default values for this actor's properties

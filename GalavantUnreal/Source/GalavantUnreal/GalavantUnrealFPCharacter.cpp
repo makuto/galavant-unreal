@@ -22,7 +22,7 @@ AGalavantUnrealFPCharacter::AGalavantUnrealFPCharacter()
 	// Create a CameraComponent
 	FirstPersonCameraComponent =
 	    CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
-	FirstPersonCameraComponent->AttachParent = GetCapsuleComponent();
+	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCameraComponent->RelativeLocation = FVector(0, 0, 64.f);  // Position the camera
 	FirstPersonCameraComponent->bUsePawnControlRotation = true;
 
@@ -30,7 +30,7 @@ AGalavantUnrealFPCharacter::AGalavantUnrealFPCharacter()
 	// controlling this pawn)
 	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("CharacterMesh1P"));
 	Mesh1P->SetOnlyOwnerSee(true);
-	Mesh1P->AttachParent = FirstPersonCameraComponent;
+	Mesh1P->SetupAttachment(FirstPersonCameraComponent);
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
 
@@ -39,13 +39,16 @@ AGalavantUnrealFPCharacter::AGalavantUnrealFPCharacter()
 	FP_Gun->SetOnlyOwnerSee(true);  // only the owning player will see this mesh
 	FP_Gun->bCastDynamicShadow = false;
 	FP_Gun->CastShadow = false;
-	FP_Gun->AttachTo(Mesh1P, TEXT("GripPoint"), EAttachLocation::SnapToTargetIncludingScale, true);
+	FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
+	                                          EAttachmentRule::SnapToTarget,
+	                                          EAttachmentRule::SnapToTarget, false);
+	FP_Gun->AttachToComponent(Mesh1P, attachmentRules, TEXT("GripPoint"));
 
 	// Default offset from the character location for projectiles to spawn
 	GunOffset = FVector(100.0f, 30.0f, 10.0f);
 
 	ChunkManager = CreateDefaultSubobject<UChildActorComponent>(TEXT("ChunkManager"));
-	ChunkManager->AttachParent = FirstPersonCameraComponent;
+	ChunkManager->SetupAttachment(FirstPersonCameraComponent);
 
 	// Note: The ProjectileClass and the skeletal mesh/anim blueprints for Mesh1P are set in the
 	// derived blueprint asset named MyCharacter (to avoid direct content references in C++)
