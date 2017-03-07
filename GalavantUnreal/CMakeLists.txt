@@ -6231,6 +6231,7 @@ set(SOURCE_FILES
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealCharacter.cpp"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealFPCharacter.cpp"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealGameMode.cpp"
+	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealLog.cpp"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealMain.cpp"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealPlayerController.cpp"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GeneratedMeshComponent.cpp"
@@ -6239,6 +6240,8 @@ set(SOURCE_FILES
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/TestPolyVoxChunkManager.cpp"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/ThirdPersonCharacter.cpp"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalaEntityComponents/TestMovementComponent.cpp"
+	"${GAME_ROOT_PATH}/Source/GalavantUnreal/TestHtn/TestMovementTasks.cpp"
+	"${GAME_ROOT_PATH}/Source/GalavantUnreal/TestHtn/TestWorldResourceLocator.cpp"
  )
 
 set(HEADER_FILES 
@@ -14609,6 +14612,7 @@ set(HEADER_FILES
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealCharacter.h"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealFPCharacter.h"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealGameMode.h"
+	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealLog.h"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealMain.h"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealPlayerController.h"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GeneratedMeshComponent.h"
@@ -15154,6 +15158,7 @@ include_directories(
 	"${GAME_ROOT_PATH}/ThirdParty/galavant/src/thirdPartyWrapper"
 	"${GAME_ROOT_PATH}/ThirdParty/polyvox/library/PolyVoxCore/include"
 	"${GAME_ROOT_PATH}/ThirdParty/polyvox/library/PolyVoxUtil/include"
+	"${GAME_ROOT_PATH}/ThirdParty/galavant/thirdParty/plog/include"
 	"${GAME_ROOT_PATH}/Source"
 	"${GAME_ROOT_PATH}/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/GalavantUnreal"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal"

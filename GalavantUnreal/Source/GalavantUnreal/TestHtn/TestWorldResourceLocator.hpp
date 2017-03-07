@@ -37,5 +37,5 @@ public:
 	// Find the nearest resource. Uses Manhattan distance
 	// Manhattan distance of -1 indicates no resource was found
 	gv::Position FindNearestResource(const WorldResourceType type, const gv::Position& location,
-	                                 float& manhattanToOut);
+	                                 bool allowSameLocation, float& manhattanToOut);
 };

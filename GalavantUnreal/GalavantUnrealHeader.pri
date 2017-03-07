@@ -8366,6 +8366,7 @@ HEADERS += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealCharacter.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealFPCharacter.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealGameMode.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealLog.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealMain.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealPlayerController.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GeneratedMeshComponent.h" \

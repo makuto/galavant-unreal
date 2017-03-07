@@ -3,6 +3,8 @@
 #include "TestMovementComponent.hpp"
 
 #include "RandomStream.h"
+
+#include "util/Logging.hpp"
 #include "entityComponentSystem/PooledComponentManager.hpp"
 #include "entityComponentSystem/EntitySharedData.hpp"
 
@@ -106,8 +108,10 @@ void TestMovementComponent::Update(float deltaSeconds)
 		sceneComponent->AddLocalOffset(deltaVelocity, false, NULL, ETeleportType::None);
 	}
 
+	// TODO: This could be improved by sending all events in one Notify...
 	for (const Htn::TaskEvent& event : eventQueue)
 	{
+		LOGD << "Position reached event for " << event.entity;
 		Notify(event);
 	}
 }

@@ -2,6 +2,7 @@
 
 #include "TestMovementTasks.hpp"
 
+#include "util/Logging.hpp"
 #include "world/Position.hpp"
 
 void TestFindResourceTask::Initialize(TestWorldResourceLocator* newResourceLocator)
@@ -24,7 +25,7 @@ void TestFindResourceTask::ApplyStateChange(gv::WorldState& state,
 	// that much of a problem if ResourceLocator caches searches
 	float manhattanTo = 0.f;
 	gv::Position targetPosition = ResourceLocator->FindNearestResource(
-	    (WorldResourceType)parameters[0].IntValue, state.SourceAgent.position, manhattanTo);
+	    (WorldResourceType)parameters[0].IntValue, state.SourceAgent.position, false, manhattanTo);
 	if (manhattanTo != -1.f)
 		state.SourceAgent.TargetPosition = targetPosition;
 }
@@ -34,8 +35,9 @@ bool TestFindResourceTask::Execute(gv::WorldState& state, const Htn::ParameterLi
 	if (ResourceLocator)
 	{
 		float manhattanTo = 0.f;
-		gv::Position targetPosition = ResourceLocator->FindNearestResource(
-		    (WorldResourceType)parameters[0].IntValue, state.SourceAgent.position, manhattanTo);
+		gv::Position targetPosition =
+		    ResourceLocator->FindNearestResource((WorldResourceType)parameters[0].IntValue,
+		                                         state.SourceAgent.position, false, manhattanTo);
 		if (manhattanTo != -1.f)
 		{
 			state.SourceAgent.TargetPosition = targetPosition;
@@ -50,7 +52,7 @@ bool TestFindResourceTask::Execute(gv::WorldState& state, const Htn::ParameterLi
 
 void TestMoveToTask::Initialize(TestMovementComponent* newMovementManager)
 {
-    MovementManager = newMovementManager;
+	MovementManager = newMovementManager;
 }
 
 bool TestMoveToTask::StateMeetsPreconditions(const gv::WorldState& state,
@@ -95,7 +97,7 @@ bool TestMoveToTask::ExecuteAndObserve(gv::WorldState& state, const Htn::Paramet
 }
 
 void TestGetResourceTask::Initialize(TestFindResourceTask* newFindResourceTask,
-                                TestMoveToTask* newMoveToTask)
+                                     TestMoveToTask* newMoveToTask)
 {
 	FindResourceTask.Initialize(newFindResourceTask);
 	MoveToTask.Initialize(newMoveToTask);
@@ -106,7 +108,10 @@ bool TestGetResourceTask::StateMeetsPreconditions(const gv::WorldState& state,
 {
 	// TODO: What is the purpose of the compound task checking preconditions if they'll be near
 	// identical to the combined primitive task preconditions?
-	return parameters.size() == 1 && parameters[1].Type == Htn::Parameter::ParamType::Int;
+	bool parametersValid =
+	    parameters.size() == 1 && parameters[0].Type == Htn::Parameter::ParamType::Int;
+	LOGD_IF(!parametersValid) << "TestGetResourceTask parameters invalid! Expected Int";
+	return parametersValid;
 }
 
 bool TestGetResourceTask::Decompose(Htn::TaskCallList& taskCallList, const gv::WorldState& state,

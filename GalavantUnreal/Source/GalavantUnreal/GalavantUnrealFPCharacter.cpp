@@ -39,10 +39,11 @@ AGalavantUnrealFPCharacter::AGalavantUnrealFPCharacter()
 	FP_Gun->SetOnlyOwnerSee(true);  // only the owning player will see this mesh
 	FP_Gun->bCastDynamicShadow = false;
 	FP_Gun->CastShadow = false;
-	FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
+	/*FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
 	                                          EAttachmentRule::SnapToTarget,
-	                                          EAttachmentRule::SnapToTarget, false);
-	FP_Gun->AttachToComponent(Mesh1P, attachmentRules, TEXT("GripPoint"));
+	                                          EAttachmentRule::SnapToTarget, false);*/
+	//FP_Gun->AttachToComponent(Mesh1P, attachmentRules, TEXT("GripPoint"));
+	FP_Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
 
 	// Default offset from the character location for projectiles to spawn
 	GunOffset = FVector(100.0f, 30.0f, 10.0f);

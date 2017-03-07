@@ -28,10 +28,12 @@ public class GalavantUnreal : ModuleRules
 		var includes = new string[] {"../../ThirdParty/galavant/src",
 			"../../ThirdParty/galavant/src/thirdPartyWrapper",
 			"../../ThirdParty/polyvox/library/PolyVoxCore/include",
-			"../../ThirdParty/polyvox/library/PolyVoxUtil/include"};
+			"../../ThirdParty/polyvox/library/PolyVoxUtil/include",
+			"../../ThirdParty/galavant/thirdParty/plog/include"};
 
 		var libs = new string[] {"../../ThirdParty/galavant/lib/libGalavant.a",
 			"../../ThirdParty/galavant/lib/thirdPartyWrapper/libGalaThirdPartyWrapper.a",
+			"../../ThirdParty/galavant/lib/libGalaUtil.a",
 			"../../ThirdParty/galavant/lib/libGalaEntityComponent.a",
 			"../../ThirdParty/galavant/lib/libGalaAi.a",
 			"../../ThirdParty/galavant/lib/libGalaWorld.a",

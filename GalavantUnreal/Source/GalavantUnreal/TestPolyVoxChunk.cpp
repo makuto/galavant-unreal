@@ -6,8 +6,8 @@
 #include "PolyVoxCore/MarchingCubesSurfaceExtractor.h"
 #include "PolyVoxCore/SurfaceMesh.h"
 #include "PolyVoxCore/SimpleVolume.h"
+#include "util/Logging.hpp"
 #include <vector>
-#include <iostream>
 #include <stdlib.h>
 
 const int CELL_X = 16;  // 32;
@@ -199,7 +199,7 @@ void create3dNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, float
 void createHeightNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, float yOffset,
                        float zOffset, float scale, int32 seed)
 {
-	std::cout << "Using noise\n";
+	LOGV << "Using noise\n";
 
 	// Static so no memory allocations after first run of get2dNoiseMapForPosition, which supports
 	// this static functionality
@@ -273,10 +273,10 @@ public:
 
 	cell()
 	{
-		std::cout << "Creating volume\n";
+		LOGV << "Creating volume\n";
 		volData = new PolyVox::SimpleVolume<uint8_t>(PolyVox::Region(
 		    PolyVox::Vector3DInt32(0, 0, 0), PolyVox::Vector3DInt32(CELL_X, CELL_Y, CELL_Z)));
-		std::cout << "done\n";
+		LOGV << "done\n";
 	}
 	~cell()
 	{
@@ -289,8 +289,8 @@ public:
 		if (!volData)
 			return -1;
 
-		std::cout << "Generating Noise " << params.newX << " , " << params.newY << " , "
-		          << params.newZ << "\n";
+		LOGV << "Generating Noise " << params.newX << " , " << params.newY << " , " << params.newZ
+		     << "\n";
 
 		if (params.use3dNoise)
 			create3dNoise(volData, params.newX / params.meshScale, params.newY / params.meshScale,
@@ -300,8 +300,8 @@ public:
 			                  params.newY / params.meshScale, params.newZ / params.meshScale,
 			                  params.scale, params.seed);
 
-		std::cout << "done\n";
-		std::cout << "Creating surface extrator\n";
+		LOGV << "done\n";
+		LOGV << "Creating surface extrator\n";
 
 		// PolyVox::CubicSurfaceExtractorWithNormals< PolyVox::SimpleVolume<uint8_t> >
 		// surfaceExtractor(volData, volData->getEnclosingRegion(), &mesh);
@@ -309,13 +309,13 @@ public:
 		// surfaceExtractor(volData, volData->getEnclosingRegion(), &mesh);
 
 		mesh.clear();
-		PolyVox::MarchingCubesSurfaceExtractor<PolyVox::SimpleVolume<uint8_t> > surfaceExtractor(
+		PolyVox::MarchingCubesSurfaceExtractor<PolyVox::SimpleVolume<uint8_t>> surfaceExtractor(
 		    volData, volData->getEnclosingRegion(), &mesh);
-		std::cout << "done\n";
+		LOGV << "done\n";
 
-		std::cout << "Executing surface extrator\n";
+		LOGV << "Executing surface extrator\n";
 		surfaceExtractor.execute();
-		std::cout << "done\n";
+		LOGV << "done\n";
 
 		return mesh.getIndices().size() / 3;
 	}
@@ -328,14 +328,14 @@ void setSurfaceMeshToRender(
 	if (!Triangles)
 		return;
 
-	std::cout << "Surf mesh start\n";
+	LOGV << "Surf mesh start\n";
 
 	// Convienient access to the vertices and indices
 	const std::vector<uint32_t>& vecIndices = surfaceMesh.getIndices();
 	const std::vector<PolyVox::PositionMaterialNormal>& vecVertices = surfaceMesh.getVertices();
 
-	std::cout << "num vertices: " << vecVertices.size() << "\n";
-	std::cout << "num indices: " << vecIndices.size() << "\n";
+	LOGV << "num vertices: " << vecVertices.size() << "\n";
+	LOGV << "num indices: " << vecIndices.size() << "\n";
 
 	int iCurrentTriangle = 0;
 	int triangleType = 1;
@@ -401,7 +401,7 @@ void setSurfaceMeshToRender(
 		iCurrentTriangle++;
 	}
 
-	std::cout << "Surf mesh done\n";
+	LOGV << "Surf mesh done\n";
 }
 
 void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale, int32 seed,
@@ -409,7 +409,7 @@ void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale,
 {
 	FGeneratedMeshTriangle emptyTriangle;
 
-	std::cout << "Creating ATestPolyVoxChunk\n";
+	LOGV << "Creating ATestPolyVoxChunk\n";
 	cell* newCell = new cell;
 
 	if (!newCell)
@@ -423,7 +423,7 @@ void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale,
 	// Initialize Unreal triangle buffer
 	Triangles.Init(emptyTriangle, numVertices);
 
-	std::cout << "Generation finished\n";
+	LOGV << "Generation finished\n";
 
 	// Get mesh data from voxel surface mesh and put it in Unreal triangle buffer
 	setSurfaceMeshToRender(newCell->mesh, &Triangles, meshScale);
@@ -438,7 +438,7 @@ void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale,
 	// Set ChunkSize, which can be used to know how large the chunk is in-game (for positioning)
 	ChunkSize.Set(CELL_X * meshScale, CELL_Y * meshScale, CELL_Z * meshScale);
 
-	std::cout << "Creating ATestPolyVoxChunk done\n";
+	LOGV << "Creating ATestPolyVoxChunk done\n";
 }
 
 bool ATestPolyVoxChunk::ShouldTickIfViewportsOnly() const
@@ -479,10 +479,11 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)  //,
 	RootComponent = SceneComponent;
 	if (SceneComponent->CanAttachAsChild(GeneratedMesh, "GeneratedMesh"))
 	{
-		FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
+		/*FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
 		                                          EAttachmentRule::SnapToTarget,
-		                                          EAttachmentRule::SnapToTarget, false);
-		GeneratedMesh->AttachToComponent(SceneComponent, attachmentRules, "GeneratedMesh");
+		                                          EAttachmentRule::SnapToTarget, false);*/
+		//GeneratedMesh->AttachToComponent(SceneComponent, attachmentRules, "GeneratedMesh");
+		GeneratedMesh->SetupAttachment(SceneComponent, "GeneratedMesh");
 	}
 
 	// Set material (this must be run in constructor)

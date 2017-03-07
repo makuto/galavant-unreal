@@ -78,6 +78,7 @@ void TestWorldResourceLocator::MoveResource(const WorldResourceType type,
 // Manhattan distance of -1 indicates no resource was found
 gv::Position TestWorldResourceLocator::FindNearestResource(const WorldResourceType type,
                                                            const gv::Position& location,
+                                                           bool allowSameLocation,
                                                            float& manhattanToOut)
 {
 	gv::Position zeroPosition;
@@ -89,7 +90,8 @@ gv::Position TestWorldResourceLocator::FindNearestResource(const WorldResourceTy
 		for (gv::Position& currentResource : *Resources[type])
 		{
 			float currentResourceDistance = location.ManhattanTo(currentResource);
-			if (currentResourceDistance < closestResourceDistance)
+			if (currentResourceDistance < closestResourceDistance &&
+			    (!allowSameLocation || currentResourceDistance > 0.f))
 			{
 				closestResourceDistance = currentResourceDistance;
 				closestResource = currentResource;
