@@ -30,7 +30,8 @@ void TestFindResourceTask::ApplyStateChange(gv::WorldState& state,
 		state.SourceAgent.TargetPosition = targetPosition;
 }
 
-bool TestFindResourceTask::Execute(gv::WorldState& state, const Htn::ParameterList& parameters)
+Htn::TaskExecuteStatus TestFindResourceTask::Execute(gv::WorldState& state,
+                                                     const Htn::ParameterList& parameters)
 {
 	if (ResourceLocator)
 	{
@@ -43,11 +44,17 @@ bool TestFindResourceTask::Execute(gv::WorldState& state, const Htn::ParameterLi
 			state.SourceAgent.TargetPosition = targetPosition;
 			// TODO: This task finishes instantly; do we need to return Success, Fail, Running and
 			// add a Running() function? That'd make this observer stuff go away
-			return true;
+			LOGD << "Found resource at " << targetPosition;
+			Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Succeeded, NULL};
+			return status;
 		}
+		else
+			LOGD << "Couldn't find resource!";
 	}
 
-	return false;
+	LOGD << "Failed to find resource";
+	Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Failed, NULL};
+	return status;
 }
 
 void TestMoveToTask::Initialize(TestMovementComponent* newMovementManager)
@@ -70,30 +77,23 @@ void TestMoveToTask::ApplyStateChange(gv::WorldState& state, const Htn::Paramete
 	state.SourceAgent.position = state.SourceAgent.TargetPosition;
 }
 
-bool TestMoveToTask::Execute(gv::WorldState& state, const Htn::ParameterList& parameters)
+Htn::TaskExecuteStatus TestMoveToTask::Execute(gv::WorldState& state,
+                                               const Htn::ParameterList& parameters)
 {
 	if (MovementManager)
 	{
 		gv::EntityList entitiesToMove{state.SourceAgent.SourceEntity};
 		std::vector<gv::Position> positions{state.SourceAgent.TargetPosition};
+		LOGD << "Moving Ent[" << state.SourceAgent.SourceEntity << "] to "
+		     << state.SourceAgent.TargetPosition;
 		MovementManager->PathEntitiesTo(entitiesToMove, positions);
-		return true;
+		Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Subscribe,
+		                              MovementManager};
+		return status;
 	}
 
-	return false;
-}
-
-// TODO: This isn't generic, so PlanComponentManager has no way of executing it :(
-bool TestMoveToTask::ExecuteAndObserve(gv::WorldState& state, const Htn::ParameterList& parameters,
-                                       gv::Observer<Htn::TaskEvent>* observer)
-{
-	if (Execute(state, parameters))
-	{
-		MovementManager->AddObserver(observer);
-		return true;
-	}
-	else
-		return false;
+	Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Failed, NULL};
+	return status;
 }
 
 void TestGetResourceTask::Initialize(TestFindResourceTask* newFindResourceTask,

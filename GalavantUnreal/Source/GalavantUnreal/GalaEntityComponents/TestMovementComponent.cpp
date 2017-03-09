@@ -2,6 +2,7 @@
 
 #include "TestMovementComponent.hpp"
 
+#include "AgentCharacter.h"
 #include "RandomStream.h"
 
 #include "util/Logging.hpp"
@@ -17,24 +18,33 @@ TestMovementComponent::~TestMovementComponent()
 {
 }
 
-void TestMovementComponent::Initialize(ATestAgent* defaultTestActor,
+void TestMovementComponent::Initialize(UWorld* newWorld,
                                        TestWorldResourceLocator* newResourceLocator)
 {
-	DefaultActor = defaultTestActor;
+	World = newWorld;
 	ResourceLocator = newResourceLocator;
 }
 
-AActor* TestMovementComponent::CreateDefaultActor(FVector& location)
+ACharacter* TestMovementComponent::CreateDefaultCharacter(FVector& location)
 {
-	if (DefaultActor)
-	{
-		FActorSpawnParameters defaultSpawnParams;
-		FRotator defaultRotation(0.f, 0.f, 0.f);
+	if (!World)
+		return nullptr;
 
-		return DefaultActor->Clone(location, defaultRotation, defaultSpawnParams);
-	}
+	FRotator defaultRotation(0.f, 0.f, 0.f);
+	FActorSpawnParameters spawnParams;
 
-	return nullptr;
+	// TODO https://answers.unrealengine.com/questions/53689/spawn-blueprint-from-c.html
+	// /Game/Blueprints/AgentCharacter1_Blueprint
+	/*static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(
+	    TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
+	         "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));*/
+	AAgentCharacter* newAgentCharacter = (AAgentCharacter*)World->SpawnActor<AAgentCharacter>(
+	    location, defaultRotation, spawnParams);
+
+	if (!newAgentCharacter)
+		LOG_ERROR << "Unable to spawn agent character!";
+
+	return newAgentCharacter;
 }
 
 void TestMovementComponent::Update(float deltaSeconds)
@@ -52,19 +62,19 @@ void TestMovementComponent::Update(float deltaSeconds)
 	     it != gv::PooledComponentManager<TestMovementComponentData>::NULL_POOL_ITERATOR;
 	     currentComponent = GetNextActivePooledComponent(it))
 	{
-		AActor* currentActor = currentComponent->data.Actor;
+		ACharacter* currentCharacter = currentComponent->data.Character;
 		FVector& currentPosition = currentComponent->data.Position;
 		gv::Position& goalWorldPosition = currentComponent->data.GoalWorldPosition;
 
-		USceneComponent* sceneComponent = currentActor->GetRootComponent();
+		USceneComponent* sceneComponent = currentCharacter->GetRootComponent();
 
 		FVector trueWorldPosition = sceneComponent->GetComponentLocation();
 		FVector deltaLocation(0.f, 0.f, 0.f);
 
 		if (goalWorldPosition)
 		{
-			gv::Position currentWorldPosition(currentPosition.X, currentPosition.Y,
-			                                  currentPosition.Z);
+			gv::Position currentWorldPosition(trueWorldPosition.X, trueWorldPosition.Y,
+			                                  trueWorldPosition.Z);
 			if (!currentWorldPosition.Equals(goalWorldPosition, GoalPositionTolerance))
 				// TODO: This fucking sucks
 				currentPosition =
@@ -81,13 +91,13 @@ void TestMovementComponent::Update(float deltaSeconds)
 		// If the component Position doesn't match the actor's actual position, have the actor
 		//  move towards the component Position. Otherwise, pick a random new target (show you're
 		//  alive). Only random walk if no goal position
-		else if (trueWorldPosition.Equals(currentPosition, 100.f))
+		/*else if (trueWorldPosition.Equals(currentPosition, 100.f))
 		{
-			float randomRange = 250.f;
-			currentPosition += FVector(randomStream.FRandRange(-randomRange, randomRange),
-			                           randomStream.FRandRange(-randomRange, randomRange),
-			                           randomStream.FRandRange(-randomRange, randomRange));
-		}
+		    float randomRange = 250.f;
+		    currentPosition += FVector(randomStream.FRandRange(-randomRange, randomRange),
+		                               randomStream.FRandRange(-randomRange, randomRange),
+		                               randomStream.FRandRange(-randomRange, randomRange));
+		}*/
 
 		// Give ResourceLocator our new position
 		if (ResourceLocator)
@@ -105,15 +115,12 @@ void TestMovementComponent::Update(float deltaSeconds)
 		FVector deltaVelocity = deltaLocation.GetSafeNormal(0.1f);
 		deltaVelocity *= SPEED * deltaSeconds;
 
-		sceneComponent->AddLocalOffset(deltaVelocity, false, NULL, ETeleportType::None);
+		//sceneComponent->AddLocalOffset(deltaVelocity, false, NULL, ETeleportType::None);
 	}
 
 	// TODO: This could be improved by sending all events in one Notify...
 	for (const Htn::TaskEvent& event : eventQueue)
-	{
-		LOGD << "Position reached event for " << event.entity;
 		Notify(event);
-	}
 }
 
 void TestMovementComponent::SubscribeEntitiesInternal(const gv::EntityList& subscribers,
@@ -129,12 +136,12 @@ void TestMovementComponent::SubscribeEntitiesInternal(const gv::EntityList& subs
 		if (!currentComponent)
 			continue;
 
-		if (!currentComponent->data.Actor)
+		if (!currentComponent->data.Character)
 		{
 			FVector newActorLocation(currentComponent->data.WorldPosition.X,
 			                         currentComponent->data.WorldPosition.Y,
 			                         currentComponent->data.WorldPosition.Z);
-			currentComponent->data.Actor = CreateDefaultActor(newActorLocation);
+			currentComponent->data.Character = CreateDefaultCharacter(newActorLocation);
 			currentComponent->data.Position = newActorLocation;
 		}
 
@@ -160,8 +167,8 @@ void TestMovementComponent::UnsubscribeEntitiesInternal(const gv::EntityList& un
 		if (!currentComponent)
 			continue;
 
-		if (currentComponent->data.Actor)
-			currentComponent->data.Actor->Destroy();
+		if (currentComponent->data.Character)
+			currentComponent->data.Character->Destroy();
 
 		if (ResourceLocator)
 			ResourceLocator->RemoveResource(WorldResourceType::Agent,

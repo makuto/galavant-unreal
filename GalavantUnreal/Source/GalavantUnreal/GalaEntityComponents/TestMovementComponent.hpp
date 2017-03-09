@@ -18,7 +18,7 @@
 struct TestMovementComponentData
 {
 	// If nullptr, TestMovementComponent will create a default actor (for debugging)
-	AActor* Actor;
+	ACharacter* Character;
 
 	FVector Position;
 
@@ -34,10 +34,11 @@ class TestMovementComponent : public gv::PooledComponentManager<TestMovementComp
                               public gv::Subject<Htn::TaskEvent>
 {
 private:
-	ATestAgent* DefaultActor;
-	AActor* CreateDefaultActor(FVector& location);
+	ACharacter* CreateDefaultCharacter(FVector& location);
 
-	float GoalPositionTolerance = 100.f;
+	float GoalPositionTolerance = 400.f;
+
+	UWorld* World;
 
 	TestWorldResourceLocator* ResourceLocator;
 
@@ -56,7 +57,7 @@ public:
 	TestMovementComponent();
 	virtual ~TestMovementComponent();
 
-	void Initialize(ATestAgent* defaultTestActor, TestWorldResourceLocator* newResourceLocator);
+	void Initialize(UWorld* newWorld, TestWorldResourceLocator* newResourceLocator);
 	virtual void Update(float deltaSeconds);
 
 	// TODO: This should return whether it was actually successful (i.e. the entity exists)

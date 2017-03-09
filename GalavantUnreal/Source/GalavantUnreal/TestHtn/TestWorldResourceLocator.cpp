@@ -91,7 +91,7 @@ gv::Position TestWorldResourceLocator::FindNearestResource(const WorldResourceTy
 		{
 			float currentResourceDistance = location.ManhattanTo(currentResource);
 			if (currentResourceDistance < closestResourceDistance &&
-			    (!allowSameLocation || currentResourceDistance > 0.f))
+			    (allowSameLocation || currentResourceDistance > 0.f))
 			{
 				closestResourceDistance = currentResourceDistance;
 				closestResource = currentResource;

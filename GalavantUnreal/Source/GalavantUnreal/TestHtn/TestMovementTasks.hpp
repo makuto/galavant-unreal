@@ -23,10 +23,8 @@ public:
 	virtual bool StateMeetsPreconditions(const gv::WorldState& state,
 	                                     const Htn::ParameterList& parameters) const;
 	virtual void ApplyStateChange(gv::WorldState& state, const Htn::ParameterList& parameters);
-	virtual bool Execute(gv::WorldState& state, const Htn::ParameterList& parameters);
-
-	bool ExecuteAndObserve(gv::WorldState& state, const Htn::ParameterList& parameters,
-	                       gv::Observer<Htn::TaskEvent>* observer);
+	virtual Htn::TaskExecuteStatus Execute(gv::WorldState& state,
+	                                       const Htn::ParameterList& parameters);
 };
 
 // Parameters:
@@ -44,7 +42,8 @@ public:
 	virtual bool StateMeetsPreconditions(const gv::WorldState& state,
 	                                     const Htn::ParameterList& parameters) const;
 	virtual void ApplyStateChange(gv::WorldState& state, const Htn::ParameterList& parameters);
-	virtual bool Execute(gv::WorldState& state, const Htn::ParameterList& parameters);
+	virtual Htn::TaskExecuteStatus Execute(gv::WorldState& state,
+	                                       const Htn::ParameterList& parameters);
 
 	bool ExecuteAndObserve(gv::WorldState& state, const Htn::ParameterList& parameters,
 	                       gv::Observer<Htn::TaskEvent>* observer);

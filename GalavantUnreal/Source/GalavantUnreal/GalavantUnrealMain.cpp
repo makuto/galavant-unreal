@@ -36,8 +36,8 @@ void AGalavantUnrealMain::InitializeEntityTests()
 		for (gv::EntityListIterator it = testEntities.begin(); it != testEntities.end(); ++it)
 		{
 			newEntityMovementComponents[i].entity = (*it);
-			newEntityMovementComponents[i].data.Actor = nullptr;
-			newEntityMovementComponents[i].data.WorldPosition.Set(0.f, i * 2000.f, 0.f);
+			newEntityMovementComponents[i].data.Character = nullptr;
+			newEntityMovementComponents[i].data.WorldPosition.Set(0.f, i * 2000.f, 3000.f);
 			i++;
 		}
 
@@ -46,29 +46,29 @@ void AGalavantUnrealMain::InitializeEntityTests()
 
 	// Test Plan component by adding one to some of them, making their goal finding other agents
 	{
-		// Task for each agent: find another agent
+		// Task for each agent: find a bus stop
 		Htn::Parameter resourceToFind;
-		resourceToFind.IntValue = WorldResourceType::Agent;
+		resourceToFind.IntValue = WorldResourceType::BusStop;
 		resourceToFind.Type = Htn::Parameter::ParamType::Int;
 		Htn::ParameterList parameters = {resourceToFind};
 		Htn::TaskCall findAgentCall{testGetResourceTask.GetTask(), parameters};
 		Htn::TaskCallList findAgentTasks = {findAgentCall};
 
-		gv::PlanComponentManager::PlanComponentList newPlanComponents(numTestEntities / 2);
-		int currentEntityIndex = 0;
+		gv::PlanComponentManager::PlanComponentList newPlanComponents(numTestEntities);
 
+		int currentEntityIndex = 0;
 		for (gv::PooledComponent<gv::PlanComponentData>& currentPlanComponent : newPlanComponents)
 		{
-			currentPlanComponent.entity = testEntities[currentEntityIndex];
+			currentPlanComponent.entity = testEntities[currentEntityIndex++];
 			currentPlanComponent.data.Tasks.insert(currentPlanComponent.data.Tasks.end(),
 			                                       findAgentTasks.begin(), findAgentTasks.end());
-
-			currentEntityIndex += 2;
-			if (currentEntityIndex > newPlanComponents.size())
-				break;
 		}
 
 		PlanComponentManager.SubscribeEntities(newPlanComponents);
+
+		// Add a bus stop
+		gv::Position busStopPosition(0.f, 0.f, 10000.f);
+		ResourceLocator.AddResource(WorldResourceType::BusStop, busStopPosition);
 	}
 }
 
@@ -83,20 +83,13 @@ void AGalavantUnrealMain::InitializeGalavant()
 
 	// Initialize TestMovementComponent
 	{
-		FVector location(0.f, 0.f, 0.f);
-		FRotator rotation(0.f, 0.f, 0.f);
-		FActorSpawnParameters spawnParams;
-
-		// ATestAgent* testAgentTemplate = (ATestAgent*)ATestAgent::StaticClass();
-		ATestAgent* testAgent =
-		    (ATestAgent*)GetWorld()->SpawnActor<ATestAgent>(location, rotation, spawnParams);
-
-		TestMovementComponentManager.Initialize(testAgent, &ResourceLocator);
+		TestMovementComponentManager.Initialize(GetWorld(), &ResourceLocator);
 	}
 
 	// Initialize PlanComponentManager
 	{
 		PlanComponentManager.Initialize(&WorldStateManager);
+		PlanComponentManager.DebugPrint = true;
 	}
 
 	EntityComponentSystem.AddComponentManager(&TestMovementComponentManager);
