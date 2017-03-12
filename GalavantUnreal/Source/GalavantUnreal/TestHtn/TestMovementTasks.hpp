@@ -6,7 +6,6 @@
 #include "ai/htn/HTNTypes.hpp"
 #include "ai/htn/HTNTasks.hpp"
 #include "ai/WorldState.hpp"
-#include "util/SubjectObserver.hpp"
 
 // Parameters:
 //  [0]: Resource type (int)
@@ -44,9 +43,6 @@ public:
 	virtual void ApplyStateChange(gv::WorldState& state, const Htn::ParameterList& parameters);
 	virtual Htn::TaskExecuteStatus Execute(gv::WorldState& state,
 	                                       const Htn::ParameterList& parameters);
-
-	bool ExecuteAndObserve(gv::WorldState& state, const Htn::ParameterList& parameters,
-	                       gv::Observer<Htn::TaskEvent>* observer);
 };
 
 // Parameters:

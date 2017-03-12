@@ -10,10 +10,8 @@
 #include "entityComponentSystem/ComponentManager.hpp"
 #include "entityComponentSystem/PooledComponentManager.hpp"
 #include "world/Position.hpp"
-#include "util/SubjectObserver.hpp"
 #include "ai/htn/HTNTypes.hpp"
-
-// using namespace gv;
+#include "util/CallbackContainer.hpp"
 
 struct TestMovementComponentData
 {
@@ -23,20 +21,19 @@ struct TestMovementComponentData
 	FVector Position;
 
 	gv::Position WorldPosition;
+
 	gv::Position GoalWorldPosition;
+	float GoalManDistanceTolerance = 400.f;
 
 	// The last position we told the ResourceLocator we were at (used so that when we move we can
 	// find the agent to move in ResourceLocator)
 	gv::Position ResourcePosition;
 };
 
-class TestMovementComponent : public gv::PooledComponentManager<TestMovementComponentData>,
-                              public gv::Subject<Htn::TaskEvent>
+class TestMovementComponent : public gv::PooledComponentManager<TestMovementComponentData>
 {
 private:
 	ACharacter* CreateDefaultCharacter(FVector& location);
-
-	float GoalPositionTolerance = 400.f;
 
 	UWorld* World;
 
@@ -53,6 +50,10 @@ protected:
 
 public:
 	typedef std::vector<gv::PooledComponent<TestMovementComponentData>> TestMovementComponentList;
+
+	TSubclassOf<ACharacter> DefaultCharacter;
+
+	gv::CallbackContainer<Htn::TaskEventCallback> TaskEventCallbacks;
 
 	TestMovementComponent();
 	virtual ~TestMovementComponent();

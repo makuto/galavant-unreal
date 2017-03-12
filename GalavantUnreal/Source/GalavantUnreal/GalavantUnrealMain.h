@@ -8,6 +8,8 @@
 
 #include "entityComponentSystem/EntityComponentManager.hpp"
 #include "game/agent/PlanComponentManager.hpp"
+#include "game/agent/AgentComponentManager.hpp"
+#include "game/agent/Needs.hpp"
 
 // Testing
 #include "GalaEntityComponents/TestMovementComponent.hpp"
@@ -27,6 +29,7 @@ class GALAVANTUNREAL_API AGalavantUnrealMain : public AActor
 	gv::EntityComponentManager EntityComponentSystem;
 	TestMovementComponent TestMovementComponentManager;
 	gv::PlanComponentManager PlanComponentManager;
+	gv::AgentComponentManager AgentComponentManager;
 
 	// World
 	gv::WorldStateManager WorldStateManager;
@@ -37,6 +40,8 @@ class GALAVANTUNREAL_API AGalavantUnrealMain : public AActor
 	TestFindResourceTask testFindResourceTask;
 	TestMoveToTask testMoveToTask;
 	TestGetResourceTask testGetResourceTask;
+
+	gv::NeedDef TestHungerNeed;
 
 	void InitializeGalavant();
 

@@ -42,8 +42,6 @@ Htn::TaskExecuteStatus TestFindResourceTask::Execute(gv::WorldState& state,
 		if (manhattanTo != -1.f)
 		{
 			state.SourceAgent.TargetPosition = targetPosition;
-			// TODO: This task finishes instantly; do we need to return Success, Fail, Running and
-			// add a Running() function? That'd make this observer stuff go away
 			LOGD << "Found resource at " << targetPosition;
 			Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Succeeded, NULL};
 			return status;
@@ -88,7 +86,7 @@ Htn::TaskExecuteStatus TestMoveToTask::Execute(gv::WorldState& state,
 		     << state.SourceAgent.TargetPosition;
 		MovementManager->PathEntitiesTo(entitiesToMove, positions);
 		Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Subscribe,
-		                              MovementManager};
+		                              &MovementManager->TaskEventCallbacks};
 		return status;
 	}
 

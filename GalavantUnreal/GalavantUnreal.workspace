@@ -6,6 +6,7 @@
     <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/galavant/src/thirdPartyWrapper" />
     <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/polyvox/library/PolyVoxCore/include" />
     <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/polyvox/library/PolyVoxUtil/include" />
+    <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/galavant/thirdParty/plog/include" />
     <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Source" />
     <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/GalavantUnreal" />
     <Include Path="/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Source/GalavantUnreal" />

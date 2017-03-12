@@ -33,13 +33,8 @@ ACharacter* TestMovementComponent::CreateDefaultCharacter(FVector& location)
 	FRotator defaultRotation(0.f, 0.f, 0.f);
 	FActorSpawnParameters spawnParams;
 
-	// TODO https://answers.unrealengine.com/questions/53689/spawn-blueprint-from-c.html
-	// /Game/Blueprints/AgentCharacter1_Blueprint
-	/*static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(
-	    TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
-	         "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));*/
 	AAgentCharacter* newAgentCharacter = (AAgentCharacter*)World->SpawnActor<AAgentCharacter>(
-	    location, defaultRotation, spawnParams);
+	    DefaultCharacter, location, defaultRotation, spawnParams);
 
 	if (!newAgentCharacter)
 		LOG_ERROR << "Unable to spawn agent character!";
@@ -65,8 +60,14 @@ void TestMovementComponent::Update(float deltaSeconds)
 		ACharacter* currentCharacter = currentComponent->data.Character;
 		FVector& currentPosition = currentComponent->data.Position;
 		gv::Position& goalWorldPosition = currentComponent->data.GoalWorldPosition;
+		float goalManDistanceTolerance = currentComponent->data.GoalManDistanceTolerance;
 
 		USceneComponent* sceneComponent = currentCharacter->GetRootComponent();
+
+		// Hit a segfault where this happened. I jumped onto a group of agents all running into
+		// eachother. Weird.
+		if (!sceneComponent)
+			continue;
 
 		FVector trueWorldPosition = sceneComponent->GetComponentLocation();
 		FVector deltaLocation(0.f, 0.f, 0.f);
@@ -75,10 +76,12 @@ void TestMovementComponent::Update(float deltaSeconds)
 		{
 			gv::Position currentWorldPosition(trueWorldPosition.X, trueWorldPosition.Y,
 			                                  trueWorldPosition.Z);
-			if (!currentWorldPosition.Equals(goalWorldPosition, GoalPositionTolerance))
+			if (currentWorldPosition.ManhattanTo(goalWorldPosition) > goalManDistanceTolerance)
+			{
 				// TODO: This fucking sucks
 				currentPosition =
 				    FVector(goalWorldPosition.X, goalWorldPosition.Y, goalWorldPosition.Z);
+			}
 			else
 			{
 				goalWorldPosition.Reset();
@@ -114,13 +117,15 @@ void TestMovementComponent::Update(float deltaSeconds)
 
 		FVector deltaVelocity = deltaLocation.GetSafeNormal(0.1f);
 		deltaVelocity *= SPEED * deltaSeconds;
+		// Disallow flying
+		deltaVelocity[2] = 0;
 
-		//sceneComponent->AddLocalOffset(deltaVelocity, false, NULL, ETeleportType::None);
+		// sceneComponent->AddLocalOffset(deltaVelocity, false, NULL, ETeleportType::None);
+		currentCharacter->AddMovementInput(deltaVelocity, 1.f);
 	}
 
-	// TODO: This could be improved by sending all events in one Notify...
-	for (const Htn::TaskEvent& event : eventQueue)
-		Notify(event);
+	for (gv::CallbackCall<Htn::TaskEventCallback>& callback : TaskEventCallbacks.Callbacks)
+		callback.Callback(eventQueue, callback.UserData);
 }
 
 void TestMovementComponent::SubscribeEntitiesInternal(const gv::EntityList& subscribers,
