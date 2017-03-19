@@ -9,8 +9,10 @@
 #include "plog/Log.h"
 #include "GalavantUnrealLog.h"
 
+#include "world/WorldResourceLocator.hpp"
 #include "entityComponentSystem/EntityTypes.hpp"
 #include "game/agent/Needs.hpp"
+#include "ai/htn/HTNTaskDb.hpp"
 
 static GalavantUnrealLog<plog::FuncMessageFormatter> g_GalavantUnrealLogAppender;
 static bool s_LogInitialized = false;
@@ -22,8 +24,6 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 	// you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	// TODO https://answers.unrealengine.com/questions/53689/spawn-blueprint-from-c.html
-	// /Game/Blueprints/AgentCharacter1_Blueprint
 	static ConstructorHelpers::FClassFinder<ACharacter> AgentCharacterBPClass(
 	    TEXT("Pawn'/Game/Blueprints/AgentCharacter1_Blueprint.AgentCharacter1_Blueprint_C'"));
 	if (AgentCharacterBPClass.Class != nullptr)
@@ -35,6 +35,16 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 		LOGE << "Agent Character Blueprint is NULL!";
 		TestMovementComponentManager.DefaultCharacter = AAgentCharacter::StaticClass();
 	}
+
+	static ConstructorHelpers::FClassFinder<AActor> FoodPlaceholderBPClass(
+	    TEXT("Actor'/Game/Blueprints/FoodPlaceholder_Pickup.FoodPlaceholder_Pickup_C'"));
+	if (FoodPlaceholderBPClass.Class != nullptr)
+		TestFoodActor = FoodPlaceholderBPClass.Class;
+	else
+	{
+		LOGE << "Food Placeholder Blueprint is NULL!";
+		TestFoodActor = AActor::StaticClass();
+	}
 }
 
 void AGalavantUnrealMain::InitializeEntityTests()
@@ -42,28 +52,24 @@ void AGalavantUnrealMain::InitializeEntityTests()
 	// Create a couple test entities
 	int numTestEntities = 20;
 	gv::EntityList testEntities;
+	testEntities.reserve(numTestEntities);
 	EntityComponentSystem.GetNewEntities(testEntities, numTestEntities);
 
 	// Add Movement components to all of them
 	{
-		TestMovementComponent::TestMovementComponentList newEntityMovementComponents;
-		newEntityMovementComponents.resize(numTestEntities);
+		TestMovementComponent::TestMovementComponentList newEntityMovementComponents(
+		    numTestEntities);
 
 		float spacing = 500.f;
 		int i = 0;
 		for (gv::EntityListIterator it = testEntities.begin(); it != testEntities.end(); ++it, i++)
 		{
 			newEntityMovementComponents[i].entity = (*it);
+			newEntityMovementComponents[i].data.ResourceType = gv::WorldResourceType::Agent;
 			newEntityMovementComponents[i].data.Character = nullptr;
 			newEntityMovementComponents[i].data.WorldPosition.Set(0.f, i * spacing, 3600.f);
-			newEntityMovementComponents[i].data.GoalManDistanceTolerance = 2300.f;
-
-			// Add a bus stop (this doesn't belong here, it's just for testing)
-			if (i % 4 == 0)
-			{
-				gv::Position busStopPosition(-2000.f, i * spacing, 4000.f);
-				ResourceLocator.AddResource(WorldResourceType::BusStop, busStopPosition);
-			}
+			newEntityMovementComponents[i].data.GoalManDistanceTolerance = 600.f;
+			newEntityMovementComponents[i].data.MaxSpeed = 500.f;
 		}
 
 		TestMovementComponentManager.SubscribeEntities(newEntityMovementComponents);
@@ -71,14 +77,29 @@ void AGalavantUnrealMain::InitializeEntityTests()
 
 	// Setup agent components for all of them and give them a need
 	{
-		TestHungerNeed.Name = "Hunger";
-		TestHungerNeed.UpdateRate = 10.f;
-		TestHungerNeed.AddPerUpdate = 101.f;
-		gv::NeedLevelTrigger deathByStarvation;
-		deathByStarvation.GreaterThanLevel = true;
-		deathByStarvation.Level = 100.f;
-		deathByStarvation.DieNow = true;
-		TestHungerNeed.LevelTriggers.push_back(deathByStarvation);
+		// Hunger Need
+		{
+			TestHungerNeed.Name = "Hunger";
+			TestHungerNeed.UpdateRate = 10.f;
+			TestHungerNeed.AddPerUpdate = 10.f;
+
+			// Hunger Need Triggers
+			{
+				gv::NeedLevelTrigger lookForFood;
+				lookForFood.GreaterThanLevel = true;
+				lookForFood.Level = 10.f;
+				lookForFood.NeedsResource = true;
+				lookForFood.WorldResource = gv::WorldResourceType::Food;
+				TestHungerNeed.LevelTriggers.push_back(lookForFood);
+
+				gv::NeedLevelTrigger deathByStarvation;
+				deathByStarvation.GreaterThanLevel = true;
+				deathByStarvation.Level = 100.f;
+				deathByStarvation.DieNow = true;
+				TestHungerNeed.LevelTriggers.push_back(deathByStarvation);
+			}
+		}
+
 		gv::Need hungerNeed = {0};
 		hungerNeed.Def = &TestHungerNeed;
 
@@ -95,11 +116,11 @@ void AGalavantUnrealMain::InitializeEntityTests()
 		AgentComponentManager.SubscribeEntities(newAgentComponents);
 	}
 
-	// Test Plan component by adding one to some of them, making their goal finding bus stops
-	{
-		// Task for each agent: find a bus stop
+	// Test Plan component by adding one to some of them, making their goal finding food
+	/*{
+		// Task for each agent: find a food
 		Htn::Parameter resourceToFind;
-		resourceToFind.IntValue = WorldResourceType::BusStop;
+		resourceToFind.IntValue = gv::WorldResourceType::Food;
 		resourceToFind.Type = Htn::Parameter::ParamType::Int;
 		Htn::ParameterList parameters = {resourceToFind};
 		Htn::TaskCall findAgentCall{testGetResourceTask.GetTask(), parameters};
@@ -116,6 +137,37 @@ void AGalavantUnrealMain::InitializeEntityTests()
 		}
 
 		PlanComponentManager.SubscribeEntities(newPlanComponents);
+	}*/
+
+	// Add food
+	{
+		int numFood = 4;
+
+		gv::EntityList testFoodEntities;
+		testFoodEntities.reserve(numFood);
+		EntityComponentSystem.GetNewEntities(testFoodEntities, numFood);
+
+		TestMovementComponent::TestMovementComponentList newFood(numFood);
+
+		float spacing = 2000.f;
+		int i = 0;
+		for (gv::EntityListIterator it = testFoodEntities.begin(); it != testFoodEntities.end();
+		     ++it, i++)
+		{
+			FVector location(-2000.f, i * spacing, 3600.f);
+			FRotator defaultRotation(0.f, 0.f, 0.f);
+			FActorSpawnParameters spawnParams;
+
+			newFood[i].entity = (*it);
+			newFood[i].data.WorldPosition.Set(location.X, location.Y, location.Z);
+			newFood[i].data.ResourceType = gv::WorldResourceType::Food;
+
+			newFood[i].data.Character = nullptr;
+			newFood[i].data.Actor = (AActor*)GetWorld()->SpawnActor<AActor>(
+			    TestFoodActor, location, defaultRotation, spawnParams);
+		}
+
+		TestMovementComponentManager.SubscribeEntities(newFood);
 	}
 }
 
@@ -128,10 +180,12 @@ void AGalavantUnrealMain::InitializeGalavant()
 		LOGI << "Galavant Log Initialized";
 	}
 
-	TestMovementComponentManager.Initialize(GetWorld(), &ResourceLocator);
+	gv::WorldResourceLocator::ClearResources();
+
+	TestMovementComponentManager.Initialize(GetWorld(), &TaskEventCallbacks);
 
 	{
-		PlanComponentManager.Initialize(&WorldStateManager);
+		PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
 		PlanComponentManager.DebugPrint = true;
 	}
 
@@ -146,9 +200,15 @@ void AGalavantUnrealMain::InitializeGalavant()
 
 	// Initialize Tasks
 	{
-		testFindResourceTask.Initialize(&ResourceLocator);
+		testFindResourceTask.Initialize();
 		testMoveToTask.Initialize(&TestMovementComponentManager);
 		testGetResourceTask.Initialize(&testFindResourceTask, &testMoveToTask);
+
+		Htn::TaskDb::ClearAllTasks();
+
+		Htn::TaskDb::AddTask(testFindResourceTask.GetTask(), Htn::TaskName::FindResource);
+		Htn::TaskDb::AddTask(testMoveToTask.GetTask(), Htn::TaskName::MoveTo);
+		Htn::TaskDb::AddTask(testGetResourceTask.GetTask(), Htn::TaskName::GetResource);
 	}
 
 	InitializeEntityTests();

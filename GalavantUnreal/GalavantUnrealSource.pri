@@ -6226,12 +6226,12 @@ SOURCES += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealMain.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealPlayerController.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GeneratedMeshComponent.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/SimplePickup.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestAgent.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunk.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunkManager.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ThirdPersonCharacter.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalaEntityComponents/TestMovementComponent.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestHtn/TestMovementTasks.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestHtn/TestWorldResourceLocator.cpp" \
  
 

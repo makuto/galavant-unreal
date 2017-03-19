@@ -488,7 +488,8 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)  //,
 
 	// Set material (this must be run in constructor)
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> material(
-	    TEXT("/Game/Materials/TriplanarTest1.TriplanarTest1"));
+	    TEXT("/Game/Materials/SolidGrass.SolidGrass"));
+	//"/Game/Materials/TriplanarTest1.TriplanarTest1"
 	GeneratedMesh->SetMaterial(0, material.Object);
 
 	// Set collision

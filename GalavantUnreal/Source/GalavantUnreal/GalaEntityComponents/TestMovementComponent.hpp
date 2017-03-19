@@ -4,12 +4,12 @@
 #include "GameFramework/Actor.h"
 
 #include "TestAgent.h"
-#include "../TestHtn/TestWorldResourceLocator.hpp"
 
 // Galavant includes
 #include "entityComponentSystem/ComponentManager.hpp"
 #include "entityComponentSystem/PooledComponentManager.hpp"
 #include "world/Position.hpp"
+#include "world/WorldResourceLocator.hpp"
 #include "ai/htn/HTNTypes.hpp"
 #include "util/CallbackContainer.hpp"
 
@@ -17,13 +17,16 @@ struct TestMovementComponentData
 {
 	// If nullptr, TestMovementComponent will create a default actor (for debugging)
 	ACharacter* Character;
-
-	FVector Position;
+	AActor* Actor;
 
 	gv::Position WorldPosition;
 
 	gv::Position GoalWorldPosition;
 	float GoalManDistanceTolerance = 400.f;
+	float MaxSpeed = 500.f;
+
+	// If provided, this entity will be registered in the WorldResourceLocator under this type
+	gv::WorldResourceType ResourceType;
 
 	// The last position we told the ResourceLocator we were at (used so that when we move we can
 	// find the agent to move in ResourceLocator)
@@ -36,8 +39,6 @@ private:
 	ACharacter* CreateDefaultCharacter(FVector& location);
 
 	UWorld* World;
-
-	TestWorldResourceLocator* ResourceLocator;
 
 protected:
 	typedef std::vector<gv::PooledComponent<TestMovementComponentData>*>
@@ -53,12 +54,13 @@ public:
 
 	TSubclassOf<ACharacter> DefaultCharacter;
 
-	gv::CallbackContainer<Htn::TaskEventCallback> TaskEventCallbacks;
+	gv::CallbackContainer<Htn::TaskEventCallback>* TaskEventCallbacks;
 
 	TestMovementComponent();
 	virtual ~TestMovementComponent();
 
-	void Initialize(UWorld* newWorld, TestWorldResourceLocator* newResourceLocator);
+	void Initialize(UWorld* newWorld,
+	                gv::CallbackContainer<Htn::TaskEventCallback>* taskEventCallbacks);
 	virtual void Update(float deltaSeconds);
 
 	// TODO: This should return whether it was actually successful (i.e. the entity exists)

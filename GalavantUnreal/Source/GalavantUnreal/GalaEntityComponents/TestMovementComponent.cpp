@@ -6,8 +6,11 @@
 #include "RandomStream.h"
 
 #include "util/Logging.hpp"
+
 #include "entityComponentSystem/PooledComponentManager.hpp"
 #include "entityComponentSystem/EntitySharedData.hpp"
+
+#include "world/WorldResourceLocator.hpp"
 
 TestMovementComponent::TestMovementComponent()
     : gv::PooledComponentManager<TestMovementComponentData>(100)
@@ -18,11 +21,11 @@ TestMovementComponent::~TestMovementComponent()
 {
 }
 
-void TestMovementComponent::Initialize(UWorld* newWorld,
-                                       TestWorldResourceLocator* newResourceLocator)
+void TestMovementComponent::Initialize(
+    UWorld* newWorld, gv::CallbackContainer<Htn::TaskEventCallback>* taskEventCallbacks)
 {
 	World = newWorld;
-	ResourceLocator = newResourceLocator;
+	TaskEventCallbacks = taskEventCallbacks;
 }
 
 ACharacter* TestMovementComponent::CreateDefaultCharacter(FVector& location)
@@ -44,10 +47,9 @@ ACharacter* TestMovementComponent::CreateDefaultCharacter(FVector& location)
 
 void TestMovementComponent::Update(float deltaSeconds)
 {
-	const float SPEED = 500.f;
 	static FRandomStream randomStream;
 
-	std::vector<Htn::TaskEvent> eventQueue;
+	Htn::TaskEventList eventList;
 
 	// TODO: Adding true iterator support to pool will drastically help damning this to hell
 	gv::PooledComponentManager<TestMovementComponentData>::FragmentedPoolIterator it =
@@ -58,80 +60,96 @@ void TestMovementComponent::Update(float deltaSeconds)
 	     currentComponent = GetNextActivePooledComponent(it))
 	{
 		ACharacter* currentCharacter = currentComponent->data.Character;
-		FVector& currentPosition = currentComponent->data.Position;
+		AActor* currentActor = currentComponent->data.Actor;
+		gv::Position& worldPosition = currentComponent->data.WorldPosition;
 		gv::Position& goalWorldPosition = currentComponent->data.GoalWorldPosition;
 		float goalManDistanceTolerance = currentComponent->data.GoalManDistanceTolerance;
+		FVector trueWorldPosition;
+		FVector targetPosition(0.f, 0.f, 0.f);
 
-		USceneComponent* sceneComponent = currentCharacter->GetRootComponent();
+		USceneComponent* sceneComponent = nullptr;
+
+		if (currentActor)
+			sceneComponent = currentActor->GetRootComponent();
+		else if (currentCharacter)
+			sceneComponent = currentCharacter->GetRootComponent();
 
 		// Hit a segfault where this happened. I jumped onto a group of agents all running into
 		// eachother. Weird.
 		if (!sceneComponent)
 			continue;
 
-		FVector trueWorldPosition = sceneComponent->GetComponentLocation();
-		FVector deltaLocation(0.f, 0.f, 0.f);
+		trueWorldPosition = sceneComponent->GetComponentLocation();
+		worldPosition.Set(trueWorldPosition.X, trueWorldPosition.Y, trueWorldPosition.Z);
 
-		if (goalWorldPosition)
+		// Decide where we're going to go
 		{
-			gv::Position currentWorldPosition(trueWorldPosition.X, trueWorldPosition.Y,
-			                                  trueWorldPosition.Z);
-			if (currentWorldPosition.ManhattanTo(goalWorldPosition) > goalManDistanceTolerance)
+			if (goalWorldPosition)
 			{
-				// TODO: This fucking sucks
-				currentPosition =
-				    FVector(goalWorldPosition.X, goalWorldPosition.Y, goalWorldPosition.Z);
+				if (worldPosition.ManhattanTo(goalWorldPosition) > goalManDistanceTolerance)
+				{
+					targetPosition =
+					    FVector(goalWorldPosition.X, goalWorldPosition.Y, goalWorldPosition.Z);
+				}
+				else
+				{
+					goalWorldPosition.Reset();
+
+					Htn::TaskEvent goalPositionReachedEvent{
+					    Htn::TaskEvent::TaskResult::TaskSucceeded, currentComponent->entity};
+					eventList.push_back(goalPositionReachedEvent);
+				}
 			}
-			else
+			// If the component Position doesn't match the actor's actual position, have the actor
+			//  move towards the component Position. Otherwise, pick a random new target (show
+			//  you're
+			//  alive). Only random walk if no goal position
+			/*else if (trueWorldPosition.Equals(currentPosition, 100.f))
 			{
-				goalWorldPosition.Reset();
-
-				Htn::TaskEvent goalPositionReachedEvent{Htn::TaskEvent::TaskResult::TaskSucceeded,
-				                                        currentComponent->entity};
-				eventQueue.push_back(goalPositionReachedEvent);
-			}
-		}
-		// If the component Position doesn't match the actor's actual position, have the actor
-		//  move towards the component Position. Otherwise, pick a random new target (show you're
-		//  alive). Only random walk if no goal position
-		/*else if (trueWorldPosition.Equals(currentPosition, 100.f))
-		{
-		    float randomRange = 250.f;
-		    currentPosition += FVector(randomStream.FRandRange(-randomRange, randomRange),
-		                               randomStream.FRandRange(-randomRange, randomRange),
-		                               randomStream.FRandRange(-randomRange, randomRange));
-		}*/
-
-		// Give ResourceLocator our new position
-		if (ResourceLocator)
-		{
-			gv::Position trueGvWorldPosition(trueWorldPosition.X, trueWorldPosition.Y,
-			                                 trueWorldPosition.Z);
-			ResourceLocator->MoveResource(WorldResourceType::Agent,
-			                              currentComponent->data.ResourcePosition,
-			                              trueGvWorldPosition);
-			currentComponent->data.ResourcePosition = trueGvWorldPosition;
+			    float randomRange = 250.f;
+			    currentPosition += FVector(randomStream.FRandRange(-randomRange, randomRange),
+			                               randomStream.FRandRange(-randomRange, randomRange),
+			                               randomStream.FRandRange(-randomRange, randomRange));
+			}*/
 		}
 
-		deltaLocation = currentPosition - trueWorldPosition;
+		if (!currentComponent->data.ResourcePosition.Equals(worldPosition, 100.f))
+		{
+			// Give ResourceLocator our new position
+			gv::WorldResourceLocator::MoveResource(currentComponent->data.ResourceType,
+			                                       currentComponent->data.ResourcePosition,
+			                                       worldPosition);
+			currentComponent->data.ResourcePosition = worldPosition;
+		}
 
-		FVector deltaVelocity = deltaLocation.GetSafeNormal(0.1f);
-		deltaVelocity *= SPEED * deltaSeconds;
-		// Disallow flying
-		deltaVelocity[2] = 0;
+		// Perform movement
+		if (!targetPosition.IsZero())
+		{
+			FVector deltaLocation = targetPosition - trueWorldPosition;
+			FVector deltaVelocity = deltaLocation.GetSafeNormal(0.1f);
+			deltaVelocity *= currentComponent->data.MaxSpeed * deltaSeconds;
+			// Disallow flying
+			deltaVelocity[2] = 0;
 
-		// sceneComponent->AddLocalOffset(deltaVelocity, false, NULL, ETeleportType::None);
-		currentCharacter->AddMovementInput(deltaVelocity, 1.f);
+			if (currentActor)
+				sceneComponent->AddLocalOffset(deltaVelocity, false, nullptr, ETeleportType::None);
+			else if (currentCharacter)
+				currentCharacter->AddMovementInput(deltaVelocity, 1.f);
+		}
 	}
 
-	for (gv::CallbackCall<Htn::TaskEventCallback>& callback : TaskEventCallbacks.Callbacks)
-		callback.Callback(eventQueue, callback.UserData);
+	if (TaskEventCallbacks)
+	{
+		for (gv::CallbackCall<Htn::TaskEventCallback>& callback : TaskEventCallbacks->Callbacks)
+			callback.Callback(eventList, callback.UserData);
+	}
 }
 
 void TestMovementComponent::SubscribeEntitiesInternal(const gv::EntityList& subscribers,
                                                       TestMovementComponentRefList& components)
 {
 	gv::PositionRefList newPositionRefs;
+	newPositionRefs.reserve(subscribers.size());
 
 	for (TestMovementComponentRefList::iterator it = components.begin(); it != components.end();
 	     ++it)
@@ -141,22 +159,18 @@ void TestMovementComponent::SubscribeEntitiesInternal(const gv::EntityList& subs
 		if (!currentComponent)
 			continue;
 
-		if (!currentComponent->data.Character)
+		if (!currentComponent->data.Character && !currentComponent->data.Actor)
 		{
 			FVector newActorLocation(currentComponent->data.WorldPosition.X,
 			                         currentComponent->data.WorldPosition.Y,
 			                         currentComponent->data.WorldPosition.Z);
 			currentComponent->data.Character = CreateDefaultCharacter(newActorLocation);
-			currentComponent->data.Position = newActorLocation;
 		}
 
-		if (ResourceLocator)
-		{
-			ResourceLocator->AddResource(WorldResourceType::Agent,
-			                             currentComponent->data.WorldPosition);
-			currentComponent->data.ResourcePosition = currentComponent->data.WorldPosition;
-			newPositionRefs.push_back(&currentComponent->data.WorldPosition);
-		}
+		gv::WorldResourceLocator::AddResource(currentComponent->data.ResourceType,
+		                                      currentComponent->data.WorldPosition);
+		currentComponent->data.ResourcePosition = currentComponent->data.WorldPosition;
+		newPositionRefs.push_back(&currentComponent->data.WorldPosition);
 	}
 
 	gv::EntityCreatePositions(subscribers, newPositionRefs);
@@ -174,10 +188,11 @@ void TestMovementComponent::UnsubscribeEntitiesInternal(const gv::EntityList& un
 
 		if (currentComponent->data.Character)
 			currentComponent->data.Character->Destroy();
+		if (currentComponent->data.Actor)
+			currentComponent->data.Actor->Destroy();
 
-		if (ResourceLocator)
-			ResourceLocator->RemoveResource(WorldResourceType::Agent,
-			                                currentComponent->data.ResourcePosition);
+		gv::WorldResourceLocator::RemoveResource(currentComponent->data.ResourceType,
+		                                         currentComponent->data.ResourcePosition);
 	}
 
 	// TODO: We assume we own the positions of these entities. This could be dangerous later on

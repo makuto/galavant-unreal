@@ -3,6 +3,10 @@
 
 #include "TestPolyVoxChunk.h"
 
+#include <algorithm>
+
+#include "util/Logging.hpp"
+
 // Sets default values
 ATestPolyVoxChunkManager::ATestPolyVoxChunkManager()
 {
@@ -134,11 +138,11 @@ ATestPolyVoxChunk *ATestPolyVoxChunkManager::CreateChunk(FVector &location, FRot
 
 	if (newChunk)
 	{
-		UE_LOG(LogGalavantUnreal, Log, TEXT("Spawned chunk named '%s' with size %s"),
-		       *newChunk->GetHumanReadableName(), *newChunk->GetChunkSize().ToString());
+		LOGV << "Spawned chunk named " << *newChunk->GetHumanReadableName() << " with size "
+		     << *newChunk->GetChunkSize().ToString();
 	}
 	else
-		UE_LOG(LogGalavantUnreal, Log, TEXT("ERROR: Failed to spawn new chunk!"));
+		LOGE << "Failed to spawn new chunk!";
 
 	return newChunk;
 }
@@ -183,9 +187,8 @@ void ATestPolyVoxChunkManager::DestroyUnneededChunks()
 		// If the chunk is outside the spawn radius, destroy it
 		if (FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth > ChunkSpawnRadius)
 		{
-			UE_LOG(LogGalavantUnreal, Log, TEXT("Destroying chunk '%s' (%f units away)"),
-			       *chunk->GetHumanReadableName(),
-			       FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth);
+			LOGV << "Destroying chunk " << *chunk->GetHumanReadableName() << " ("
+			     << FVector::Dist(worldPosition, chunkPosition) + chunkHalfWidth << " units away)";
 			chunk->Destroy();
 			Chunks.RemoveAtSwap(i);
 		}

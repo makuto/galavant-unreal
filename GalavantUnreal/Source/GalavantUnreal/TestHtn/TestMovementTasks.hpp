@@ -1,6 +1,5 @@
 #pragma once
 
-#include "TestWorldResourceLocator.hpp"
 #include "../GalaEntityComponents/TestMovementComponent.hpp"
 
 #include "ai/htn/HTNTypes.hpp"
@@ -11,14 +10,11 @@
 //  [0]: Resource type (int)
 class TestFindResourceTask : public Htn::PrimitiveTask
 {
-private:
-	TestWorldResourceLocator* ResourceLocator;
-
 public:
 	TestFindResourceTask() = default;
 	virtual ~TestFindResourceTask() = default;
 
-	void Initialize(TestWorldResourceLocator* newResourceLocator);
+	void Initialize();
 	virtual bool StateMeetsPreconditions(const gv::WorldState& state,
 	                                     const Htn::ParameterList& parameters) const;
 	virtual void ApplyStateChange(gv::WorldState& state, const Htn::ParameterList& parameters);

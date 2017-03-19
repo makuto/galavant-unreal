@@ -8372,6 +8372,7 @@ HEADERS += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealMain.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealPlayerController.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GeneratedMeshComponent.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/SimplePickup.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestAgent.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunk.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunkManager.h" \

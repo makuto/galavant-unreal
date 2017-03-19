@@ -4,18 +4,18 @@
 
 #include "util/Logging.hpp"
 #include "world/Position.hpp"
+#include "world/WorldResourceLocator.hpp"
 
-void TestFindResourceTask::Initialize(TestWorldResourceLocator* newResourceLocator)
+void TestFindResourceTask::Initialize()
 {
-	ResourceLocator = newResourceLocator;
 }
 
 bool TestFindResourceTask::StateMeetsPreconditions(const gv::WorldState& state,
                                                    const Htn::ParameterList& parameters) const
 {
 	return parameters.size() == 1 && parameters[0].Type == Htn::Parameter::ParamType::Int &&
-	       ResourceLocator &&
-	       ResourceLocator->ResourceExistsInWorld((WorldResourceType)parameters[0].IntValue);
+	       gv::WorldResourceLocator::ResourceExistsInWorld(
+	           (gv::WorldResourceType)parameters[0].IntValue);
 }
 
 void TestFindResourceTask::ApplyStateChange(gv::WorldState& state,
@@ -24,8 +24,9 @@ void TestFindResourceTask::ApplyStateChange(gv::WorldState& state,
 	// TODO: Should this be the case? Should StateMeetsPreconditions find the position? This isn't
 	// that much of a problem if ResourceLocator caches searches
 	float manhattanTo = 0.f;
-	gv::Position targetPosition = ResourceLocator->FindNearestResource(
-	    (WorldResourceType)parameters[0].IntValue, state.SourceAgent.position, false, manhattanTo);
+	gv::Position targetPosition = gv::WorldResourceLocator::FindNearestResource(
+	    (gv::WorldResourceType)parameters[0].IntValue, state.SourceAgent.position, false,
+	    manhattanTo);
 	if (manhattanTo != -1.f)
 		state.SourceAgent.TargetPosition = targetPosition;
 }
@@ -33,25 +34,22 @@ void TestFindResourceTask::ApplyStateChange(gv::WorldState& state,
 Htn::TaskExecuteStatus TestFindResourceTask::Execute(gv::WorldState& state,
                                                      const Htn::ParameterList& parameters)
 {
-	if (ResourceLocator)
+	float manhattanTo = 0.f;
+	gv::Position targetPosition = gv::WorldResourceLocator::FindNearestResource(
+	    (gv::WorldResourceType)parameters[0].IntValue, state.SourceAgent.position, false,
+	    manhattanTo);
+	if (manhattanTo != -1.f)
 	{
-		float manhattanTo = 0.f;
-		gv::Position targetPosition =
-		    ResourceLocator->FindNearestResource((WorldResourceType)parameters[0].IntValue,
-		                                         state.SourceAgent.position, false, manhattanTo);
-		if (manhattanTo != -1.f)
-		{
-			state.SourceAgent.TargetPosition = targetPosition;
-			LOGD << "Found resource at " << targetPosition;
-			Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Succeeded, NULL};
-			return status;
-		}
-		else
-			LOGD << "Couldn't find resource!";
+		state.SourceAgent.TargetPosition = targetPosition;
+		LOGD << "Found resource at " << targetPosition;
+		Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Succeeded};
+		return status;
 	}
+	else
+		LOGD << "Couldn't find resource!";
 
 	LOGD << "Failed to find resource";
-	Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Failed, NULL};
+	Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Failed};
 	return status;
 }
 
@@ -85,12 +83,11 @@ Htn::TaskExecuteStatus TestMoveToTask::Execute(gv::WorldState& state,
 		LOGD << "Moving Ent[" << state.SourceAgent.SourceEntity << "] to "
 		     << state.SourceAgent.TargetPosition;
 		MovementManager->PathEntitiesTo(entitiesToMove, positions);
-		Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Subscribe,
-		                              &MovementManager->TaskEventCallbacks};
+		Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Subscribe};
 		return status;
 	}
 
-	Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Failed, NULL};
+	Htn::TaskExecuteStatus status{Htn::TaskExecuteStatus::ExecutionStatus::Failed};
 	return status;
 }
 
