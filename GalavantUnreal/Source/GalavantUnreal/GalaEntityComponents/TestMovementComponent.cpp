@@ -9,12 +9,14 @@
 
 #include "entityComponentSystem/PooledComponentManager.hpp"
 #include "entityComponentSystem/EntitySharedData.hpp"
+#include "entityComponentSystem/ComponentTypes.hpp"
 
 #include "world/WorldResourceLocator.hpp"
 
 TestMovementComponent::TestMovementComponent()
     : gv::PooledComponentManager<TestMovementComponentData>(100)
 {
+	Type = gv::ComponentType::Movement;
 }
 
 TestMovementComponent::~TestMovementComponent()
@@ -28,7 +30,7 @@ void TestMovementComponent::Initialize(
 	TaskEventCallbacks = taskEventCallbacks;
 }
 
-ACharacter* TestMovementComponent::CreateDefaultCharacter(FVector& location)
+ACharacter* TestMovementComponent::CreateDefaultCharacter(FVector& location, gv::Entity entity)
 {
 	if (!World)
 		return nullptr;
@@ -41,6 +43,8 @@ ACharacter* TestMovementComponent::CreateDefaultCharacter(FVector& location)
 
 	if (!newAgentCharacter)
 		LOG_ERROR << "Unable to spawn agent character!";
+	else
+		newAgentCharacter->Entity = entity;
 
 	return newAgentCharacter;
 }
@@ -75,7 +79,7 @@ void TestMovementComponent::Update(float deltaSeconds)
 			sceneComponent = currentCharacter->GetRootComponent();
 
 		// Hit a segfault where this happened. I jumped onto a group of agents all running into
-		// eachother. Weird.
+		// eachother. Weird. (UPDATE: TODO: This is still crashing :(. Fuck)
 		if (!sceneComponent)
 			continue;
 
@@ -164,7 +168,8 @@ void TestMovementComponent::SubscribeEntitiesInternal(const gv::EntityList& subs
 			FVector newActorLocation(currentComponent->data.WorldPosition.X,
 			                         currentComponent->data.WorldPosition.Y,
 			                         currentComponent->data.WorldPosition.Z);
-			currentComponent->data.Character = CreateDefaultCharacter(newActorLocation);
+			currentComponent->data.Character =
+			    CreateDefaultCharacter(newActorLocation, currentComponent->entity);
 		}
 
 		gv::WorldResourceLocator::AddResource(currentComponent->data.ResourceType,

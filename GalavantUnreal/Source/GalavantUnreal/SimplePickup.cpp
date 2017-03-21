@@ -10,10 +10,14 @@ ASimplePickup::ASimplePickup()
 	// you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+
+	// I have no fucking clue why this doesn't actually enable it. I had to check the box in the
+	//  blueprint in order to actually get physics
+	SphereComponent->SetSimulatePhysics(true);
 
 	// Establish component relationships
-	RootComponent = SceneComponent;
+	RootComponent = SphereComponent;
 }
 
 // Called when the game starts or when spawned

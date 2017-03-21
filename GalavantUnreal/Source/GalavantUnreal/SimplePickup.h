@@ -11,7 +11,7 @@ class GALAVANTUNREAL_API ASimplePickup : public AActor
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	USceneComponent *SceneComponent;
+	USphereComponent *SphereComponent;
 
 public:
 	// Sets default values for this actor's properties

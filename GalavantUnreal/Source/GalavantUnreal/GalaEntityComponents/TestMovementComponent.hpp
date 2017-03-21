@@ -6,6 +6,7 @@
 #include "TestAgent.h"
 
 // Galavant includes
+#include "entityComponentSystem/EntityTypes.hpp"
 #include "entityComponentSystem/ComponentManager.hpp"
 #include "entityComponentSystem/PooledComponentManager.hpp"
 #include "world/Position.hpp"
@@ -36,7 +37,7 @@ struct TestMovementComponentData
 class TestMovementComponent : public gv::PooledComponentManager<TestMovementComponentData>
 {
 private:
-	ACharacter* CreateDefaultCharacter(FVector& location);
+	ACharacter* CreateDefaultCharacter(FVector& location, gv::Entity entity);
 
 	UWorld* World;
 
