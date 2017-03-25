@@ -47,8 +47,8 @@ protected:
 
 	virtual void SubscribeEntitiesInternal(const gv::EntityList& subscribers,
 	                                       TestMovementComponentRefList& components);
-	virtual void UnsubscribeEntitiesInternal(const gv::EntityList& unsubscribers,
-	                                         TestMovementComponentRefList& components);
+	virtual void UnsubscribePoolEntitiesInternal(const gv::EntityList& unsubscribers,
+	                                             TestMovementComponentRefList& components);
 
 public:
 	typedef std::vector<gv::PooledComponent<TestMovementComponentData>> TestMovementComponentList;

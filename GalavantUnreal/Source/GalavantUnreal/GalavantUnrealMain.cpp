@@ -117,26 +117,28 @@ void AGalavantUnrealMain::InitializeEntityTests()
 	}
 
 	// Test Plan component by adding one to some of them, making their goal finding food
-	/*{
-		// Task for each agent: find a food
-		Htn::Parameter resourceToFind;
-		resourceToFind.IntValue = gv::WorldResourceType::Food;
-		resourceToFind.Type = Htn::Parameter::ParamType::Int;
-		Htn::ParameterList parameters = {resourceToFind};
-		Htn::TaskCall findAgentCall{testGetResourceTask.GetTask(), parameters};
-		Htn::TaskCallList findAgentTasks = {findAgentCall};
+	/* Commented because this is no longer needed - AgentComponentManager will add plans based on
+	needs
+	{
+	    // Task for each agent: find a food
+	    Htn::Parameter resourceToFind;
+	    resourceToFind.IntValue = gv::WorldResourceType::Food;
+	    resourceToFind.Type = Htn::Parameter::ParamType::Int;
+	    Htn::ParameterList parameters = {resourceToFind};
+	    Htn::TaskCall findAgentCall{testGetResourceTask.GetTask(), parameters};
+	    Htn::TaskCallList findAgentTasks = {findAgentCall};
 
-		gv::PlanComponentManager::PlanComponentList newPlanComponents(numTestEntities);
+	    gv::PlanComponentManager::PlanComponentList newPlanComponents(numTestEntities);
 
-		int currentEntityIndex = 0;
-		for (gv::PooledComponent<gv::PlanComponentData>& currentPlanComponent : newPlanComponents)
-		{
-			currentPlanComponent.entity = testEntities[currentEntityIndex++];
-			currentPlanComponent.data.Tasks.insert(currentPlanComponent.data.Tasks.end(),
-			                                       findAgentTasks.begin(), findAgentTasks.end());
-		}
+	    int currentEntityIndex = 0;
+	    for (gv::PooledComponent<gv::PlanComponentData>& currentPlanComponent : newPlanComponents)
+	    {
+	        currentPlanComponent.entity = testEntities[currentEntityIndex++];
+	        currentPlanComponent.data.Tasks.insert(currentPlanComponent.data.Tasks.end(),
+	                                               findAgentTasks.begin(), findAgentTasks.end());
+	    }
 
-		PlanComponentManager.SubscribeEntities(newPlanComponents);
+	    PlanComponentManager.SubscribeEntities(newPlanComponents);
 	}*/
 
 	// Add food
@@ -148,23 +150,35 @@ void AGalavantUnrealMain::InitializeEntityTests()
 		EntityComponentSystem.GetNewEntities(testFoodEntities, numFood);
 
 		TestMovementComponent::TestMovementComponentList newFood(numFood);
+		gv::PickupRefList newPickups;
+		newPickups.reserve(numFood);
+		InteractComponentManager.CreatePickups(numFood, newPickups);
 
 		float spacing = 2000.f;
 		int i = 0;
 		for (gv::EntityListIterator it = testFoodEntities.begin(); it != testFoodEntities.end();
 		     ++it, i++)
 		{
-			FVector location(-2000.f, i * spacing, 3600.f);
-			FRotator defaultRotation(0.f, 0.f, 0.f);
-			FActorSpawnParameters spawnParams;
+			// Movement component
+			{
+				FVector location(-2000.f, i * spacing, 3600.f);
+				FRotator defaultRotation(0.f, 0.f, 0.f);
+				FActorSpawnParameters spawnParams;
 
-			newFood[i].entity = (*it);
-			newFood[i].data.WorldPosition.Set(location.X, location.Y, location.Z);
-			newFood[i].data.ResourceType = gv::WorldResourceType::Food;
+				newFood[i].entity = (*it);
+				newFood[i].data.WorldPosition.Set(location.X, location.Y, location.Z);
+				newFood[i].data.ResourceType = gv::WorldResourceType::Food;
 
-			newFood[i].data.Character = nullptr;
-			newFood[i].data.Actor = (AActor*)GetWorld()->SpawnActor<AActor>(
-			    TestFoodActor, location, defaultRotation, spawnParams);
+				newFood[i].data.Character = nullptr;
+				newFood[i].data.Actor = (AActor*)GetWorld()->SpawnActor<AActor>(
+				    TestFoodActor, location, defaultRotation, spawnParams);
+			}
+
+			// Pickup component
+			{
+				newPickups[i]->entity = (*it);
+				newPickups[i]->ResourceType = gv::WorldResourceType::Food;
+			}
 		}
 
 		TestMovementComponentManager.SubscribeEntities(newFood);
@@ -237,4 +251,11 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 	TestMovementComponentManager.Update(DeltaTime);
 
 	EntityComponentSystem.DestroyEntitiesPendingDestruction();
+}
+
+void AGalavantUnrealMain::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	// This is because Unreal will begin destroying actors that our entities expected to have
+	EntityComponentSystem.DestroyAllEntities();
+	LOGI << "Destroyed all entities";
 }

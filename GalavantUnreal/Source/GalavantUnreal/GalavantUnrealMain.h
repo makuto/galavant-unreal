@@ -10,6 +10,7 @@
 #include "game/agent/PlanComponentManager.hpp"
 #include "game/agent/AgentComponentManager.hpp"
 #include "game/agent/Needs.hpp"
+#include "game/InteractComponentManager.hpp"
 #include "util/CallbackContainer.hpp"
 
 // Testing
@@ -27,9 +28,11 @@ class GALAVANTUNREAL_API AGalavantUnrealMain : public AActor
 
 	// Entity Components
 	gv::EntityComponentManager EntityComponentSystem;
+
 	TestMovementComponent TestMovementComponentManager;
 	gv::PlanComponentManager PlanComponentManager;
 	gv::AgentComponentManager AgentComponentManager;
+	gv::InteractComponentManager InteractComponentManager;
 
 	// World
 	gv::WorldStateManager WorldStateManager;
@@ -56,6 +59,8 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
 	void InitializeEntityTests();

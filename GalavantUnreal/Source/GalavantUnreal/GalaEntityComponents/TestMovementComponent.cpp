@@ -117,7 +117,8 @@ void TestMovementComponent::Update(float deltaSeconds)
 			}*/
 		}
 
-		if (!currentComponent->data.ResourcePosition.Equals(worldPosition, 100.f))
+		if (currentComponent->data.ResourceType != gv::WorldResourceType::None &&
+		    !currentComponent->data.ResourcePosition.Equals(worldPosition, 100.f))
 		{
 			// Give ResourceLocator our new position
 			gv::WorldResourceLocator::MoveResource(currentComponent->data.ResourceType,
@@ -172,17 +173,20 @@ void TestMovementComponent::SubscribeEntitiesInternal(const gv::EntityList& subs
 			    CreateDefaultCharacter(newActorLocation, currentComponent->entity);
 		}
 
-		gv::WorldResourceLocator::AddResource(currentComponent->data.ResourceType,
-		                                      currentComponent->data.WorldPosition);
-		currentComponent->data.ResourcePosition = currentComponent->data.WorldPosition;
+		if (currentComponent->data.ResourceType != gv::WorldResourceType::None)
+		{
+			gv::WorldResourceLocator::AddResource(currentComponent->data.ResourceType,
+			                                      currentComponent->data.WorldPosition);
+			currentComponent->data.ResourcePosition = currentComponent->data.WorldPosition;
+		}
 		newPositionRefs.push_back(&currentComponent->data.WorldPosition);
 	}
 
 	gv::EntityCreatePositions(subscribers, newPositionRefs);
 }
 
-void TestMovementComponent::UnsubscribeEntitiesInternal(const gv::EntityList& unsubscribers,
-                                                        TestMovementComponentRefList& components)
+void TestMovementComponent::UnsubscribePoolEntitiesInternal(
+    const gv::EntityList& unsubscribers, TestMovementComponentRefList& components)
 {
 	for (TestMovementComponentRefList::iterator it = components.begin(); it != components.end();
 	     ++it)
@@ -196,8 +200,11 @@ void TestMovementComponent::UnsubscribeEntitiesInternal(const gv::EntityList& un
 		if (currentComponent->data.Actor)
 			currentComponent->data.Actor->Destroy();
 
-		gv::WorldResourceLocator::RemoveResource(currentComponent->data.ResourceType,
-		                                         currentComponent->data.ResourcePosition);
+		if (currentComponent->data.ResourceType != gv::WorldResourceType::None)
+		{
+			gv::WorldResourceLocator::RemoveResource(currentComponent->data.ResourceType,
+			                                         currentComponent->data.ResourcePosition);
+		}
 	}
 
 	// TODO: We assume we own the positions of these entities. This could be dangerous later on
