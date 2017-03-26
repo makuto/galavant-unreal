@@ -6232,6 +6232,5 @@ SOURCES += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunkManager.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ThirdPersonCharacter.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalaEntityComponents/TestMovementComponent.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestHtn/TestMovementTasks.cpp" \
  
 

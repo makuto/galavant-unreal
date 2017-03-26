@@ -10,12 +10,12 @@
 #include "game/agent/PlanComponentManager.hpp"
 #include "game/agent/AgentComponentManager.hpp"
 #include "game/agent/Needs.hpp"
+#include "game/agent/htnTasks/MovementTasks.hpp"
 #include "game/InteractComponentManager.hpp"
 #include "util/CallbackContainer.hpp"
 
 // Testing
 #include "GalaEntityComponents/TestMovementComponent.hpp"
-#include "TestHtn/TestMovementTasks.hpp"
 
 #include "GalavantUnrealMain.generated.h"
 
@@ -39,9 +39,9 @@ class GALAVANTUNREAL_API AGalavantUnrealMain : public AActor
 
 	// Hierarchical Task Networks
 	// TODO: How should this work?
-	TestFindResourceTask testFindResourceTask;
-	TestMoveToTask testMoveToTask;
-	TestGetResourceTask testGetResourceTask;
+	gv::FindResourceTask FindResourceTask;
+	gv::MoveToTask MoveToTask;
+	gv::GetResourceTask GetResourceTask;
 	gv::CallbackContainer<Htn::TaskEventCallback> TaskEventCallbacks;
 
 	gv::NeedDef TestHungerNeed;

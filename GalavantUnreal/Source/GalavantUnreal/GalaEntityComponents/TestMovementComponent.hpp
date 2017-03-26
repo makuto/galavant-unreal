@@ -12,6 +12,7 @@
 #include "world/Position.hpp"
 #include "world/WorldResourceLocator.hpp"
 #include "ai/htn/HTNTypes.hpp"
+#include "game/agent/MovementManager.hpp"
 #include "util/CallbackContainer.hpp"
 
 struct TestMovementComponentData
@@ -34,7 +35,8 @@ struct TestMovementComponentData
 	gv::Position ResourcePosition;
 };
 
-class TestMovementComponent : public gv::PooledComponentManager<TestMovementComponentData>
+class TestMovementComponent : public gv::PooledComponentManager<TestMovementComponentData>,
+                              public gv::MovementManager
 {
 private:
 	ACharacter* CreateDefaultCharacter(FVector& location, gv::Entity entity);
@@ -65,5 +67,5 @@ public:
 	virtual void Update(float deltaSeconds);
 
 	// TODO: This should return whether it was actually successful (i.e. the entity exists)
-	void PathEntitiesTo(gv::EntityList& entities, std::vector<gv::Position>& positions);
+	virtual void PathEntitiesTo(const gv::EntityList& entities, const gv::PositionList& positions);
 };

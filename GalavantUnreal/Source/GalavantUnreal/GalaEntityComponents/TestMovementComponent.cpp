@@ -121,9 +121,9 @@ void TestMovementComponent::Update(float deltaSeconds)
 		    !currentComponent->data.ResourcePosition.Equals(worldPosition, 100.f))
 		{
 			// Give ResourceLocator our new position
-			gv::WorldResourceLocator::MoveResource(currentComponent->data.ResourceType,
-			                                       currentComponent->data.ResourcePosition,
-			                                       worldPosition);
+			gv::WorldResourceLocator::MoveResource(
+			    currentComponent->data.ResourceType, currentComponent->entity,
+			    currentComponent->data.ResourcePosition, worldPosition);
 			currentComponent->data.ResourcePosition = worldPosition;
 		}
 
@@ -176,6 +176,7 @@ void TestMovementComponent::SubscribeEntitiesInternal(const gv::EntityList& subs
 		if (currentComponent->data.ResourceType != gv::WorldResourceType::None)
 		{
 			gv::WorldResourceLocator::AddResource(currentComponent->data.ResourceType,
+			                                      currentComponent->entity,
 			                                      currentComponent->data.WorldPosition);
 			currentComponent->data.ResourcePosition = currentComponent->data.WorldPosition;
 		}
@@ -203,6 +204,7 @@ void TestMovementComponent::UnsubscribePoolEntitiesInternal(
 		if (currentComponent->data.ResourceType != gv::WorldResourceType::None)
 		{
 			gv::WorldResourceLocator::RemoveResource(currentComponent->data.ResourceType,
+			                                         currentComponent->entity,
 			                                         currentComponent->data.ResourcePosition);
 		}
 	}
@@ -211,8 +213,8 @@ void TestMovementComponent::UnsubscribePoolEntitiesInternal(
 	gv::EntityDestroyPositions(unsubscribers);
 }
 
-void TestMovementComponent::PathEntitiesTo(gv::EntityList& entities,
-                                           std::vector<gv::Position>& positions)
+void TestMovementComponent::PathEntitiesTo(const gv::EntityList& entities,
+                                           const gv::PositionList& positions)
 {
 	const gv::EntityList& subscribers = GetSubscriberList();
 
@@ -221,8 +223,8 @@ void TestMovementComponent::PathEntitiesTo(gv::EntityList& entities,
 
 	for (int i = 0; i < entities.size(); i++)
 	{
-		gv::Entity& entityToMove = entities[i];
-		gv::Position& targetPosition = positions[i];
+		const gv::Entity& entityToMove = entities[i];
+		const gv::Position& targetPosition = positions[i];
 
 		// For now, entities which are not subscribed will be tossed out
 		if (std::find(subscribers.begin(), subscribers.end(), entityToMove) == subscribers.end())

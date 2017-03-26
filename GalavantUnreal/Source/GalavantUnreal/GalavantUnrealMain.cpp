@@ -214,15 +214,15 @@ void AGalavantUnrealMain::InitializeGalavant()
 
 	// Initialize Tasks
 	{
-		testFindResourceTask.Initialize();
-		testMoveToTask.Initialize(&TestMovementComponentManager);
-		testGetResourceTask.Initialize(&testFindResourceTask, &testMoveToTask);
+		MoveToTask.Initialize(&TestMovementComponentManager);
+		GetResourceTask.Initialize(&FindResourceTask, &MoveToTask);
 
+		// Done to support Unreal hotreloading
 		Htn::TaskDb::ClearAllTasks();
 
-		Htn::TaskDb::AddTask(testFindResourceTask.GetTask(), Htn::TaskName::FindResource);
-		Htn::TaskDb::AddTask(testMoveToTask.GetTask(), Htn::TaskName::MoveTo);
-		Htn::TaskDb::AddTask(testGetResourceTask.GetTask(), Htn::TaskName::GetResource);
+		Htn::TaskDb::AddTask(FindResourceTask.GetTask(), Htn::TaskName::FindResource);
+		Htn::TaskDb::AddTask(MoveToTask.GetTask(), Htn::TaskName::MoveTo);
+		Htn::TaskDb::AddTask(GetResourceTask.GetTask(), Htn::TaskName::GetResource);
 	}
 
 	InitializeEntityTests();
