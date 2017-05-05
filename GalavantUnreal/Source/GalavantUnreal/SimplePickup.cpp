@@ -3,6 +3,8 @@
 #include "GalavantUnreal.h"
 #include "SimplePickup.h"
 
+#include "entityComponentSystem/EntityComponentManager.hpp"
+
 // Sets default values
 ASimplePickup::ASimplePickup()
 {
@@ -24,6 +26,20 @@ ASimplePickup::ASimplePickup()
 void ASimplePickup::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ASimplePickup::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (Entity)
+	{
+		gv::EntityComponentManager* entityComponentManager =
+		    gv::EntityComponentManager::GetSingleton();
+		if (entityComponentManager)
+		{
+			gv::EntityList entitiesToUnsubscribe{Entity};
+			entityComponentManager->MarkDestroyEntities(entitiesToUnsubscribe);
+		}
+	}
 }
 
 // Called every frame

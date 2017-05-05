@@ -38,6 +38,20 @@ void AAgentCharacter::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AAgentCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (Entity)
+	{
+		gv::EntityComponentManager* entityComponentManager =
+		    gv::EntityComponentManager::GetSingleton();
+		if (entityComponentManager)
+		{
+			gv::EntityList entitiesToUnsubscribe{Entity};
+			entityComponentManager->MarkDestroyEntities(entitiesToUnsubscribe);
+		}
+	}
+}
+
 // Called every frame
 void AAgentCharacter::Tick(float DeltaTime)
 {

@@ -49,6 +49,7 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 
 void AGalavantUnrealMain::InitializeEntityTests()
 {
+	float entityZSpawn = 100.f;
 	// Create a couple test entities
 	int numTestEntities = 20;
 	gv::EntityList testEntities;
@@ -67,7 +68,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 			newEntityMovementComponents[i].entity = (*it);
 			newEntityMovementComponents[i].data.ResourceType = gv::WorldResourceType::Agent;
 			newEntityMovementComponents[i].data.Character = nullptr;
-			newEntityMovementComponents[i].data.WorldPosition.Set(0.f, i * spacing, 3600.f);
+			newEntityMovementComponents[i].data.WorldPosition.Set(0.f, i * spacing, entityZSpawn);
 			newEntityMovementComponents[i].data.GoalManDistanceTolerance = 600.f;
 			newEntityMovementComponents[i].data.MaxSpeed = 500.f;
 		}
@@ -79,6 +80,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 	{
 		// Hunger Need
 		{
+			TestHungerNeed.Type = gv::NeedType::Hunger;
 			TestHungerNeed.Name = "Hunger";
 			TestHungerNeed.UpdateRate = 10.f;
 			TestHungerNeed.AddPerUpdate = 10.f;
@@ -100,7 +102,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 			}
 		}
 
-		gv::Need hungerNeed = {0};
+		gv::Need hungerNeed;
 		hungerNeed.Def = &TestHungerNeed;
 
 		gv::AgentComponentManager::AgentComponentList newAgentComponents(numTestEntities);
@@ -152,7 +154,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 		TestMovementComponent::TestMovementComponentList newFood(numFood);
 		gv::PickupRefList newPickups;
 		newPickups.reserve(numFood);
-		InteractComponentManager.CreatePickups(numFood, newPickups);
+		InteractComponentManager.CreatePickups(testFoodEntities, newPickups);
 
 		float spacing = 2000.f;
 		int i = 0;
@@ -161,7 +163,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 		{
 			// Movement component
 			{
-				FVector location(-2000.f, i * spacing, 3600.f);
+				FVector location(-2000.f, i * spacing, entityZSpawn);
 				FRotator defaultRotation(0.f, 0.f, 0.f);
 				FActorSpawnParameters spawnParams;
 
@@ -176,8 +178,8 @@ void AGalavantUnrealMain::InitializeEntityTests()
 
 			// Pickup component
 			{
-				newPickups[i]->entity = (*it);
-				newPickups[i]->ResourceType = gv::WorldResourceType::Food;
+				newPickups[i]->AffectsNeed = gv::NeedType::Hunger;
+				newPickups[i]->DestroySelfOnPickup = true;
 			}
 		}
 
@@ -216,6 +218,7 @@ void AGalavantUnrealMain::InitializeGalavant()
 	{
 		MoveToTask.Initialize(&TestMovementComponentManager);
 		GetResourceTask.Initialize(&FindResourceTask, &MoveToTask);
+		InteractPickupTask.Initialize(&InteractComponentManager);
 
 		// Done to support Unreal hotreloading
 		Htn::TaskDb::ClearAllTasks();
@@ -223,6 +226,7 @@ void AGalavantUnrealMain::InitializeGalavant()
 		Htn::TaskDb::AddTask(FindResourceTask.GetTask(), Htn::TaskName::FindResource);
 		Htn::TaskDb::AddTask(MoveToTask.GetTask(), Htn::TaskName::MoveTo);
 		Htn::TaskDb::AddTask(GetResourceTask.GetTask(), Htn::TaskName::GetResource);
+		Htn::TaskDb::AddTask(InteractPickupTask.GetTask(), Htn::TaskName::InteractPickup);
 	}
 
 	InitializeEntityTests();

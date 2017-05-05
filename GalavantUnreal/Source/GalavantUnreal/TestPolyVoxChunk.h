@@ -81,5 +81,5 @@ public:
 
 private:
 	void ConstructForPosition(FVector Position, float noiseScale, int seed, float meshScale,
-							  bool use3dNoise);
+	                          bool use3dNoise, bool useVoxels);
 };

@@ -3,6 +3,7 @@
 /home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/galavant/src/thirdPartyWrapper
 /home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/polyvox/library/PolyVoxCore/include
 /home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/polyvox/library/PolyVoxUtil/include
+/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty/galavant/thirdParty/plog/include
 /home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Source
 /home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Intermediate/Build/Linux/B4D820EA/UE4Editor/Inc/GalavantUnreal
 /home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Source/GalavantUnreal

@@ -197,7 +197,7 @@ void create3dNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, float
 }
 
 void createHeightNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, float yOffset,
-                       float zOffset, float scale, int32 seed)
+                       float zOffset, float scale, int32 seed, bool smooth)
 {
 	LOGV << "Using noise\n";
 
@@ -217,30 +217,36 @@ void createHeightNoise(PolyVox::SimpleVolume<uint8_t>* volData, float xOffset, f
 				uint8_t noiseValue = get2dNoiseMapValue(&noiseMap, x, y);
 				int noiseHeightValue = (noiseValue / 255.f) * volData->getDepth();
 
-				/*
-				Because we have 2D noise, but want 3D values, we must generate a discrete
-				 value for each Z. Meshing systems will perform smoother results if the data
-				 is smoother
-				I just realized this lerping scheme will not result in
-				 half density at the noise-specified point - that will be reached at 128, which
-				 is not necessarily at the noise point (somewhere inbetween). This should be
-				 alright, though it makes it less clear to the noise algorithm where the final
-				 point will be
-				If the current Z is greater than the noise height, lerp between the noise height
-				 and 0 (no density)
-				If the current Z is less than the noise height, lerp between 255 (full density)
-				 and the noise value
-				 */
-				uint8_t relativeValue = z > noiseHeightValue ?
-				                            lerp(halfDepth, volData->getDepth(), z, noiseValue, 0) :
-				                            lerp(0, halfDepth, z, 255, noiseValue);
+				if (smooth)
+				{
+					/*
+					Because we have 2D noise, but want 3D values, we must generate a discrete
+					 value for each Z. Meshing systems will perform smoother results if the data
+					 is smoother
+					I just realized this lerping scheme will not result in
+					 half density at the noise-specified point - that will be reached at 128, which
+					 is not necessarily at the noise point (somewhere inbetween). This should be
+					 alright, though it makes it less clear to the noise algorithm where the final
+					 point will be
+					If the current Z is greater than the noise height, lerp between the noise height
+					 and 0 (no density)
+					If the current Z is less than the noise height, lerp between 255 (full density)
+					 and the noise value
+					 */
+					uint8_t relativeValue =
+					    z > noiseHeightValue ?
+					        lerp(halfDepth, volData->getDepth(), z, noiseValue, 0) :
+					        lerp(0, halfDepth, z, 255, noiseValue);
 
-				volData->setVoxelAt(x, y, z, relativeValue);
-
-				/*if ((float) z / volData->getDepth() < noiseValue / 255.f)
-				    volData->setVoxelAt(x, y, z, 255);
+					volData->setVoxelAt(x, y, z, relativeValue);
+				}
 				else
-				    volData->setVoxelAt(x, y, z, 0); */
+				{
+					if ((float)z / volData->getDepth() < noiseValue / 255.f)
+						volData->setVoxelAt(x, y, z, 255);
+					else
+						volData->setVoxelAt(x, y, z, 0);
+				}
 			}
 		}
 	}
@@ -260,6 +266,8 @@ struct CellGenerationParams
 	bool use3dNoise;
 
 	float meshScale;
+
+	bool smooth;
 };
 
 class cell
@@ -298,7 +306,7 @@ public:
 		else
 			createHeightNoise(volData, params.newX / params.meshScale,
 			                  params.newY / params.meshScale, params.newZ / params.meshScale,
-			                  params.scale, params.seed);
+			                  params.scale, params.seed, params.smooth);
 
 		LOGV << "done\n";
 		LOGV << "Creating surface extrator\n";
@@ -405,40 +413,114 @@ void setSurfaceMeshToRender(
 }
 
 void ATestPolyVoxChunk::ConstructForPosition(FVector Position, float noiseScale, int32 seed,
-                                             float meshScale, bool use3dNoise)
+                                             float meshScale, bool use3dNoise, bool useVoxels)
 {
 	FGeneratedMeshTriangle emptyTriangle;
+	if (useVoxels)
+	{
+		LOGV << "(Voxel) Creating ATestPolyVoxChunk\n";
+		cell* newCell = new cell;
 
-	LOGV << "Creating ATestPolyVoxChunk\n";
-	cell* newCell = new cell;
+		if (!newCell)
+			return;
 
-	if (!newCell)
-		return;
+		// Generate surface mesh for position
+		CellGenerationParams params = {Position.X, Position.Y, Position.Z, noiseScale,
+		                               seed,       use3dNoise, meshScale,  false};
+		int numVertices = newCell->generate(params);
 
-	// Generate surface mesh for position
-	CellGenerationParams params = {Position.X, Position.Y, Position.Z, noiseScale,
-	                               seed,       use3dNoise, meshScale};
-	int numVertices = newCell->generate(params);
+		// Initialize Unreal triangle buffer
+		Triangles.Init(emptyTriangle, numVertices);
 
-	// Initialize Unreal triangle buffer
-	Triangles.Init(emptyTriangle, numVertices);
+		LOGV << "(Voxel) Generation finished\n";
 
-	LOGV << "Generation finished\n";
+		// Get mesh data from voxel surface mesh and put it in Unreal triangle buffer
+		setSurfaceMeshToRender(newCell->mesh, &Triangles, meshScale);
 
-	// Get mesh data from voxel surface mesh and put it in Unreal triangle buffer
-	setSurfaceMeshToRender(newCell->mesh, &Triangles, meshScale);
+		// Give the triangles to Unreal Engine
+		GeneratedMesh->SetGeneratedMeshTriangles(Triangles);
 
-	// Give the triangles to Unreal Engine
-	GeneratedMesh->SetGeneratedMeshTriangles(Triangles);
+		// Free voxel data and surface mesh (this won't happen in actual game, but we don't need it
+		// in
+		// this case)
+		delete newCell;
 
-	// Free voxel data and surface mesh (this won't happen in actual game, but we don't need it in
-	// this case)
-	delete newCell;
+		// Set ChunkSize, which can be used to know how large the chunk is in-game (for positioning)
+		ChunkSize.Set(CELL_X * meshScale, CELL_Y * meshScale, CELL_Z * meshScale);
 
-	// Set ChunkSize, which can be used to know how large the chunk is in-game (for positioning)
-	ChunkSize.Set(CELL_X * meshScale, CELL_Y * meshScale, CELL_Z * meshScale);
+		LOGV << "(Voxel) Creating ATestPolyVoxChunk done\n";
+	}
+	else
+	{
+		LOGV << "(Grid) Creating ATestPolyVoxChunk\n";
 
-	LOGV << "Creating ATestPolyVoxChunk done\n";
+		// Static so no memory allocations after first run of get2dNoiseMapForPosition, which
+		// supports
+		// this static functionality
+		static NoiseMap noiseMap;
+#define width 2
+#define height 2
+		get2dNoiseMapForPosition(&noiseMap, width, height, Position.X, Position.Y, noiseScale,
+		                         seed);
+
+		uint8_t minimumValue = 0;
+		for (int row = 0; row < height; row++)
+		{
+			for (int column = 0; column < width; column++)
+			{
+				uint8_t value = get2dNoiseMapValue(&noiseMap, column, row);
+				if (value < minimumValue)
+				{
+					minimumValue = value;
+				}
+			}
+		}
+
+		// Determine which mesh we'll use based on offsets from minimum value
+		int offsetTable[height][width] = {{0, 0}, {0, 0}};
+		for (int row = 0; row < height; row++)
+		{
+			for (int column = 0; column < width; column++)
+			{
+				uint8_t value = get2dNoiseMapValue(&noiseMap, column, row);
+				// How many units of noise until we step up a level
+				const int step = 10;
+				if (value - minimumValue > step)
+					offsetTable[row][column] = 1;
+				else if (value - minimumValue > step)
+					offsetTable[row][column] = -1;
+			}
+		}
+
+		struct GridMesh
+		{
+			int OffsetTable[height][width];
+			float Triangles[2][3][3];
+		};
+		// clang-format off
+		static const GridMesh meshes[] =
+		{
+			// Flat
+			{{{0, 0}, {0, 0}},
+			   {{{0.f, 0.f, 0.f}, {1.f, 0.f, 0.f}, {1.f, 1.f, 0.f}},
+				{{1.f, 1.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 0.f}}}},
+
+			// Ramp
+			{{{0, 0}, {1, 1}},
+			   {{{0.f, 0.f, 1.f}, {1.f, 0.f, 1.f}, {1.f, 1.f, 0.f}},
+				{{1.f, 1.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}}}},
+
+			// Corner
+			{{{0, 0}, {1, 0}},
+			   {{{0.f, 0.f, 1.f}, {1.f, 0.f, 0.f}, {1.f, 1.f, 0.f}},
+				{{1.f, 1.f, 0.f}, {0.f, 1.f, 0.f}, {0.f, 0.f, 1.f}}}},
+		};
+// clang-format on
+
+#undef height
+#undef width
+		LOGV << "(Grid) Creating ATestPolyVoxChunk done\n";
+	}
 }
 
 bool ATestPolyVoxChunk::ShouldTickIfViewportsOnly() const
@@ -466,8 +548,8 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)  //,
 	PropertiesChanged = false;
 
 	// Properties defaults
-	MeshScale = 100.f;
-	NoiseScale = 0.008f;
+	MeshScale = 270.f;
+	NoiseScale = 0.04f;
 	NoiseSeed = 5138008;
 	Use3dNoise = false;
 
@@ -482,7 +564,7 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)  //,
 		/*FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
 		                                          EAttachmentRule::SnapToTarget,
 		                                          EAttachmentRule::SnapToTarget, false);*/
-		//GeneratedMesh->AttachToComponent(SceneComponent, attachmentRules, "GeneratedMesh");
+		// GeneratedMesh->AttachToComponent(SceneComponent, attachmentRules, "GeneratedMesh");
 		GeneratedMesh->SetupAttachment(SceneComponent, "GeneratedMesh");
 	}
 
@@ -491,6 +573,9 @@ ATestPolyVoxChunk::ATestPolyVoxChunk() : LastUpdatedPosition(0.f, 0.f, 0.f)  //,
 	    TEXT("/Game/Materials/SolidGrass.SolidGrass"));
 	//"/Game/Materials/TriplanarTest1.TriplanarTest1"
 	GeneratedMesh->SetMaterial(0, material.Object);
+
+	FVector squashZScale(1.f, 1.f, 0.5f);
+	SceneComponent->SetWorldScale3D(squashZScale);
 
 	// Set collision
 	SetActorEnableCollision(true);
@@ -509,8 +594,9 @@ void ATestPolyVoxChunk::Construct()
 	int32 seed = NoiseSeed;
 	float meshScale = MeshScale;
 	bool use3dNoise = Use3dNoise;
+	bool useVoxels = true;
 
-	ConstructForPosition(worldPosition, noiseScale, seed, meshScale, use3dNoise);
+	ConstructForPosition(worldPosition, noiseScale, seed, meshScale, use3dNoise, useVoxels);
 
 	TimeSinceLastUpdate = 0.f;
 	LastUpdatedPosition = worldPosition;

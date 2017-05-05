@@ -23,7 +23,7 @@ ATestPolyVoxChunkManager::ATestPolyVoxChunkManager()
 	PropertiesChanged = false;
 
 	// Property defaults
-	ChunkSpawnRadius = 12800.f;
+	ChunkSpawnRadius = 26000.f;
 	MaxNumChunks = 75;
 	Use3dNoise = false;
 
@@ -47,7 +47,9 @@ FVector ATestPolyVoxChunkManager::GetChunkManagerLocation()
 
 	// Our chunk manager shouldn't care about the Z axis. Otherwise, player movement in the Z axis
 	// would change our chunk Z axis positioning. If we make 3D chunks (!), this would be removed
-	worldLocation[2] = 0.f;
+	//worldLocation[2] = 0.f;
+	// HACK: Move all chunks down this amount so that they don't spawn so goddamn high 
+	worldLocation[2] = -6000.f;
 	return worldLocation;
 }
 
