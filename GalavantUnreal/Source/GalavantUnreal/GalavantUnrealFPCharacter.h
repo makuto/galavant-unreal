@@ -26,6 +26,10 @@ class AGalavantUnrealFPCharacter : public ACharacter
 	UPROPERTY(VisibleDefaultsOnly)
 	class UChildActorComponent* ChunkManager;
 
+	/** Minimap */
+	UPROPERTY(VisibleDefaultsOnly)
+	class UChildActorComponent* Minimap;
+
 public:
 	AGalavantUnrealFPCharacter();
 

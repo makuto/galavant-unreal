@@ -6219,6 +6219,7 @@ SOURCES += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ActorEntityManagement.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentAIController.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentCharacter.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/DynamicTexture.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealCharacter.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealFPCharacter.cpp" \
@@ -6227,6 +6228,7 @@ SOURCES += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealMain.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealPlayerController.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GeneratedMeshComponent.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/HUDMinimapActor.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/SimplePickup.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestAgent.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunk.cpp" \

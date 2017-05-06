@@ -18,7 +18,7 @@ AGalavantUnrealGameMode::AGalavantUnrealGameMode() : Super()
 	    TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
 	         "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));
 	// TEXT("/Game/FirstPersonCPP/Blueprints/GalavantUnrealFPCharacterTrueBP"));
-	if (PlayerPawnBPClass.Class != nullptr)
+	if (PlayerPawnBPClass.Class)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}

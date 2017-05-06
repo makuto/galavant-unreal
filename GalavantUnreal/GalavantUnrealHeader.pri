@@ -8365,6 +8365,7 @@ HEADERS += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ActorEntityManagement.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentAIController.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentCharacter.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/DynamicTexture.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealCharacter.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealFPCharacter.h" \
@@ -8373,6 +8374,7 @@ HEADERS += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealMain.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealPlayerController.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GeneratedMeshComponent.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/HUDMinimapActor.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/SimplePickup.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestAgent.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunk.h" \

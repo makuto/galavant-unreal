@@ -1,9 +1,13 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
 
 #include "GalavantUnreal.h"
+
 #include "GalavantUnrealFPCharacter.h"
+
 #include "Animation/AnimInstance.h"
 #include "GameFramework/InputSettings.h"
+
+#include "HUDMinimapActor.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -50,6 +54,10 @@ AGalavantUnrealFPCharacter::AGalavantUnrealFPCharacter()
 
 	ChunkManager = CreateDefaultSubobject<UChildActorComponent>(TEXT("ChunkManager"));
 	ChunkManager->SetupAttachment(FirstPersonCameraComponent);
+
+	Minimap = CreateDefaultSubobject<UChildActorComponent>(TEXT("Minimap"));
+	Minimap->SetupAttachment(FirstPersonCameraComponent);
+	Minimap->SetChildActorClass(AHUDMinimapActor::StaticClass());
 
 	// Note: The ProjectileClass and the skeletal mesh/anim blueprints for Mesh1P are set in the
 	// derived blueprint asset named MyCharacter (to avoid direct content references in C++)
