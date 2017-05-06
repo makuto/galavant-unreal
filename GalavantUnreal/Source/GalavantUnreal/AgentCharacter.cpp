@@ -84,8 +84,39 @@ void AAgentCharacter::Tick(float DeltaTime)
 						debugTextPosition = sceneComponent->GetComponentLocation();
 					debugTextPosition.Z += 100.f;
 					// DrawDebugPoint(world, point, POINT_SCALE, FColor(255, 0, 0), true, 0.f);
-					DrawDebugString(GetWorld(), debugTextPosition, TEXT("Test"), this,
-					                FColor(255, 0, 0), 0.f, false);
+					switch (consciousState)
+					{
+						case gv::AgentConsciousState::None:
+							DrawDebugString(GetWorld(), debugTextPosition, TEXT("None"), this,
+							                FColor(255, 0, 0), 0.f, false);
+							break;
+
+						case gv::AgentConsciousState::Conscious:
+							DrawDebugString(GetWorld(), debugTextPosition, TEXT("Conscious"), this,
+							                FColor(255, 0, 0), 0.f, false);
+							break;
+
+						case gv::AgentConsciousState::Unconscious:
+							DrawDebugString(GetWorld(), debugTextPosition, TEXT("Unconscious"),
+							                this, FColor(255, 0, 0), 0.f, false);
+							break;
+
+						case gv::AgentConsciousState::Sleeping:
+							DrawDebugString(GetWorld(), debugTextPosition, TEXT("Sleeping"), this,
+							                FColor(255, 0, 0), 0.f, false);
+							break;
+
+						case gv::AgentConsciousState::Dead:
+							DrawDebugString(GetWorld(), debugTextPosition, TEXT("Dead"), this,
+							                FColor(255, 0, 0), 0.f, false);
+							break;
+
+						default:
+							DrawDebugString(GetWorld(), debugTextPosition,
+							                TEXT("Unrecognized state"), this, FColor(255, 0, 0),
+							                0.f, false);
+							break;
+					}
 				}
 			}
 		}

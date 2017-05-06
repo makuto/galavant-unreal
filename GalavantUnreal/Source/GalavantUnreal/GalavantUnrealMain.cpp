@@ -4,6 +4,7 @@
 #include "GalavantUnrealMain.h"
 
 #include "AgentCharacter.h"
+#include "ActorEntityManagement.h"
 
 #include "util/Logging.hpp"
 #include "plog/Log.h"
@@ -23,6 +24,8 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if
 	// you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	// Sets this function to hipri and all prerequisites recursively
+	PrimaryActorTick.SetPriorityIncludingPrerequisites(true);
 
 	static ConstructorHelpers::FClassFinder<ACharacter> AgentCharacterBPClass(
 	    TEXT("Pawn'/Game/Blueprints/AgentCharacter1_Blueprint.AgentCharacter1_Blueprint_C'"));
@@ -96,7 +99,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 
 				gv::NeedLevelTrigger deathByStarvation;
 				deathByStarvation.GreaterThanLevel = true;
-				deathByStarvation.Level = 100.f;
+				deathByStarvation.Level = 300.f;
 				deathByStarvation.DieNow = true;
 				TestHungerNeed.LevelTriggers.push_back(deathByStarvation);
 			}
@@ -174,6 +177,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 				newFood[i].data.Character = nullptr;
 				newFood[i].data.Actor = (AActor*)GetWorld()->SpawnActor<AActor>(
 				    TestFoodActor, location, defaultRotation, spawnParams);
+				ActorEntityManager::AddActorEntity(newFood[i].data.Actor, (*it));
 			}
 
 			// Pickup component
@@ -202,7 +206,7 @@ void AGalavantUnrealMain::InitializeGalavant()
 
 	{
 		PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
-		PlanComponentManager.DebugPrint = true;
+		PlanComponentManager.DebugPrint = false;
 	}
 
 	{
@@ -248,13 +252,19 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Make sure the Entity Component System knows if an Actor associated with an Entity has been
+	// destroyed. Component Managers should be able to trust that their Subscribers have valid data
+	ActorEntityManager::DestroyEntitiesWithDestroyedActors(GetWorld(), &EntityComponentSystem);
+
+	// Destroy entities now because Unreal might have destroyed actors, so we don't want our code to
+	// break not knowing that
+	EntityComponentSystem.DestroyEntitiesPendingDestruction();
+
 	GalavantMain.Update(DeltaTime);
 
 	AgentComponentManager.Update(DeltaTime);
 	PlanComponentManager.Update(DeltaTime);
 	TestMovementComponentManager.Update(DeltaTime);
-
-	EntityComponentSystem.DestroyEntitiesPendingDestruction();
 }
 
 void AGalavantUnrealMain::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -262,4 +272,5 @@ void AGalavantUnrealMain::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	// This is because Unreal will begin destroying actors that our entities expected to have
 	EntityComponentSystem.DestroyAllEntities();
 	LOGI << "Destroyed all entities";
+	ActorEntityManager::Clear();
 }

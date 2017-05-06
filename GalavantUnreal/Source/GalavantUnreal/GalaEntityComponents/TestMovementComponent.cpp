@@ -4,6 +4,7 @@
 
 #include "AgentCharacter.h"
 #include "RandomStream.h"
+#include "ActorEntityManagement.h"
 
 #include "util/Logging.hpp"
 
@@ -44,7 +45,11 @@ ACharacter* TestMovementComponent::CreateDefaultCharacter(FVector& location, gv:
 	if (!newAgentCharacter)
 		LOG_ERROR << "Unable to spawn agent character!";
 	else
+	{
 		newAgentCharacter->Entity = entity;
+
+		ActorEntityManager::AddActorEntity(newAgentCharacter, entity);
+	}
 
 	return newAgentCharacter;
 }
@@ -78,8 +83,6 @@ void TestMovementComponent::Update(float deltaSeconds)
 		else if (currentCharacter)
 			sceneComponent = currentCharacter->GetRootComponent();
 
-		// Hit a segfault where this happened. I jumped onto a group of agents all running into
-		// eachother. Weird. (UPDATE: TODO: This is still crashing :(. Fuck)
 		if (!sceneComponent)
 			continue;
 
