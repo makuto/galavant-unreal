@@ -3,9 +3,11 @@
 #include "GalavantUnreal.h"
 #include "HUDMinimapActor.h"
 
+#include "ConversionHelpers.h"
+
 #include "util/Logging.hpp"
 
-#include "noise/noise.hpp"
+#include "world/ProceduralWorld.hpp"
 
 // Sets default values
 AHUDMinimapActor::AHUDMinimapActor()
@@ -41,22 +43,20 @@ void AHUDMinimapActor::UpdateMinimap(FVector& worldPosition)
 {
 	static FVector lastPositionUpdated(0.f, 0.f, 0.f);
 
-	if (!IsRunningDedicatedServer() && !lastPositionUpdated.Equals(worldPosition, 100.f))
+	if (!IsRunningDedicatedServer() && !lastPositionUpdated.Equals(worldPosition, 1000.f))
 	{
-		float xOffset = worldPosition.X;
-		float yOffset = worldPosition.Y;
-
-		float scale = 0.04f;  // 10.8f;
-		int seed = 5138008;
-		gv::Noise2d noiseGenerator(seed);
+#define SAMPLE_WIDTH 128
+#define SAMPLE_HEIGHT 128
+		static unsigned char sampleHeights[SAMPLE_HEIGHT][SAMPLE_WIDTH];
+		gv::ProceduralWorld::SampleWorldCellHeights(ToPosition(worldPosition), SAMPLE_WIDTH,
+		                                            SAMPLE_HEIGHT, (unsigned char*)&sampleHeights);
 
 		for (int row = 0; row < TextureWidth; row++)
 		{
 			for (int col = 0; col < TextureHeight; col++)
 			{
 				const uint8 banding = 10;
-				float noiseValue = noiseGenerator.scaledOctaveNoise2d(
-				    (row + yOffset) * scale, (col + xOffset) * scale, 0, 255, 10, 0.1f, 0.55f, 2);
+				unsigned char noiseValue = sampleHeights[row % SAMPLE_HEIGHT][col % SAMPLE_WIDTH];
 				DynamicTexturePixel* currentPixel = MinimapTexture.GetPixel(row, col);
 				currentPixel->g = ((uint8)noiseValue) % banding;
 				currentPixel->b = (((uint8)noiseValue) / banding) * (255 / banding);
@@ -71,6 +71,9 @@ void AHUDMinimapActor::UpdateMinimap(FVector& worldPosition)
 		MinimapTexture.Update();
 
 		lastPositionUpdated = worldPosition;
+
+#undef SAMPLE_WIDTH
+#undef SAMPLE_WIDTH
 	}
 }
 

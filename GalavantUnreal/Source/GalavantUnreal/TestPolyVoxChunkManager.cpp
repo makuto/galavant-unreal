@@ -23,7 +23,7 @@ ATestPolyVoxChunkManager::ATestPolyVoxChunkManager()
 	PropertiesChanged = false;
 
 	// Property defaults
-	ChunkSpawnRadius = 26000.f;
+	ChunkSpawnRadius = 6700.f;
 	MaxNumChunks = 75;
 	Use3dNoise = false;
 

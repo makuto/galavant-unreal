@@ -8,5 +8,4 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogGalavantUnreal, Log, All);
 
-
 #endif

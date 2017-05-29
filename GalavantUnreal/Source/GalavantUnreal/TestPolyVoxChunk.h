@@ -28,18 +28,6 @@ class GALAVANTUNREAL_API ATestPolyVoxChunk : public AActor
 	// The length, width, and height of the Chunk in Unreal units (i.e. after mesh scaling)
 	FVector ChunkSize;
 
-	// The scale of the simplex noise
-	UPROPERTY(EditAnywhere)
-	float NoiseScale;
-
-	// The multiplier which will scale the mesh after its surface has been extracted
-	UPROPERTY(EditAnywhere)
-	float MeshScale;
-
-	// The seed to provide simplex noise
-	UPROPERTY(EditAnywhere)
-	int32 NoiseSeed;
-
 	// Use 3D simplex noise to generate the chunk rather than 2D heightmap noise
 	UPROPERTY(EditAnywhere)
 	bool Use3dNoise;
@@ -63,7 +51,7 @@ public:
 	virtual bool ShouldTickIfViewportsOnly() const;
 
 #if WITH_EDITOR
-	// Insure that if properties change, the chunk immediately updates
+	// Ensure that if properties change, the chunk immediately updates
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent &e);
 #endif
 
@@ -78,8 +66,4 @@ public:
 
 	void SetUse3dNoise(bool newValue);
 	void SetAsyncConstruction(bool newValue);
-
-private:
-	void ConstructForPosition(FVector Position, float noiseScale, int seed, float meshScale,
-	                          bool use3dNoise, bool useVoxels);
 };

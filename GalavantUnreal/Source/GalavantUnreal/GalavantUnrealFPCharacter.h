@@ -1,6 +1,11 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "GameFramework/Character.h"
+
+#include "entityComponentSystem/EntityTypes.hpp"
+#include "game/agent/Needs.hpp"
+#include "world/Position.hpp"
+
 #include "GalavantUnrealFPCharacter.generated.h"
 
 class UInputComponent;
@@ -30,6 +35,14 @@ class AGalavantUnrealFPCharacter : public ACharacter
 	UPROPERTY(VisibleDefaultsOnly)
 	class UChildActorComponent* Minimap;
 
+	gv::Entity PlayerEntity;
+
+	// This will be the position referred to by the entire game when querying player position
+	gv::Position PlayerPosition;
+
+	// TODO: This shouldn't be here
+	gv::NeedDef PlayerHungerNeed;
+
 public:
 	AGalavantUnrealFPCharacter();
 
@@ -58,10 +71,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	class UAnimMontage* FireAnimation;
 
+	UPROPERTY(EditAnywhere)
+	float MaxInteractManhattanDistance;
+
+	// Set up player entity
+	virtual void BeginPlay() override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	
 	/** Fires a projectile. */
 	void OnFire();
+
+	void OnInteract();
 
 	/** Handles moving forward/backward */
 	void MoveForward(float Val);

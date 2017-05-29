@@ -15,8 +15,7 @@
 #include "game/agent/htnTasks/InteractTasks.hpp"
 #include "util/CallbackContainer.hpp"
 
-// Testing
-#include "GalaEntityComponents/TestMovementComponent.hpp"
+#include "GalaEntityComponents/UnrealMovementComponent.hpp"
 
 #include "GalavantUnrealMain.generated.h"
 
@@ -27,18 +26,42 @@ class GALAVANTUNREAL_API AGalavantUnrealMain : public AActor
 
 	gv::GalavantMain GalavantMain;
 
+	//
+	// World
+	//
+	gv::WorldStateManager WorldStateManager;
+
+	//
+	// Procedural World Params
+	//
+	// Seed used in all Noise generation
+	UPROPERTY(EditAnywhere)
+	int Seed;
+
+	// Scale of a single tile (the smallest unit the Procedural World will generate). This assumes
+	// the tiles are uniform
+	UPROPERTY(EditAnywhere)
+	float TileScale;
+
+	UPROPERTY(EditAnywhere)
+	float NoiseScale;
+
+	UPROPERTY(EditAnywhere)
+	float TestEntityCreationZ;
+
+	UPROPERTY(EditAnywhere)
+	float PlayerManhattanViewDistance;
+
 	// Entity Components
 	gv::EntityComponentManager EntityComponentSystem;
 
-	TestMovementComponent TestMovementComponentManager;
+	UnrealMovementComponent UnrealMovementComponentManager;
 	gv::PlanComponentManager PlanComponentManager;
 	gv::AgentComponentManager AgentComponentManager;
 	gv::InteractComponentManager InteractComponentManager;
 
-	// World
-	gv::WorldStateManager WorldStateManager;
-
-	// Hierarchical Task Networks
+	//
+	// Agent
 	// TODO: How should this work?
 	gv::FindResourceTask FindResourceTask;
 	gv::MoveToTask MoveToTask;
@@ -49,12 +72,17 @@ class GALAVANTUNREAL_API AGalavantUnrealMain : public AActor
 	gv::NeedDef TestHungerNeed;
 
 	TSubclassOf<AActor> TestFoodActor;
+	TSubclassOf<ACharacter> DefaultAgentCharacter;
 
 	void InitializeGalavant();
 
 public:
 	// Sets default values for this actor's properties
 	AGalavantUnrealMain();
+
+#if WITH_EDITOR
+	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& e);
+#endif
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -66,4 +94,5 @@ public:
 
 private:
 	void InitializeEntityTests();
+	void InitializeProceduralWorld();
 };

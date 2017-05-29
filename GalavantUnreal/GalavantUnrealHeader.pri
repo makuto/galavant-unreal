@@ -8365,6 +8365,7 @@ HEADERS += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ActorEntityManagement.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentAIController.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentCharacter.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ConversionHelpers.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/DynamicTexture.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealCharacter.h" \

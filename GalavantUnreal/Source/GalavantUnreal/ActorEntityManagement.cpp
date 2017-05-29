@@ -5,6 +5,7 @@
 #include "util/Logging.hpp"
 
 #include <vector>
+#include <map>
 #include <iterator>
 
 namespace ActorEntityManager
@@ -16,12 +17,16 @@ struct ActorEntity
 };
 
 typedef std::vector<ActorEntity> ActorEntityList;
-
 ActorEntityList s_ActorEntities;
+
+typedef std::vector<TrackActorLifetimeCallback> TrackActorLifetimeCallbackList;
+typedef std::map<const AActor*, TrackActorLifetimeCallbackList> ActorLifetimeCallbacks;
+ActorLifetimeCallbacks s_ActorLifetimeCallbacks;
 
 void Clear()
 {
 	s_ActorEntities.clear();
+	s_ActorLifetimeCallbacks.clear();
 }
 
 void AddActorEntity(AActor* actor, gv::Entity entity)
@@ -73,6 +78,52 @@ void DestroyEntitiesWithDestroyedActors(UWorld* world,
 
 			s_ActorEntities.resize(lastGoodActorEntityIndex + 1);
 			entityComponentSystem->MarkDestroyEntities(entitiesToDestroy);
+		}
+	}
+}
+
+void TrackActorLifetime(AActor* actor, TrackActorLifetimeCallback callback)
+{
+	if (!actor)
+		return;
+
+	ActorLifetimeCallbacks::iterator findIt = s_ActorLifetimeCallbacks.find(actor);
+	if (findIt != s_ActorLifetimeCallbacks.end())
+		findIt->second.push_back(callback);
+	else
+		s_ActorLifetimeCallbacks[actor] = {callback};
+}
+
+void UpdateNotifyOnActorDestroy(UWorld* world)
+{
+	if (!world)
+		return;
+
+	const TArray<class ULevel*>& levels = world->GetLevels();
+
+	for (const ULevel* level : levels)
+	{
+		if (!level)
+			continue;
+
+		for (const AActor* actor : level->Actors)
+		{
+			if (!actor)
+				continue;
+			
+			if (actor->IsPendingKillPending())
+			{
+				ActorLifetimeCallbacks::iterator findIt =
+				    s_ActorLifetimeCallbacks.find(actor);
+				if (findIt == s_ActorLifetimeCallbacks.end())
+					continue;
+
+				for (TrackActorLifetimeCallback callbackOnDestroy : findIt->second)
+					callbackOnDestroy(actor);
+
+				// The actor has been removed, so there's no reason to track its lifetime
+				s_ActorLifetimeCallbacks.erase(findIt);
+			}
 		}
 	}
 }

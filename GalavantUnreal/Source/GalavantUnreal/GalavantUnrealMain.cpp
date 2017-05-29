@@ -11,8 +11,10 @@
 #include "GalavantUnrealLog.h"
 
 #include "world/WorldResourceLocator.hpp"
+#include "world/ProceduralWorld.hpp"
 #include "entityComponentSystem/EntityTypes.hpp"
 #include "game/agent/Needs.hpp"
+#include "game/EntityLevelOfDetail.hpp"
 #include "ai/htn/HTNTaskDb.hpp"
 
 static GalavantUnrealLog<plog::FuncMessageFormatter> g_GalavantUnrealLogAppender;
@@ -24,35 +26,49 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if
 	// you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	// Sets this function to hipri and all prerequisites recursively
+	// Sets this function to hipri and all prerequisites recursively (we want this because we need
+	// to tick before everything else)
 	PrimaryActorTick.SetPriorityIncludingPrerequisites(true);
 
-	static ConstructorHelpers::FClassFinder<ACharacter> AgentCharacterBPClass(
-	    TEXT("Pawn'/Game/Blueprints/AgentCharacter1_Blueprint.AgentCharacter1_Blueprint_C'"));
-	if (AgentCharacterBPClass.Class != nullptr)
+	// Find classes needed for various things
 	{
-		TestMovementComponentManager.DefaultCharacter = AgentCharacterBPClass.Class;
-	}
-	else
-	{
-		LOGE << "Agent Character Blueprint is NULL!";
-		TestMovementComponentManager.DefaultCharacter = AAgentCharacter::StaticClass();
+		static ConstructorHelpers::FClassFinder<ACharacter> AgentCharacterBPClass(
+		    TEXT("Pawn'/Game/Blueprints/AgentCharacter1_Blueprint.AgentCharacter1_Blueprint_C'"));
+		if (AgentCharacterBPClass.Class != nullptr)
+		{
+			DefaultAgentCharacter = AgentCharacterBPClass.Class;
+		}
+		else
+		{
+			LOGE << "Agent Character Blueprint is NULL!";
+			DefaultAgentCharacter = AAgentCharacter::StaticClass();
+		}
+
+		static ConstructorHelpers::FClassFinder<AActor> FoodPlaceholderBPClass(
+		    TEXT("Actor'/Game/Blueprints/FoodPlaceholder_Pickup.FoodPlaceholder_Pickup_C'"));
+		if (FoodPlaceholderBPClass.Class != nullptr)
+			TestFoodActor = FoodPlaceholderBPClass.Class;
+		else
+		{
+			LOGE << "Food Placeholder Blueprint is NULL!";
+			TestFoodActor = AActor::StaticClass();
+		}
 	}
 
-	static ConstructorHelpers::FClassFinder<AActor> FoodPlaceholderBPClass(
-	    TEXT("Actor'/Game/Blueprints/FoodPlaceholder_Pickup.FoodPlaceholder_Pickup_C'"));
-	if (FoodPlaceholderBPClass.Class != nullptr)
-		TestFoodActor = FoodPlaceholderBPClass.Class;
-	else
+	// Set defaults for properties
 	{
-		LOGE << "Food Placeholder Blueprint is NULL!";
-		TestFoodActor = AActor::StaticClass();
+		Seed = 5138008;
+		TileScale = 120.f;
+		NoiseScale = 1.f;
+		TestEntityCreationZ = 100.f;
+		PlayerManhattanViewDistance = 10000.f;
 	}
+
+	InitializeProceduralWorld();
 }
 
 void AGalavantUnrealMain::InitializeEntityTests()
 {
-	float entityZSpawn = 100.f;
 	// Create a couple test entities
 	int numTestEntities = 20;
 	gv::EntityList testEntities;
@@ -61,7 +77,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 
 	// Add Movement components to all of them
 	{
-		TestMovementComponent::TestMovementComponentList newEntityMovementComponents(
+		UnrealMovementComponent::UnrealMovementComponentList newEntityMovementComponents(
 		    numTestEntities);
 
 		float spacing = 500.f;
@@ -70,13 +86,16 @@ void AGalavantUnrealMain::InitializeEntityTests()
 		{
 			newEntityMovementComponents[i].entity = (*it);
 			newEntityMovementComponents[i].data.ResourceType = gv::WorldResourceType::Agent;
-			newEntityMovementComponents[i].data.Character = nullptr;
-			newEntityMovementComponents[i].data.WorldPosition.Set(0.f, i * spacing, entityZSpawn);
+			newEntityMovementComponents[i].data.SpawnParams.CharacterToSpawn =
+			    DefaultAgentCharacter;
+			newEntityMovementComponents[i].data.SpawnParams.OverrideSpawnZ = TestEntityCreationZ;
+			newEntityMovementComponents[i].data.WorldPosition.Set(0.f, i * spacing,
+			                                                      TestEntityCreationZ);
 			newEntityMovementComponents[i].data.GoalManDistanceTolerance = 600.f;
 			newEntityMovementComponents[i].data.MaxSpeed = 500.f;
 		}
 
-		TestMovementComponentManager.SubscribeEntities(newEntityMovementComponents);
+		UnrealMovementComponentManager.SubscribeEntities(newEntityMovementComponents);
 	}
 
 	// Setup agent components for all of them and give them a need
@@ -154,7 +173,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 		testFoodEntities.reserve(numFood);
 		EntityComponentSystem.GetNewEntities(testFoodEntities, numFood);
 
-		TestMovementComponent::TestMovementComponentList newFood(numFood);
+		UnrealMovementComponent::UnrealMovementComponentList newFood(numFood);
 		gv::PickupRefList newPickups;
 		newPickups.reserve(numFood);
 		InteractComponentManager.CreatePickups(testFoodEntities, newPickups);
@@ -166,18 +185,14 @@ void AGalavantUnrealMain::InitializeEntityTests()
 		{
 			// Movement component
 			{
-				FVector location(-2000.f, i * spacing, entityZSpawn);
-				FRotator defaultRotation(0.f, 0.f, 0.f);
-				FActorSpawnParameters spawnParams;
+				FVector location(-2000.f, i * spacing, TestEntityCreationZ);
 
 				newFood[i].entity = (*it);
 				newFood[i].data.WorldPosition.Set(location.X, location.Y, location.Z);
 				newFood[i].data.ResourceType = gv::WorldResourceType::Food;
 
-				newFood[i].data.Character = nullptr;
-				newFood[i].data.Actor = (AActor*)GetWorld()->SpawnActor<AActor>(
-				    TestFoodActor, location, defaultRotation, spawnParams);
-				ActorEntityManager::AddActorEntity(newFood[i].data.Actor, (*it));
+				newFood[i].data.SpawnParams.ActorToSpawn = TestFoodActor;
+				newFood[i].data.SpawnParams.OverrideSpawnZ = TestEntityCreationZ;
 			}
 
 			// Pickup component
@@ -187,8 +202,27 @@ void AGalavantUnrealMain::InitializeEntityTests()
 			}
 		}
 
-		TestMovementComponentManager.SubscribeEntities(newFood);
+		UnrealMovementComponentManager.SubscribeEntities(newFood);
 	}
+}
+
+void AGalavantUnrealMain::InitializeProceduralWorld()
+{
+	gv::ProceduralWorld::ProceduralWorldParams& Params =
+	    gv::ProceduralWorld::GetCurrentActiveWorldParams();
+
+	Params.Seed = Seed;
+
+	for (int i = 0; i < 3; i++)
+		Params.WorldCellTileSize[i] = TileScale;
+
+	// Hardcoded noise values because I won't be changing these often
+	Params.ScaledNoiseParams.lowBound = 0.f;
+	Params.ScaledNoiseParams.highBound = 255.f;
+	Params.ScaledNoiseParams.octaves = 10;
+	Params.ScaledNoiseParams.scale = NoiseScale;
+	Params.ScaledNoiseParams.persistence = 0.55f;
+	Params.ScaledNoiseParams.lacunarity = 2.f;
 }
 
 void AGalavantUnrealMain::InitializeGalavant()
@@ -200,27 +234,35 @@ void AGalavantUnrealMain::InitializeGalavant()
 		LOGI << "Galavant Log Initialized";
 	}
 
+	InitializeProceduralWorld();
+
 	gv::WorldResourceLocator::ClearResources();
 
-	TestMovementComponentManager.Initialize(GetWorld(), &TaskEventCallbacks);
-
+	// Initialize Entity Components
 	{
-		PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
-		PlanComponentManager.DebugPrint = false;
-	}
+		UnrealMovementComponentManager.Initialize(GetWorld(), &TaskEventCallbacks);
 
-	{
-		AgentComponentManager.Initialize(&PlanComponentManager);
-		AgentComponentManager.DebugPrint = true;
-	}
+		{
+			PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
+			PlanComponentManager.DebugPrint = false;
+		}
 
-	EntityComponentSystem.AddComponentManager(&TestMovementComponentManager);
-	EntityComponentSystem.AddComponentManager(&PlanComponentManager);
-	EntityComponentSystem.AddComponentManager(&AgentComponentManager);
+		{
+			AgentComponentManager.Initialize(&PlanComponentManager);
+			AgentComponentManager.DebugPrint = true;
+		}
+
+		EntityComponentSystem.AddComponentManager(&UnrealMovementComponentManager);
+		EntityComponentSystem.AddComponentManager(&PlanComponentManager);
+		EntityComponentSystem.AddComponentManager(&AgentComponentManager);
+		// TODO: Figure out these ComponentManager type shenanigans
+		EntityComponentSystem.AddComponentManagerOfType(gv::ComponentType::Interact,
+		                                                &InteractComponentManager);
+	}
 
 	// Initialize Tasks
 	{
-		MoveToTask.Initialize(&TestMovementComponentManager);
+		MoveToTask.Initialize(&UnrealMovementComponentManager);
 		GetResourceTask.Initialize(&FindResourceTask, &MoveToTask);
 		InteractPickupTask.Initialize(&InteractComponentManager);
 
@@ -233,17 +275,34 @@ void AGalavantUnrealMain::InitializeGalavant()
 		Htn::TaskDb::AddTask(InteractPickupTask.GetTask(), Htn::TaskName::InteractPickup);
 	}
 
-	InitializeEntityTests();
+	// Initialize test levels
+	{
+		InitializeEntityTests();
+	}
+
+	// Initialize LOD settings
+	{
+		gv::EntityLOD::g_EntityLODSettings.PlayerManhattanViewDistance =
+		    PlayerManhattanViewDistance;
+	}
 
 	LOGI << "Galavant Initialized";
 }
+
+#if WITH_EDITOR
+void AGalavantUnrealMain::PostEditChangeProperty(struct FPropertyChangedEvent& e)
+{
+	InitializeProceduralWorld();
+
+	Super::PostEditChangeProperty(e);
+}
+#endif
 
 // Called when the game starts or when spawned
 void AGalavantUnrealMain::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Should this be here or in the constructor?
 	InitializeGalavant();
 }
 
@@ -252,9 +311,14 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	UWorld* world = GetWorld();
+
 	// Make sure the Entity Component System knows if an Actor associated with an Entity has been
-	// destroyed. Component Managers should be able to trust that their Subscribers have valid data
-	ActorEntityManager::DestroyEntitiesWithDestroyedActors(GetWorld(), &EntityComponentSystem);
+	// destroyed. Component Managers should be able to trust that their Subscribers have valid data.
+	// This wouldn't be needed if Unreal would stop killing our Actors for strange reasons or if I
+	// added a ECS hookup to the AActor base class
+	ActorEntityManager::UpdateNotifyOnActorDestroy(world);
+	ActorEntityManager::DestroyEntitiesWithDestroyedActors(world, &EntityComponentSystem);
 
 	// Destroy entities now because Unreal might have destroyed actors, so we don't want our code to
 	// break not knowing that
@@ -264,7 +328,7 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 
 	AgentComponentManager.Update(DeltaTime);
 	PlanComponentManager.Update(DeltaTime);
-	TestMovementComponentManager.Update(DeltaTime);
+	UnrealMovementComponentManager.Update(DeltaTime);
 }
 
 void AGalavantUnrealMain::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -273,4 +337,5 @@ void AGalavantUnrealMain::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	EntityComponentSystem.DestroyAllEntities();
 	LOGI << "Destroyed all entities";
 	ActorEntityManager::Clear();
+	gv::WorldResourceLocator::ClearResources();
 }

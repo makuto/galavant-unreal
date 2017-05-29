@@ -7,7 +7,14 @@
 #include "Animation/AnimInstance.h"
 #include "GameFramework/InputSettings.h"
 
+#include "ConversionHelpers.h"
 #include "HUDMinimapActor.h"
+
+#include "util/Logging.hpp"
+#include "entityComponentSystem/EntityComponentManager.hpp"
+#include "game/agent/AgentComponentManager.hpp"
+#include "game/InteractComponentManager.hpp"
+#include "entityComponentSystem/EntitySharedData.hpp"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -46,7 +53,7 @@ AGalavantUnrealFPCharacter::AGalavantUnrealFPCharacter()
 	/*FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
 	                                          EAttachmentRule::SnapToTarget,
 	                                          EAttachmentRule::SnapToTarget, false);*/
-	//FP_Gun->AttachToComponent(Mesh1P, attachmentRules, TEXT("GripPoint"));
+	// FP_Gun->AttachToComponent(Mesh1P, attachmentRules, TEXT("GripPoint"));
 	FP_Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
 
 	// Default offset from the character location for projectiles to spawn
@@ -61,6 +68,98 @@ AGalavantUnrealFPCharacter::AGalavantUnrealFPCharacter()
 
 	// Note: The ProjectileClass and the skeletal mesh/anim blueprints for Mesh1P are set in the
 	// derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	MaxInteractManhattanDistance = 600.f;
+}
+
+void AGalavantUnrealFPCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Setup player entity
+	if (!PlayerEntity)
+	{
+		gv::EntityComponentManager* entityComponentManager =
+		    gv::EntityComponentManager::GetSingleton();
+		if (!entityComponentManager)
+			return;
+
+		gv::EntityList newEntities;
+		entityComponentManager->GetNewEntities(newEntities, 1);
+		PlayerEntity = newEntities[0];
+
+		// Setup player position
+		{
+			USceneComponent* sceneComponent = GetRootComponent();
+			FVector trueWorldPosition;
+			if (sceneComponent)
+				trueWorldPosition = sceneComponent->GetComponentLocation();
+			PlayerPosition = ToPosition(trueWorldPosition);
+			gv::EntityPlayerRegisterPosition(PlayerEntity, &PlayerPosition);
+		}
+
+		// Setup components
+		{
+			gv::AgentComponentManager* agentComponentManager =
+			    gv::GetComponentManagerForType<gv::AgentComponentManager>(gv::ComponentType::Agent);
+			if (!agentComponentManager)
+				return;
+			gv::AgentComponentManager::AgentComponentList newAgentComponents(1);
+
+			newAgentComponents[0].entity = PlayerEntity;
+
+			// TODO: This is horrible, remove
+			{
+				// Hunger Need
+				{
+					PlayerHungerNeed.Type = gv::NeedType::Hunger;
+					PlayerHungerNeed.Name = "PlayerHunger";
+					PlayerHungerNeed.UpdateRate = 10.f;
+					PlayerHungerNeed.AddPerUpdate = 10.f;
+
+					// Hunger Need Triggers
+					{
+						gv::NeedLevelTrigger deathByStarvation;
+						deathByStarvation.GreaterThanLevel = true;
+						deathByStarvation.Level = 300.f;
+						deathByStarvation.DieNow = true;
+						PlayerHungerNeed.LevelTriggers.push_back(deathByStarvation);
+					}
+				}
+			}
+			gv::Need hungerNeed;
+			hungerNeed.Def = &PlayerHungerNeed;
+			newAgentComponents[0].data.Needs.push_back(hungerNeed);
+
+			agentComponentManager->SubscribeEntities(newAgentComponents);
+		}
+	}
+}
+
+void AGalavantUnrealFPCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	// Remove the position we were tracking
+	gv::EntityPlayerUnregisterPosition();
+
+	gv::EntityComponentManager* entityComponentManager = gv::EntityComponentManager::GetSingleton();
+	if (entityComponentManager)
+	{
+		gv::EntityList entitiesToDestroy = {PlayerEntity};
+		entityComponentManager->MarkDestroyEntities(entitiesToDestroy);
+	}
+}
+
+void AGalavantUnrealFPCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	USceneComponent* sceneComponent = GetRootComponent();
+	FVector trueWorldPosition;
+	if (sceneComponent)
+		trueWorldPosition = sceneComponent->GetComponentLocation();
+	// Updating PlayerPosition here updates it for anyone watching
+	PlayerPosition = ToPosition(trueWorldPosition);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -92,6 +191,12 @@ void AGalavantUnrealFPCharacter::SetupPlayerInputComponent(class UInputComponent
 	InputComponent->BindAxis("TurnRate", this, &AGalavantUnrealFPCharacter::TurnAtRate);
 	InputComponent->BindAxis("LookUp", this, &AGalavantUnrealFPCharacter::AddControllerPitchInput);
 	InputComponent->BindAxis("LookUpRate", this, &AGalavantUnrealFPCharacter::LookUpAtRate);
+
+	// Galavant-specific bindings
+	{
+		InputComponent->BindAction("Interact", IE_Pressed, this,
+		                           &AGalavantUnrealFPCharacter::OnInteract);
+	}
 }
 
 void AGalavantUnrealFPCharacter::OnFire()
@@ -130,6 +235,30 @@ void AGalavantUnrealFPCharacter::OnFire()
 	    }
 	}
 	*/
+}
+
+void AGalavantUnrealFPCharacter::OnInteract()
+{
+	LOGD << "Player interacting!";
+	// TODO: Make interact system work based on proximity
+	USceneComponent* sceneComponent = GetRootComponent();
+	FVector trueWorldPosition = sceneComponent->GetComponentLocation();
+	gv::Position worldPosition(ToPosition(trueWorldPosition));
+	float manhattanTo = 0.f;
+	gv::WorldResourceLocator::Resource* nearestFood =
+	    gv::WorldResourceLocator::FindNearestResource(gv::WorldResourceType::Food, worldPosition,
+	                                                  /*allowSameLocation*/ true, manhattanTo);
+	if (nearestFood && manhattanTo < MaxInteractManhattanDistance)
+	{
+		gv::InteractComponentManager* interactComponentManager =
+		    gv::GetComponentManagerForType<gv::InteractComponentManager>(
+		        gv::ComponentType::Interact);
+
+		if (interactComponentManager)
+		{
+			interactComponentManager->PickupDirect(PlayerEntity, nearestFood->entity);
+		}
+	}
 }
 
 void AGalavantUnrealFPCharacter::BeginTouch(const ETouchIndex::Type FingerIndex,

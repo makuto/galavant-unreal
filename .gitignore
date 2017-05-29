@@ -61,5 +61,9 @@ GalavantUnreal/DerivedDataCache/*
 GalavantUnreal/.kdev4/*
 *.kdev4
 
-# Third party libraries (TODO: Figure out how best to do this)
+# Third party libraries (TODO: Figure out how best to do this; maybe submodules?)
 GalavantUnreal/ThirdParty/*
+
+# Ignore large assets (TODO: Figure out what to do once these are actually used, esp because the 
+#                              license might be picky about how I share it)
+GalavantUnreal/Content/MedievalTown/*

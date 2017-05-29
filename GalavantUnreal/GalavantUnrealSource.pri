@@ -6219,6 +6219,7 @@ SOURCES += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ActorEntityManagement.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentAIController.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentCharacter.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ConversionHelpers.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/DynamicTexture.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealCharacter.cpp" \
@@ -6234,6 +6235,6 @@ SOURCES += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunk.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunkManager.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ThirdPersonCharacter.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalaEntityComponents/TestMovementComponent.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalaEntityComponents/UnrealMovementComponent.cpp" \
  
 
