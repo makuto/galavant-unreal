@@ -76,6 +76,8 @@ void AGalavantUnrealFPCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	LOGI << "Initializing Player";
+
 	// Setup player entity
 	if (!PlayerEntity)
 	{
@@ -131,9 +133,12 @@ void AGalavantUnrealFPCharacter::BeginPlay()
 			hungerNeed.Def = &PlayerHungerNeed;
 			newAgentComponents[0].data.Needs.push_back(hungerNeed);
 
+			LOGD << "Registering Player AgentComponent";
 			agentComponentManager->SubscribeEntities(newAgentComponents);
 		}
 	}
+
+	LOGI << "Initializing Player done";
 }
 
 void AGalavantUnrealFPCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -256,7 +261,7 @@ void AGalavantUnrealFPCharacter::OnInteract()
 
 		if (interactComponentManager)
 		{
-			interactComponentManager->PickupDirect(PlayerEntity, nearestFood->entity);
+			interactComponentManager->PickupDirect(nearestFood->entity, PlayerEntity);
 		}
 	}
 }

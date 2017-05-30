@@ -58,6 +58,7 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 		float goalManDistanceTolerance = currentComponent->data.GoalManDistanceTolerance;
 		FVector trueWorldPosition;
 		gv::Position targetPosition;
+		bool shouldActorExist = gv::EntityLOD::ShouldRenderForPlayer(worldPosition);
 		bool moveActor = false;
 
 		USceneComponent* sceneComponent = nullptr;
@@ -69,18 +70,24 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 		else if (currentCharacter)
 			sceneComponent = currentCharacter->GetRootComponent();
 
-		if (!sceneComponent)
+		if (!sceneComponent && shouldActorExist)
 		{
-			LOGD << "Entity " << currentComponent->entity
-			     << " detected with no SceneComponent; was the actor destroyed? Unsubscribing...";
-			entitiesToUnsubscribe.push_back(currentComponent->entity);
+			LOGD << "Entity " << currentComponent->entity << " detected with no SceneComponent; "
+			                                                 "was the actor destroyed? It should "
+			                                                 "be respawned later...";
+
+			// If the actor/character has been destroyed for some reason, make sure we reset these
+			// so it'll be spawned. All actors/characters should have scene components
+			currentActor = nullptr;
+			currentCharacter = nullptr;
+			// entitiesToUnsubscribe.push_back(currentComponent->entity);
 			continue;
 		}
 		else
 			moveActor = true;
 
 		// World position is always superceded by the actual Actor position
-		if (moveActor)
+		if (moveActor && sceneComponent)
 		{
 			// TODO: This motherfucker is still crashing
 			trueWorldPosition = sceneComponent->GetComponentLocation();
@@ -90,8 +97,7 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 			trueWorldPosition = ToFVector(worldPosition);
 
 		// Destroy the actor if we are far away
-		if (!gv::EntityLOD::ShouldRenderForPlayer(worldPosition) &&
-		    (currentActor || currentCharacter))
+		if (!shouldActorExist && (currentActor || currentCharacter))
 		{
 			if (currentActor)
 				currentActor->Destroy();
@@ -99,6 +105,8 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 				currentCharacter->Destroy();
 
 			currentActor = currentCharacter = nullptr;
+
+			moveActor = false;
 
 			LOGD << "Entity " << currentComponent->entity
 			     << " destroyed its actor because it shouldn't be rendered to the player";
@@ -284,6 +292,7 @@ void UnrealMovementComponent::SpawnActorIfNecessary(
 		FVector position(ToFVector(component->data.WorldPosition));
 		FActorSpawnParameters spawnParams;
 
+		// TODO: Store last known good position
 		if (component->data.SpawnParams.OverrideSpawnZ)
 			position.Z = component->data.SpawnParams.OverrideSpawnZ;
 
@@ -334,7 +343,7 @@ void UnrealMovementComponent::OnActorDestroyed(const AActor* actor)
 		if (currentComponent->data.Actor == actor || currentComponent->data.Character == actor)
 		{
 			LOGD << "Entity " << currentComponent->entity << " had its actor " << actor
-			     << " destroyed against its will";
+			     << " destroyed (possibly against its will)";
 			currentComponent->data.Actor = nullptr;
 			currentComponent->data.Character = nullptr;
 

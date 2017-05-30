@@ -99,32 +99,59 @@ void UpdateNotifyOnActorDestroy(UWorld* world)
 	if (!world)
 		return;
 
-	const TArray<class ULevel*>& levels = world->GetLevels();
+	std::vector<const AActor*> liveActors;
 
-	for (const ULevel* level : levels)
+	const ULevel* level = world->GetCurrentLevel();
+
+	if (!level)
+		return;
+
+	for (const AActor* actor : level->Actors)
 	{
-		if (!level)
+		if (!actor)
 			continue;
 
-		for (const AActor* actor : level->Actors)
+		liveActors.push_back(actor);
+
+		if (actor->IsPendingKillPending())
 		{
-			if (!actor)
+			ActorLifetimeCallbacks::iterator findIt = s_ActorLifetimeCallbacks.find(actor);
+			if (findIt == s_ActorLifetimeCallbacks.end())
 				continue;
-			
-			if (actor->IsPendingKillPending())
+
+			for (TrackActorLifetimeCallback callbackOnDestroy : findIt->second)
+				callbackOnDestroy(actor);
+
+			// The actor has been removed, so there's no reason to track its lifetime
+			s_ActorLifetimeCallbacks.erase(findIt);
+		}
+	}
+
+	// If an actor has been removed before we've had a chance to check IsPendingKillPending(), we
+	// need to make sure we detect it
+	for (ActorLifetimeCallbacks::iterator trackingIt = s_ActorLifetimeCallbacks.begin();
+	     trackingIt != s_ActorLifetimeCallbacks.end();)
+	{
+		bool stillAlive = false;
+		for (const AActor* currentActor : liveActors)
+		{
+			if (trackingIt->first == currentActor)
 			{
-				ActorLifetimeCallbacks::iterator findIt =
-				    s_ActorLifetimeCallbacks.find(actor);
-				if (findIt == s_ActorLifetimeCallbacks.end())
-					continue;
-
-				for (TrackActorLifetimeCallback callbackOnDestroy : findIt->second)
-					callbackOnDestroy(actor);
-
-				// The actor has been removed, so there's no reason to track its lifetime
-				s_ActorLifetimeCallbacks.erase(findIt);
+				stillAlive = true;
+				break;
 			}
 		}
+
+		if (!stillAlive)
+		{
+			for (TrackActorLifetimeCallback callbackOnDestroy : trackingIt->second)
+				callbackOnDestroy(trackingIt->first);
+
+			// The actor has been removed, so there's no reason to track its lifetime
+			trackingIt = s_ActorLifetimeCallbacks.erase(trackingIt);
+		}
+		else
+			++trackingIt;
 	}
 }
 }

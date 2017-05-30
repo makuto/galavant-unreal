@@ -6,6 +6,8 @@
 #include "GalavantUnrealCharacter.h"
 #include "GalavantUnrealFPCharacter.h"
 
+// DEPRECATED; Using AGalavantUnrealMain instead
+
 AGalavantUnrealGameMode::AGalavantUnrealGameMode() : Super()
 {
 	// use our custom PlayerController class

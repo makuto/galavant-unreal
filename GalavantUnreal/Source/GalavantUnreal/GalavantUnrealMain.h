@@ -20,7 +20,7 @@
 #include "GalavantUnrealMain.generated.h"
 
 UCLASS()
-class GALAVANTUNREAL_API AGalavantUnrealMain : public AActor
+class GALAVANTUNREAL_API AGalavantUnrealMain : public AGameMode
 {
 	GENERATED_BODY()
 
@@ -91,6 +91,9 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	virtual void InitGame(const FString& MapName, const FString& Options,
+	                      FString& ErrorMessage) override;
 
 private:
 	void InitializeEntityTests();

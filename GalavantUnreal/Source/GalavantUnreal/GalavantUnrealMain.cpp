@@ -3,6 +3,7 @@
 #include "GalavantUnreal.h"
 #include "GalavantUnrealMain.h"
 
+#include "GalavantUnrealFPCharacter.h"
 #include "AgentCharacter.h"
 #include "ActorEntityManagement.h"
 
@@ -32,26 +33,51 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 
 	// Find classes needed for various things
 	{
-		static ConstructorHelpers::FClassFinder<ACharacter> AgentCharacterBPClass(
-		    TEXT("Pawn'/Game/Blueprints/AgentCharacter1_Blueprint.AgentCharacter1_Blueprint_C'"));
-		if (AgentCharacterBPClass.Class != nullptr)
+		// Player
 		{
-			DefaultAgentCharacter = AgentCharacterBPClass.Class;
-		}
-		else
-		{
-			LOGE << "Agent Character Blueprint is NULL!";
-			DefaultAgentCharacter = AAgentCharacter::StaticClass();
+			// Set default player class to our Blueprinted character
+			static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(
+			    TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
+			         "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));
+			if (PlayerPawnBPClass.Class)
+			{
+				DefaultPawnClass = PlayerPawnBPClass.Class;
+			}
+			else
+			{
+				if (s_LogInitialized)
+					LOGE << "Player Pawn is null!";
+
+				DefaultPawnClass = AGalavantUnrealFPCharacter::StaticClass();
+			}
 		}
 
-		static ConstructorHelpers::FClassFinder<AActor> FoodPlaceholderBPClass(
-		    TEXT("Actor'/Game/Blueprints/FoodPlaceholder_Pickup.FoodPlaceholder_Pickup_C'"));
-		if (FoodPlaceholderBPClass.Class != nullptr)
-			TestFoodActor = FoodPlaceholderBPClass.Class;
-		else
+		// Agent
 		{
-			LOGE << "Food Placeholder Blueprint is NULL!";
-			TestFoodActor = AActor::StaticClass();
+			static ConstructorHelpers::FClassFinder<ACharacter> AgentCharacterBPClass(TEXT(
+			    "Pawn'/Game/Blueprints/AgentCharacter1_Blueprint.AgentCharacter1_Blueprint_C'"));
+			if (AgentCharacterBPClass.Class != nullptr)
+			{
+				DefaultAgentCharacter = AgentCharacterBPClass.Class;
+			}
+			else
+			{
+				LOGE << "Agent Character Blueprint is NULL!";
+				DefaultAgentCharacter = AAgentCharacter::StaticClass();
+			}
+		}
+
+		// Food
+		{
+			static ConstructorHelpers::FClassFinder<AActor> FoodPlaceholderBPClass(
+			    TEXT("Actor'/Game/Blueprints/FoodPlaceholder_Pickup.FoodPlaceholder_Pickup_C'"));
+			if (FoodPlaceholderBPClass.Class != nullptr)
+				TestFoodActor = FoodPlaceholderBPClass.Class;
+			else
+			{
+				LOGE << "Food Placeholder Blueprint is NULL!";
+				TestFoodActor = AActor::StaticClass();
+			}
 		}
 	}
 
@@ -234,6 +260,8 @@ void AGalavantUnrealMain::InitializeGalavant()
 		LOGI << "Galavant Log Initialized";
 	}
 
+	LOGI << "Initializing Galavant...";
+
 	InitializeProceduralWorld();
 
 	gv::WorldResourceLocator::ClearResources();
@@ -298,12 +326,20 @@ void AGalavantUnrealMain::PostEditChangeProperty(struct FPropertyChangedEvent& e
 }
 #endif
 
+void AGalavantUnrealMain::InitGame(const FString& MapName, const FString& Options,
+                                   FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	// It's important that this is in InitGame as opposed to something like BeginPlay() because it
+	// needs to be setup before any Actors run BeginPlay()
+	InitializeGalavant();
+}
+
 // Called when the game starts or when spawned
 void AGalavantUnrealMain::BeginPlay()
 {
 	Super::BeginPlay();
-
-	InitializeGalavant();
 }
 
 // Called every frame
