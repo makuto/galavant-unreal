@@ -10,14 +10,25 @@ class GalavantUnrealLog : public plog::IAppender
 public:
 	virtual void write(const plog::Record& record)
 	{
-		// TODO: Unreal severity
-		//plog::Severity severity = record.getSeverity();
-		//bool IsError = (severity >= plog::fatal && severity <= plog::warning);
-		//ELogVerbosity verbosity = (IsError ? ELogVerbosity::Error : ELogVerbosity::Log);
+		bool IsWarning = (record.getSeverity() == plog::warning);
+		bool IsError = (record.getSeverity() <= plog::error);
 
-		// The UTF8_TO_TCHAR() is very important. Don't move it out of the macro without first
-		// making sure its return has a sensible lifetime
-		UE_LOG(LogGalavantUnreal, Log, TEXT("%s"),
-		       UTF8_TO_TCHAR(Formatter::format(record).c_str()));
+		if (IsError)
+		{
+			// The UTF8_TO_TCHAR() is very important. Don't move it out of the macro without first
+			// making sure its return has a sensible lifetime
+			UE_LOG(LogGalavantUnreal, Error, TEXT("%s"),
+			       UTF8_TO_TCHAR(Formatter::format(record).c_str()));
+		}
+		else if (IsWarning)
+		{
+			UE_LOG(LogGalavantUnreal, Warning, TEXT("%s"),
+			       UTF8_TO_TCHAR(Formatter::format(record).c_str()));
+		}
+		else
+		{
+			UE_LOG(LogGalavantUnreal, Log, TEXT("%s"),
+			       UTF8_TO_TCHAR(Formatter::format(record).c_str()));
+		}
 	}
 };

@@ -235,7 +235,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 void AGalavantUnrealMain::InitializeProceduralWorld()
 {
 	gv::ProceduralWorld::ProceduralWorldParams& Params =
-	    gv::ProceduralWorld::GetCurrentActiveWorldParams();
+	    gv::ProceduralWorld::GetActiveWorldParams();
 
 	Params.Seed = Seed;
 

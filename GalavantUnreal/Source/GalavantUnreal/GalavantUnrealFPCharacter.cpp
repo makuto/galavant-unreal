@@ -136,6 +136,12 @@ void AGalavantUnrealFPCharacter::BeginPlay()
 			LOGD << "Registering Player AgentComponent";
 			agentComponentManager->SubscribeEntities(newAgentComponents);
 		}
+
+		// Register resource as player
+		{
+			gv::WorldResourceLocator::AddResource(gv::WorldResourceType::Player, PlayerEntity,
+			                                      PlayerPosition);
+		}
 	}
 
 	LOGI << "Initializing Player done";
@@ -160,11 +166,16 @@ void AGalavantUnrealFPCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	USceneComponent* sceneComponent = GetRootComponent();
-	FVector trueWorldPosition;
+	gv::Position trueWorldPosition;
 	if (sceneComponent)
-		trueWorldPosition = sceneComponent->GetComponentLocation();
+		trueWorldPosition = ToPosition(sceneComponent->GetComponentLocation());
+
+	// Give ResourceLocator our new position
+	gv::WorldResourceLocator::MoveResource(gv::WorldResourceType::Player, PlayerEntity,
+	                                       PlayerPosition, trueWorldPosition);
+
 	// Updating PlayerPosition here updates it for anyone watching
-	PlayerPosition = ToPosition(trueWorldPosition);
+	PlayerPosition = trueWorldPosition;
 }
 
 //////////////////////////////////////////////////////////////////////////

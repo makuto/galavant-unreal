@@ -16,15 +16,16 @@ class GALAVANTUNREAL_API AHUDMinimapActor : public AActor
 	DynamicTexture MinimapTexture;
 
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent *MinimapMesh;
+	UStaticMeshComponent* MinimapMesh;
 
 	int32 TextureWidth;
 	int32 TextureHeight;
+
 public:
 	// Sets default values for this actor's properties
 	AHUDMinimapActor();
 
-	void UpdateMinimap(FVector& worldPosition);
+	void UpdateMinimap(FVector& worldPosition, FRotator& rotation);
 
 	virtual void PostInitializeComponents() override;
 

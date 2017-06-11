@@ -40,8 +40,7 @@ void drawDebugPointsForPosition(UWorld* world, FVector& position)
 		gv::ProceduralWorld::GetCellTileMapForPosition(cellPosition, &cellTileMap);
 	}
 
-	float meshScale =
-	    gv::ProceduralWorld::GetCurrentActiveWorldParams().WorldCellTileSize[0] * CELL_X;
+	float meshScale = gv::ProceduralWorld::GetActiveWorldParams().WorldCellTileSize[0] * CELL_X;
 
 	for (int y = 0; y < CELL_Y; y++)
 	{
@@ -356,8 +355,7 @@ void ATestPolyVoxChunk::Destroyed()
 void ATestPolyVoxChunk::Construct()
 {
 	FVector worldPosition = SceneComponent->GetComponentLocation();
-	float meshScale =
-	    gv::ProceduralWorld::GetCurrentActiveWorldParams().WorldCellTileSize[0] * CELL_X;
+	float meshScale = gv::ProceduralWorld::GetActiveWorldParams().WorldCellTileSize[0] * CELL_X;
 	bool use3dNoise = Use3dNoise;
 	bool useVoxels = true;
 
@@ -382,9 +380,8 @@ void ATestPolyVoxChunk::Construct()
 		LOGV << "(Voxel) Generation finished\n";
 
 		// Get mesh data from voxel surface mesh and put it in Unreal triangle buffer
-		setSurfaceMeshToRender(
-		    newCell->mesh, &Triangles,
-		    gv::ProceduralWorld::GetCurrentActiveWorldParams().WorldCellTileSize[0]);
+		setSurfaceMeshToRender(newCell->mesh, &Triangles,
+		                       gv::ProceduralWorld::GetActiveWorldParams().WorldCellTileSize[0]);
 
 		// Give the triangles to Unreal Engine
 		GeneratedMesh->SetGeneratedMeshTriangles(Triangles);

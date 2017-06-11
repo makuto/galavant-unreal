@@ -6,6 +6,6 @@
 //#include "EngineMinimal.h"
 #include "Engine.h" // Macoy: Had to do this for UGeneratedMeshComponent :(
 
-DECLARE_LOG_CATEGORY_EXTERN(LogGalavantUnreal, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogGalavantUnreal, All, All);
 
 #endif

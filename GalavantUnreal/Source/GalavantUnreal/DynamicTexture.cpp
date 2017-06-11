@@ -175,7 +175,7 @@ void DynamicTexture::Update()
 
 DynamicTexturePixel* DynamicTexture::GetPixel(int32 row, int32 column)
 {
-	if (!Pixels || row >= Height || column >= Width)
+	if (!Pixels || row >= Height || column >= Width || row < 0 || column < 0)
 		return nullptr;
 
 	return &Pixels[(row * Width) + column];
