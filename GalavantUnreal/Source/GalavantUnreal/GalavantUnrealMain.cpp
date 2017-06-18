@@ -85,7 +85,7 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 	{
 		Seed = 5138008;
 		TileScale = 120.f;
-		NoiseScale = 1.f;
+		NoiseScale = 0.00001f;
 		TestEntityCreationZ = 100.f;
 		PlayerManhattanViewDistance = 10000.f;
 	}

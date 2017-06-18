@@ -16,6 +16,9 @@
 #include <vector>
 #include <stdlib.h>
 
+#include <iostream>  // Delete me
+#include <fstream>   // Delete me
+
 const int CELL_X = WORLD_CELL_X_SIZE;
 const int CELL_Y = WORLD_CELL_Y_SIZE;
 // While WORLD_CELL_Z_SIZE is provided, we're making 3D voxel volumes. We'll coerce the
@@ -167,8 +170,10 @@ public:
 	cell()
 	{
 		LOGV << "Creating volume\n";
-		volData = new PolyVox::SimpleVolume<uint8_t>(PolyVox::Region(
-		    PolyVox::Vector3DInt32(0, 0, 0), PolyVox::Vector3DInt32(CELL_X, CELL_Y, CELL_Z)));
+		// We subtract one here because the region is inclusive, when we really want 0 to size - 1
+		volData = new PolyVox::SimpleVolume<uint8_t>(
+		    PolyVox::Region(PolyVox::Vector3DInt32(0, 0, 0),
+		                    PolyVox::Vector3DInt32(CELL_X - 1, CELL_Y - 1, CELL_Z - 1)));
 		LOGV << "done\n";
 	}
 	~cell()
@@ -194,14 +199,14 @@ public:
 		LOGV << "done\n";
 		LOGV << "Creating surface extrator\n";
 
-		// PolyVox::CubicSurfaceExtractorWithNormals< PolyVox::SimpleVolume<uint8_t> >
-		// surfaceExtractor(volData, volData->getEnclosingRegion(), &mesh);
-		// PolyVox::CubicSurfaceExtractor< PolyVox::SimpleVolume<uint8_t> >
-		// surfaceExtractor(volData, volData->getEnclosingRegion(), &mesh);
-
 		mesh.clear();
 		PolyVox::MarchingCubesSurfaceExtractor<PolyVox::SimpleVolume<uint8_t>> surfaceExtractor(
 		    volData, volData->getEnclosingRegion(), &mesh);
+		/*PolyVox::CubicSurfaceExtractorWithNormals<PolyVox::SimpleVolume<uint8_t>>
+		   surfaceExtractor(
+		    volData, volData->getEnclosingRegion(), &mesh);*/
+		// PolyVox::CubicSurfaceExtractor< PolyVox::SimpleVolume<uint8_t> >
+		// surfaceExtractor(volData, volData->getEnclosingRegion(), &mesh);
 		LOGV << "done\n";
 
 		LOGV << "Executing surface extrator\n";
@@ -355,7 +360,8 @@ void ATestPolyVoxChunk::Destroyed()
 void ATestPolyVoxChunk::Construct()
 {
 	FVector worldPosition = SceneComponent->GetComponentLocation();
-	float meshScale = gv::ProceduralWorld::GetActiveWorldParams().WorldCellTileSize[0] * CELL_X;
+	float meshScale =
+	    gv::ProceduralWorld::GetActiveWorldParams().WorldCellTileSize[0] * (CELL_X - 1);
 	bool use3dNoise = Use3dNoise;
 	bool useVoxels = true;
 
