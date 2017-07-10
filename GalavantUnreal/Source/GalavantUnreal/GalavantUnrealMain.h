@@ -10,7 +10,6 @@
 #include "game/agent/PlanComponentManager.hpp"
 #include "game/agent/AgentComponentManager.hpp"
 #include "game/InteractComponentManager.hpp"
-#include "game/agent/Needs.hpp"
 #include "game/agent/htnTasks/MovementTasks.hpp"
 #include "game/agent/htnTasks/InteractTasks.hpp"
 #include "util/CallbackContainer.hpp"
@@ -68,8 +67,6 @@ class GALAVANTUNREAL_API AGalavantUnrealMain : public AGameMode
 	gv::GetResourceTask GetResourceTask;
 	gv::InteractPickupTask InteractPickupTask;
 	gv::CallbackContainer<Htn::TaskEventCallback> TaskEventCallbacks;
-
-	gv::NeedDef TestHungerNeed;
 
 	TSubclassOf<AActor> TestFoodActor;
 	TSubclassOf<ACharacter> DefaultAgentCharacter;

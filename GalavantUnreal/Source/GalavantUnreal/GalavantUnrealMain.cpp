@@ -17,6 +17,7 @@
 #include "game/agent/Needs.hpp"
 #include "game/EntityLevelOfDetail.hpp"
 #include "ai/htn/HTNTaskDb.hpp"
+#include "util/StringHashing.hpp"
 
 static GalavantUnrealLog<plog::FuncMessageFormatter> g_GalavantUnrealLogAppender;
 static bool s_LogInitialized = false;
@@ -93,6 +94,43 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 	InitializeProceduralWorld();
 }
 
+void InitializeResources()
+{
+	// Hunger Need
+	{
+		static gv::NeedDef TestHungerNeed;
+		TestHungerNeed.Type = gv::NeedType::Hunger;
+		TestHungerNeed.Name = "Hunger";
+		TestHungerNeed.UpdateRate = 10.f;
+		TestHungerNeed.AddPerUpdate = 10.f;
+
+		// Hunger Need Triggers
+		{
+			gv::NeedLevelTrigger lookForFood;
+			lookForFood.GreaterThanLevel = true;
+			lookForFood.Level = 10.f;
+			lookForFood.NeedsResource = true;
+			lookForFood.WorldResource = gv::WorldResourceType::Food;
+			TestHungerNeed.LevelTriggers.push_back(lookForFood);
+
+			gv::NeedLevelTrigger deathByStarvation;
+			deathByStarvation.GreaterThanLevel = true;
+			deathByStarvation.Level = 300.f;
+			deathByStarvation.DieNow = true;
+			TestHungerNeed.LevelTriggers.push_back(deathByStarvation);
+		}
+
+		gv::g_NeedDefDictionary.AddResource(RESKEY("Hunger"), &TestHungerNeed);
+	}
+
+	{
+		// TODO: Remove once defs have a place to go (e.g. ResourceDictionary)
+		static gv::AgentGoalDef s_getResourceGoalDef{gv::AgentGoalDef::GoalType::GetResource,
+		                                             /*NumRetriesIfFailed=*/2};
+		gv::g_AgentGoalDefDictionary.AddResource(RESKEY("GetResource"), &s_getResourceGoalDef);
+	}
+}
+
 void AGalavantUnrealMain::InitializeEntityTests()
 {
 	// Create a couple test entities
@@ -126,32 +164,8 @@ void AGalavantUnrealMain::InitializeEntityTests()
 
 	// Setup agent components for all of them and give them a need
 	{
-		// Hunger Need
-		{
-			TestHungerNeed.Type = gv::NeedType::Hunger;
-			TestHungerNeed.Name = "Hunger";
-			TestHungerNeed.UpdateRate = 10.f;
-			TestHungerNeed.AddPerUpdate = 10.f;
-
-			// Hunger Need Triggers
-			{
-				gv::NeedLevelTrigger lookForFood;
-				lookForFood.GreaterThanLevel = true;
-				lookForFood.Level = 10.f;
-				lookForFood.NeedsResource = true;
-				lookForFood.WorldResource = gv::WorldResourceType::Food;
-				TestHungerNeed.LevelTriggers.push_back(lookForFood);
-
-				gv::NeedLevelTrigger deathByStarvation;
-				deathByStarvation.GreaterThanLevel = true;
-				deathByStarvation.Level = 300.f;
-				deathByStarvation.DieNow = true;
-				TestHungerNeed.LevelTriggers.push_back(deathByStarvation);
-			}
-		}
-
 		gv::Need hungerNeed;
-		hungerNeed.Def = &TestHungerNeed;
+		hungerNeed.Def = gv::g_NeedDefDictionary.GetResource(RESKEY("Hunger"));
 
 		gv::AgentComponentManager::AgentComponentList newAgentComponents(numTestEntities);
 
@@ -261,6 +275,8 @@ void AGalavantUnrealMain::InitializeGalavant()
 	}
 
 	LOGI << "Initializing Galavant...";
+
+	InitializeResources();
 
 	InitializeProceduralWorld();
 
@@ -374,4 +390,6 @@ void AGalavantUnrealMain::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	LOGI << "Destroyed all entities";
 	ActorEntityManager::Clear();
 	gv::WorldResourceLocator::ClearResources();
+	gv::g_NeedDefDictionary.ClearResources();
+	gv::g_AgentGoalDefDictionary.ClearResources();
 }

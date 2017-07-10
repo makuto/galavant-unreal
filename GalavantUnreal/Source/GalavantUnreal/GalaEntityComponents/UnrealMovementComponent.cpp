@@ -330,7 +330,7 @@ void UnrealMovementComponent::SpawnActorIfNecessary(
 	}
 }
 
-// #Callback
+// @Callback: TrackActorLifetimeCallback
 void UnrealMovementComponent::OnActorDestroyed(const AActor* actor)
 {
 	gv::PooledComponentManager<UnrealMovementComponentData>::FragmentedPoolIterator it =

@@ -16,9 +16,6 @@
 #include <vector>
 #include <stdlib.h>
 
-#include <iostream>  // Delete me
-#include <fstream>   // Delete me
-
 const int CELL_X = WORLD_CELL_X_SIZE;
 const int CELL_Y = WORLD_CELL_Y_SIZE;
 // While WORLD_CELL_Z_SIZE is provided, we're making 3D voxel volumes. We'll coerce the
