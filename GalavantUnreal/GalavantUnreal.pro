@@ -2,7 +2,7 @@
 # *DO NOT EDIT*
 
 TEMPLATE = aux
-CONFIG += c++11
+CONFIG += c++14
 CONFIG -= console
 CONFIG -= app_bundle
 CONFIG -= qt

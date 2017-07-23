@@ -19,7 +19,7 @@ struct UpdateTextureRegionsParams
 };
 
 // Send the render command to update the texture
-void UpdateTextureRegions(UpdateTextureRegionsParams params)
+void UpdateTextureRegions(UpdateTextureRegionsParams& params)
 {
 	if (params.Texture && params.Texture->Resource)
 	{

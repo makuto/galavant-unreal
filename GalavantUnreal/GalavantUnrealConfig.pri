@@ -17,6 +17,7 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Source/Developer/AudioFormatOgg/AudioFormatOgg.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Developer/AudioFormatOpus/AudioFormatOpus.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Developer/AutomationController/AutomationController.Build.cs" \
+	"$$unrealRootPath/Engine/Source/Developer/AutomationDriver/AutomationDriver.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Developer/AutomationWindow/AutomationWindow.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Developer/BlankModule/BlankModule.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Developer/BlueprintCompilerCppBackend/BlueprintCompilerCppBackend.Build.cs" \
@@ -112,6 +113,7 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Source/Editor/AnimGraph/AnimGraph.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/AnimationBlueprintEditor/AnimationBlueprintEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/AnimationEditor/AnimationEditor.Build.cs" \
+	"$$unrealRootPath/Engine/Source/Editor/AudioEditor/AudioEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/BehaviorTreeEditor/BehaviorTreeEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/BlueprintGraph/BlueprintGraph.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/Blutility/Blutility.Build.cs" \
@@ -138,8 +140,6 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Source/Editor/FoliageEdit/FoliageEdit.build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/FontEditor/FontEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/GameProjectGeneration/GameProjectGeneration.Build.cs" \
-	"$$unrealRootPath/Engine/Source/Editor/GameplayAbilitiesEditor/GameplayAbilitiesEditor.Build.cs" \
-	"$$unrealRootPath/Engine/Source/Editor/GameplayTagsEditor/GameplayTagsEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/GameplayTasksEditor/GameplayTasksEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/GeometryCacheEd/GeometryCacheEd.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/GeometryMode/GeometryMode.Build.cs" \
@@ -185,8 +185,6 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Source/Editor/SizeMap/SizeMap.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/SkeletalMeshEditor/SkeletalMeshEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/SkeletonEditor/SkeletonEditor.Build.cs" \
-	"$$unrealRootPath/Engine/Source/Editor/SoundClassEditor/SoundClassEditor.Build.cs" \
-	"$$unrealRootPath/Engine/Source/Editor/SoundCueEditor/SoundCueEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/SourceControlWindows/SourceControlWindows.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/StaticMeshEditor/StaticMeshEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Editor/StatsViewer/StatsViewer.Build.cs" \
@@ -253,10 +251,13 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Source/Programs/UnrealPak/UnrealPak.Target.cs" \
 	"$$unrealRootPath/Engine/Source/Programs/UnrealVersionSelector/UnrealVersionSelector.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Programs/UnrealVersionSelector/UnrealVersionSelector.Target.cs" \
+	"$$unrealRootPath/Engine/Source/Programs/UnrealWatchdog/UnrealWatchdog.Build.cs" \
+	"$$unrealRootPath/Engine/Source/Programs/UnrealWatchdog/UnrealWatchdog.Target.cs" \
 	"$$unrealRootPath/Engine/Source/Programs/Windows/BootstrapPackagedGame/BootstrapPackagedGame.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Programs/Windows/BootstrapPackagedGame/BootstrapPackagedGame.Target.cs" \
 	"$$unrealRootPath/Engine/Source/Runtime/AIModule/AIModule.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Runtime/ALAudio/ALAudio.Build.cs" \
+	"$$unrealRootPath/Engine/Source/Runtime/ActorSequence/ActorSequence.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Runtime/Advertising/Advertising/Advertising.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Runtime/Advertising/Android/AndroidAdvertising/AndroidAdvertising.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Runtime/Advertising/IOS/IOSAdvertising/IOSAdvertising.Build.cs" \
@@ -290,7 +291,6 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Source/Runtime/FriendsAndChat/FriendsAndChat.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Runtime/GameLiveStreaming/GameLiveStreaming.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Runtime/GameMenuBuilder/GameMenuBuilder.Build.cs" \
-	"$$unrealRootPath/Engine/Source/Runtime/GameplayAbilities/GameplayAbilities.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Runtime/GameplayTags/GameplayTags.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Runtime/GameplayTasks/GameplayTasks.Build.cs" \
 	"$$unrealRootPath/Engine/Source/Runtime/GeometryCache/GeometryCache.Build.cs" \
@@ -422,7 +422,9 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Plugins/Developer/XCodeSourceCodeAccess/Source/XCodeSourceCodeAccess/XCodeSourceCodeAccess.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Editor/AudioCapture/Source/AudioCapture/AudioCapture.build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Editor/EpicSurvey/Source/EpicSurvey/EpicSurvey.Build.cs" \
-	"$$unrealRootPath/Engine/Plugins/Editor/MacGraphicsSwitching/Source/MacGraphicsSwitching/MacGraphicsSwitching.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Editor/FacialAnimation/Source/FacialAnimation/FacialAnimation.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Editor/FacialAnimation/Source/FacialAnimationEditor/FacialAnimationEditor.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Editor/GameplayTagsEditor/Source/GameplayTagsEditor/GameplayTagsEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Editor/MobileLauncherProfileWizard/Source/MobileLauncherProfileWizard/MobileLauncherProfileWizard.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Editor/PluginBrowser/Source/PluginBrowser/PluginBrowser.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Editor/SpeedTreeImporter/Source/SpeedTreeImporter/SpeedTreeImporter.Build.cs" \
@@ -437,7 +439,7 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Plugins/Experimental/OSVR/Source/OSVR/OSVR.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Experimental/OSVR/Source/OSVRInput/OSVRInput.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Experimental/Phya/Source/Phya/Phya.Build.cs" \
-	"$$unrealRootPath/Engine/Plugins/Experimental/SignificanceManager/Source/SignificanceManager/SignificanceManager.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Experimental/RawInput/Source/RawInput/RawInput.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Experimental/SimpleHMD/Source/SimpleHMD/SimpleHMD.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Experimental/StereoPanorama/Source/StereoPanorama/StereoPanorama.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Experimental/StructBox/Source/StructBox/StructBox.Build.cs" \
@@ -448,12 +450,16 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Plugins/Media/AvfMedia/Source/AvfMediaEditor/AvfMediaEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Media/AvfMedia/Source/AvfMediaFactory/AvfMediaFactory.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Media/MediaPlayerEditor/Source/MediaPlayerEditor/MediaPlayerEditor.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Media/MfMedia/Source/MfMedia/MfMedia.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Media/MfMedia/Source/MfMediaEditor/MfMediaEditor.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Media/MfMedia/Source/MfMediaFactory/MfMediaFactory.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Media/WmfMedia/Source/WmfMedia/WmfMedia.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Media/WmfMedia/Source/WmfMediaEditor/WmfMediaEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Media/WmfMedia/Source/WmfMediaFactory/WmfMediaFactory.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Messaging/MessagingDebugger/Source/MessagingDebugger/MessagingDebugger.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Messaging/TcpMessaging/Source/TcpMessaging/TcpMessaging.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Messaging/UdpMessaging/Source/UdpMessaging/UdpMessaging.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/MovieScene/ActorSequenceEditor/Source/ActorSequenceEditor/ActorSequenceEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/MovieScene/LevelSequenceEditor/Source/LevelSequenceEditor/LevelSequenceEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/MovieScene/MatineeToLevelSequence/Source/MatineeToLevelSequence/MatineeToLevelSequence.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/NetcodeUnitTest/NUTUnrealEngine4/Source/NUTUnrealEngine4/NUTUnrealEngine4.Build.cs" \
@@ -466,6 +472,7 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Plugins/Online/OnlineFramework/Source/Lobby/Lobby.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Online/OnlineFramework/Source/Party/Party.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Online/OnlineFramework/Source/Qos/Qos.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Online/OnlineFramework/Source/Rejoin/Rejoin.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Online/OnlineSubsystem/Source/OnlineSubsystem.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Online/OnlineSubsystemAmazon/Source/OnlineSubsystemAmazon.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Online/OnlineSubsystemFacebook/Source/OnlineSubsystemFacebook.Build.cs" \
@@ -485,17 +492,26 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Plugins/Runtime/Analytics/Flurry/Source/IOSFlurry/Source/IOSFlurry/IOSFlurry.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/AndroidDeviceProfileSelector/Source/AndroidDeviceProfileSelector/AndroidDeviceProfileSelector.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/AndroidMoviePlayer/Source/AndroidMoviePlayer/AndroidMoviePlayer.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/AndroidPermission/Source/AndroidPermission/AndroidPermission.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/AppleMoviePlayer/Source/AppleMoviePlayer/AppleMoviePlayer.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/ArchVisCharacter/Source/ArchVisCharacter/ArchVisCharacter.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/CableComponent/Source/CableComponent/CableComponent.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/CustomMeshComponent/Source/CustomMeshComponent/CustomMeshComponent.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/ExampleDeviceProfileSelector/Source/ExampleDeviceProfileSelector/ExampleDeviceProfileSelector.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilities/GameplayAbilities.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/GameplayAbilities/Source/GameplayAbilitiesEditor/GameplayAbilitiesEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/GearVR/Source/GearVR/GearVR.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/GoogleVR/GoogleVRController/Source/GoogleVRController/GoogleVRController.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/GoogleVR/GoogleVRHMD/Source/GoogleVRHMD/GoogleVRHMD.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/GoogleVR/GoogleVRTransition2D/Source/GoogleVRTransition2D/GoogleVRTransition2D.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/IOSDeviceProfileSelector/Source/IOSDeviceProfileSelector/IOSDeviceProfileSelector.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/LeapMotion/Source/LeapMotion/LeapMotion.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/LinuxDeviceProfileSelector/Source/LinuxDeviceProfileSelector/LinuxDeviceProfileSelector.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/LocationServicesAndroidImpl/Source/LocationServicesAndroidEditor/LocationServicesAndroidEditor.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/LocationServicesAndroidImpl/Source/LocationServicesAndroidImpl/LocationServicesAndroidImpl.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/LocationServicesBPLibrary/Source/LocationServicesBPLibrary/LocationServicesBPLibrary.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/LocationServicesIOSImpl/Source/LocationServicesIOSEditor/LocationServicesIOSEditor.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/LocationServicesIOSImpl/Source/LocationServicesIOSImpl/LocationServicesIOSImpl.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/MIDIDevice/Source/MIDIDevice/MIDIDevice.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/MobilePatchingUtils/Source/MobilePatchingUtils/MobilePatchingUtils.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/Nvidia/Ansel/Source/Ansel/Ansel.Build.cs" \
@@ -503,9 +519,13 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Plugins/Runtime/OculusInput/Source/OculusInput.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/OculusLibrary/Source/OculusLibrary/OculusLibrary.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/OculusRift/Source/OculusRift/OculusRift.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/OptionalMobileFeaturesBPLibrary/Source/OptionalMobileFeaturesBPLibrary/OptionalMobileFeaturesBPLibrary.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/PacketHandlers/CompressionComponents/Oodle/Source/OodleHandlerComponent/OodleHandlerComponent.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/PhysXVehicles/Source/PhysXVehicles/PhysXVehicles.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/PhysXVehicles/Source/PhysXVehiclesEditor/PhysXVehiclesEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/ProceduralMeshComponent/Source/ProceduralMeshComponent/ProceduralMeshComponent.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/ProceduralMeshComponent/Source/ProceduralMeshComponentEditor/ProceduralMeshComponentEditor.Build.cs" \
+	"$$unrealRootPath/Engine/Plugins/Runtime/SignificanceManager/Source/SignificanceManager/SignificanceManager.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/SoundMod/Source/SoundMod/SoundMod.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/SoundMod/Source/SoundModImporter/SoundModImporter.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Runtime/SoundVisualizations/Source/SoundVisualizations/SoundVisualizations.Build.cs" \

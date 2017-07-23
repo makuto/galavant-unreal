@@ -61,6 +61,7 @@ class GALAVANTUNREAL_API AGalavantUnrealMain : public AGameMode
 
 	//
 	// Agent
+	//
 	// TODO: How should this work?
 	gv::FindResourceTask FindResourceTask;
 	gv::MoveToTask MoveToTask;

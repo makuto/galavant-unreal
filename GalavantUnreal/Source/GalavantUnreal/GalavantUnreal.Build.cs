@@ -17,6 +17,7 @@ public class GalavantUnreal : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] {"CustomMeshComponent"});
 		PrivateIncludePathModuleNames.AddRange(new string[] {"CustomMeshComponent"});
 
+
 		////////////////////////
 		// External libraries //
 		////////////////////////
@@ -28,8 +29,7 @@ public class GalavantUnreal : ModuleRules
 		var includes = new string[] {"../../ThirdParty/galavant/src",
 			"../../ThirdParty/galavant/src/thirdPartyWrapper",
 			"../../ThirdParty/polyvox/library/PolyVoxCore/include",
-			"../../ThirdParty/polyvox/library/PolyVoxUtil/include",
-			"../../ThirdParty/galavant/thirdParty/plog/include"};
+			"../../ThirdParty/polyvox/library/PolyVoxUtil/include"};
 
 		var libs = new string[] {"../../ThirdParty/galavant/lib/libGalavant.a",
 			"../../ThirdParty/galavant/lib/thirdPartyWrapper/libGalaThirdPartyWrapper.a",

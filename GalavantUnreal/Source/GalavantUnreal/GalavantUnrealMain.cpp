@@ -8,7 +8,6 @@
 #include "ActorEntityManagement.h"
 
 #include "util/Logging.hpp"
-#include "plog/Log.h"
 #include "GalavantUnrealLog.h"
 
 #include "world/WorldResourceLocator.hpp"
@@ -19,8 +18,7 @@
 #include "ai/htn/HTNTaskDb.hpp"
 #include "util/StringHashing.hpp"
 
-static GalavantUnrealLog<plog::FuncMessageFormatter> g_GalavantUnrealLogAppender;
-static bool s_LogInitialized = false;
+static gv::Logging::Logger s_UnrealLogger(gv::Logging::Severity::debug, &UnrealLogOutput);
 
 // Sets default values
 AGalavantUnrealMain::AGalavantUnrealMain()
@@ -46,9 +44,7 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 			}
 			else
 			{
-				if (s_LogInitialized)
-					LOGE << "Player Pawn is null!";
-
+				LOGE << "Player Pawn is null!";
 				DefaultPawnClass = AGalavantUnrealFPCharacter::StaticClass();
 			}
 		}
@@ -124,7 +120,6 @@ void InitializeResources()
 	}
 
 	{
-		// TODO: Remove once defs have a place to go (e.g. ResourceDictionary)
 		static gv::AgentGoalDef s_getResourceGoalDef{gv::AgentGoalDef::GoalType::GetResource,
 		                                             /*NumRetriesIfFailed=*/2};
 		gv::g_AgentGoalDefDictionary.AddResource(RESKEY("GetResource"), &s_getResourceGoalDef);
@@ -267,13 +262,6 @@ void AGalavantUnrealMain::InitializeProceduralWorld()
 
 void AGalavantUnrealMain::InitializeGalavant()
 {
-	if (!s_LogInitialized)
-	{
-		plog::init(plog::debug, &g_GalavantUnrealLogAppender);
-		s_LogInitialized = true;
-		LOGI << "Galavant Log Initialized";
-	}
-
 	LOGI << "Initializing Galavant...";
 
 	InitializeResources();
