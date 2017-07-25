@@ -175,31 +175,6 @@ void AGalavantUnrealMain::InitializeEntityTests()
 		AgentComponentManager.SubscribeEntities(newAgentComponents);
 	}
 
-	// Test Plan component by adding one to some of them, making their goal finding food
-	/* Commented because this is no longer needed - AgentComponentManager will add plans based on
-	needs
-	{
-	    // Task for each agent: find a food
-	    Htn::Parameter resourceToFind;
-	    resourceToFind.IntValue = gv::WorldResourceType::Food;
-	    resourceToFind.Type = Htn::Parameter::ParamType::Int;
-	    Htn::ParameterList parameters = {resourceToFind};
-	    Htn::TaskCall findAgentCall{testGetResourceTask.GetTask(), parameters};
-	    Htn::TaskCallList findAgentTasks = {findAgentCall};
-
-	    gv::PlanComponentManager::PlanComponentList newPlanComponents(numTestEntities);
-
-	    int currentEntityIndex = 0;
-	    for (gv::PooledComponent<gv::PlanComponentData>& currentPlanComponent : newPlanComponents)
-	    {
-	        currentPlanComponent.entity = testEntities[currentEntityIndex++];
-	        currentPlanComponent.data.Tasks.insert(currentPlanComponent.data.Tasks.end(),
-	                                               findAgentTasks.begin(), findAgentTasks.end());
-	    }
-
-	    PlanComponentManager.SubscribeEntities(newPlanComponents);
-	}*/
-
 	// Add food
 	{
 		int numFood = 4;
@@ -276,7 +251,7 @@ void AGalavantUnrealMain::InitializeGalavant()
 
 		{
 			PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
-			PlanComponentManager.DebugPrint = false;
+			//PlanComponentManager.DebugPrint = true;
 		}
 
 		{
@@ -334,6 +309,14 @@ void AGalavantUnrealMain::InitGame(const FString& MapName, const FString& Option
                                    FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
+
+	// Set world settings. I'm not sure if this is the proper place for this, but it works
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		AWorldSettings* worldSettings = world->GetWorldSettings(true);
+		worldSettings->KillZ = -30000;
+	}
 
 	// It's important that this is in InitGame as opposed to something like BeginPlay() because it
 	// needs to be setup before any Actors run BeginPlay()

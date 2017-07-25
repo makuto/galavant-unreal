@@ -67,3 +67,6 @@ GalavantUnreal/ThirdParty/*
 # Ignore large assets (TODO: Figure out what to do once these are actually used, esp because the 
 #                              license might be picky about how I share it)
 GalavantUnreal/Content/MedievalTown/*
+
+# Ignore core dumps
+core
