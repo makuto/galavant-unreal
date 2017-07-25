@@ -4,7 +4,7 @@
 
 #include "GameFramework/Actor.h"
 
-#include "DynamicTexture.h"
+#include "Graphics/DynamicTexture.h"
 
 #include "HUDMinimapActor.generated.h"
 

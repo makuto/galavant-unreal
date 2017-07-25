@@ -3,12 +3,12 @@
 #include "GalavantUnreal.h"
 #include "GalavantUnrealMain.h"
 
-#include "GalavantUnrealFPCharacter.h"
-#include "AgentCharacter.h"
+#include "Characters/GalavantUnrealFPCharacter.h"
+#include "Characters/AgentCharacter.h"
 #include "ActorEntityManagement.h"
 
+#include "Utilities/GalavantUnrealLog.h"
 #include "util/Logging.hpp"
-#include "GalavantUnrealLog.h"
 
 #include "world/WorldResourceLocator.hpp"
 #include "world/ProceduralWorld.hpp"

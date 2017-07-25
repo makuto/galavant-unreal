@@ -7,7 +7,7 @@
 #include "CustomMeshComponent.h"
 #include "Components/SceneComponent.h"
 
-#include "GeneratedMeshComponent.h"
+#include "Components/GeneratedMeshComponent.h"
 
 #include "TestPolyVoxChunk.generated.h"
 

@@ -1,14 +1,14 @@
 #include "GalavantUnreal.h"
 #include "TestPolyVoxChunk.h"
 
-#include "util/Logging.hpp"
-
-#include "ConversionHelpers.h"
+#include "Utilities/ConversionHelpers.h"
 
 #include "PolyVoxCore/CubicSurfaceExtractorWithNormals.h"
 #include "PolyVoxCore/MarchingCubesSurfaceExtractor.h"
 #include "PolyVoxCore/SurfaceMesh.h"
 #include "PolyVoxCore/SimpleVolume.h"
+
+#include "util/Logging.hpp"
 
 #include "noise/noise.hpp"
 #include "world/ProceduralWorld.hpp"

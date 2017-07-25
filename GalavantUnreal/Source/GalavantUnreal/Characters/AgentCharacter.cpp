@@ -3,7 +3,7 @@
 #include "GalavantUnreal.h"
 #include "AgentCharacter.h"
 
-#include "AgentAIController.h"
+#include "Controllers/AgentAIController.h"
 
 #include "util/Logging.hpp"
 

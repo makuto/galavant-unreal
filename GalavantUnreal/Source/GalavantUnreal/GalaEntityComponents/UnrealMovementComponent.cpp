@@ -2,10 +2,10 @@
 
 #include "UnrealMovementComponent.hpp"
 
-#include "AgentCharacter.h"
+#include "Characters/AgentCharacter.h"
 #include "RandomStream.h"
 #include "ActorEntityManagement.h"
-#include "ConversionHelpers.h"
+#include "Utilities/ConversionHelpers.h"
 
 #include "util/Logging.hpp"
 

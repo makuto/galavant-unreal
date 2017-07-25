@@ -2,9 +2,9 @@
 
 #include "GalavantUnreal.h"
 #include "GalavantUnrealGameMode.h"
-#include "GalavantUnrealPlayerController.h"
-#include "GalavantUnrealCharacter.h"
-#include "GalavantUnrealFPCharacter.h"
+#include "Controllers/GalavantUnrealPlayerController.h"
+#include "Characters/GalavantUnrealCharacter.h"
+#include "Characters/GalavantUnrealFPCharacter.h"
 
 // DEPRECATED; Using AGalavantUnrealMain instead
 

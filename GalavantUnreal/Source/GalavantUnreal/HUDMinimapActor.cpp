@@ -3,7 +3,7 @@
 #include "GalavantUnreal.h"
 #include "HUDMinimapActor.h"
 
-#include "ConversionHelpers.h"
+#include "Utilities/ConversionHelpers.h"
 
 #include "util/Logging.hpp"
 
