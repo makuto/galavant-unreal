@@ -8330,23 +8330,23 @@ HEADERS += \
 	"$$unrealRootPath/Engine/Plugins/Tests/ScreenshotTools/Source/ScreenshotTools/Private/CompareScreenshotsCommandlet.h" \
 	"$$unrealRootPath/Engine/Plugins/Tests/ScreenshotTools/Source/ScreenshotTools/Public/ScreenshotTools.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ActorEntityManagement.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentAIController.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentCharacter.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ConversionHelpers.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/DynamicTexture.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealCharacter.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealFPCharacter.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealGameMode.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealLog.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealMain.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealPlayerController.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GeneratedMeshComponent.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/HUDMinimapActor.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/SimplePickup.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestAgent.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunk.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunkManager.h" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ThirdPersonCharacter.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/AgentCharacter.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/GalavantUnrealCharacter.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/GalavantUnrealFPCharacter.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/ThirdPersonCharacter.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Components/GeneratedMeshComponent.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Controllers/AgentAIController.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Controllers/GalavantUnrealPlayerController.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Graphics/DynamicTexture.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Utilities/ConversionHelpers.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Utilities/GalavantUnrealLog.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/World/TestPolyVoxChunk.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/World/TestPolyVoxChunkManager.h" \
  
 

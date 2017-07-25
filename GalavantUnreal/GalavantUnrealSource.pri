@@ -6413,24 +6413,24 @@ SOURCES += \
 	"$$unrealRootPath/Engine/Plugins/Tests/ScreenshotTools/Source/ScreenshotTools/Private/CompareScreenshotsCommandlet.cpp" \
 	"$$unrealRootPath/Engine/Plugins/Tests/ScreenshotTools/Source/ScreenshotTools/Private/ScreenshotTools.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ActorEntityManagement.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentAIController.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/AgentCharacter.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ConversionHelpers.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/DynamicTexture.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealCharacter.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealFPCharacter.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealGameMode.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealLog.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealMain.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealPlayerController.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GeneratedMeshComponent.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/HUDMinimapActor.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/SimplePickup.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestAgent.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunk.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestPolyVoxChunkManager.cpp" \
-	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ThirdPersonCharacter.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/AgentCharacter.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/GalavantUnrealCharacter.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/GalavantUnrealFPCharacter.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/ThirdPersonCharacter.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Components/GeneratedMeshComponent.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Controllers/AgentAIController.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Controllers/GalavantUnrealPlayerController.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalaEntityComponents/UnrealMovementComponent.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Graphics/DynamicTexture.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Utilities/ConversionHelpers.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Utilities/GalavantUnrealLog.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/World/TestPolyVoxChunk.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/World/TestPolyVoxChunkManager.cpp" \
  
 
