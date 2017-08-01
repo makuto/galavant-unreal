@@ -14,7 +14,7 @@
 #include "entityComponentSystem/ComponentTypes.hpp"
 
 #include "world/WorldResourceLocator.hpp"
-
+#include "world/ProceduralWorld.hpp"
 #include "game/EntityLevelOfDetail.hpp"
 
 #include <functional>
@@ -292,9 +292,22 @@ void UnrealMovementComponent::SpawnActorIfNecessary(
 		FVector position(ToFVector(component->data.WorldPosition));
 		FActorSpawnParameters spawnParams;
 
-		// TODO: Store last known good position
-		if (component->data.SpawnParams.OverrideSpawnZ)
-			position.Z = component->data.SpawnParams.OverrideSpawnZ;
+		// Raycast to find the ground to spawn on
+		// TODO: Far future: If anything is ever flying, we'll need to not do this
+		{
+			gv::ProceduralWorld::ProceduralWorldParams& params =
+			    gv::ProceduralWorld::GetActiveWorldParams();
+			FVector rayStart(position);
+			FVector rayEnd(position);
+			rayStart.Z = params.WorldCellMaxHeight;
+			rayEnd.Z = params.WorldCellMinHeight;
+			FHitResult hitResult;
+			if (World->LineTraceSingleByChannel(hitResult, rayStart, rayEnd,
+			                                    ECollisionChannel::ECC_WorldDynamic))
+			{
+				position.Z = hitResult.ImpactPoint.Z + 100.f;
+			}
+		}
 
 		LOGD << "Entity " << component->entity
 		     << " spawning actor/character because it should still be rendered";

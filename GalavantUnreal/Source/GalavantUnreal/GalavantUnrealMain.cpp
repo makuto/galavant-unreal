@@ -36,6 +36,8 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 		{
 			// Set default player class to our Blueprinted character
 			static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(
+			    /*TEXT("Pawn'/Game/Blueprints/"
+			         "GalavantUnrealFPPlayerCharacter.GalavantUnrealFPPlayerCharacter_C'"));*/
 			    TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
 			         "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));
 			if (PlayerPawnBPClass.Class)
@@ -83,7 +85,7 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 		Seed = 5138008;
 		TileScale = 120.f;
 		NoiseScale = 0.00001f;
-		TestEntityCreationZ = 100.f;
+		TestEntityCreationZ = 50.f;
 		PlayerManhattanViewDistance = 10000.f;
 	}
 
@@ -147,7 +149,6 @@ void AGalavantUnrealMain::InitializeEntityTests()
 			newEntityMovementComponents[i].data.ResourceType = gv::WorldResourceType::Agent;
 			newEntityMovementComponents[i].data.SpawnParams.CharacterToSpawn =
 			    DefaultAgentCharacter;
-			newEntityMovementComponents[i].data.SpawnParams.OverrideSpawnZ = TestEntityCreationZ;
 			newEntityMovementComponents[i].data.WorldPosition.Set(0.f, i * spacing,
 			                                                      TestEntityCreationZ);
 			newEntityMovementComponents[i].data.GoalManDistanceTolerance = 600.f;
@@ -202,7 +203,6 @@ void AGalavantUnrealMain::InitializeEntityTests()
 				newFood[i].data.ResourceType = gv::WorldResourceType::Food;
 
 				newFood[i].data.SpawnParams.ActorToSpawn = TestFoodActor;
-				newFood[i].data.SpawnParams.OverrideSpawnZ = TestEntityCreationZ;
 			}
 
 			// Pickup component
@@ -220,6 +220,9 @@ void AGalavantUnrealMain::InitializeProceduralWorld()
 {
 	gv::ProceduralWorld::ProceduralWorldParams& Params =
 	    gv::ProceduralWorld::GetActiveWorldParams();
+
+	Params.WorldCellMaxHeight = 200.f;
+	Params.WorldCellMinHeight = -10000.f;
 
 	Params.Seed = Seed;
 
@@ -251,7 +254,7 @@ void AGalavantUnrealMain::InitializeGalavant()
 
 		{
 			PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
-			//PlanComponentManager.DebugPrint = true;
+			// PlanComponentManager.DebugPrint = true;
 		}
 
 		{
@@ -315,7 +318,7 @@ void AGalavantUnrealMain::InitGame(const FString& MapName, const FString& Option
 	if (world)
 	{
 		AWorldSettings* worldSettings = world->GetWorldSettings(true);
-		worldSettings->KillZ = -30000;
+		worldSettings->KillZ = gv::ProceduralWorld::GetActiveWorldParams().WorldCellMinHeight;
 	}
 
 	// It's important that this is in InitGame as opposed to something like BeginPlay() because it

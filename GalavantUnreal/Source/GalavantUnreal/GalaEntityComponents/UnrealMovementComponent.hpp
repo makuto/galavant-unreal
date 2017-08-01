@@ -20,9 +20,6 @@ struct MovementComponentActorSpawnParams
 {
 	TSubclassOf<AActor> ActorToSpawn;
 	TSubclassOf<ACharacter> CharacterToSpawn;
-
-	// Spawn at this Z value instead of the previous one
-	float OverrideSpawnZ;
 };
 
 struct UnrealMovementComponentData
