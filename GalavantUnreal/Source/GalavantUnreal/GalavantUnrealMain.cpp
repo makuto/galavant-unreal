@@ -99,26 +99,52 @@ void InitializeResources()
 		static gv::NeedDef TestHungerNeed;
 		TestHungerNeed.Type = gv::NeedType::Hunger;
 		TestHungerNeed.Name = "Hunger";
+		TestHungerNeed.InitialLevel = 0.f;
+		TestHungerNeed.MaxLevel = 300.f;
+		TestHungerNeed.MinLevel = 0.f;
 		TestHungerNeed.UpdateRate = 10.f;
 		TestHungerNeed.AddPerUpdate = 10.f;
 
 		// Hunger Need Triggers
 		{
 			gv::NeedLevelTrigger lookForFood;
-			lookForFood.GreaterThanLevel = true;
+			lookForFood.Condition = gv::NeedLevelTrigger::ConditionType::GreaterThanLevel;
 			lookForFood.Level = 10.f;
 			lookForFood.NeedsResource = true;
 			lookForFood.WorldResource = gv::WorldResourceType::Food;
 			TestHungerNeed.LevelTriggers.push_back(lookForFood);
 
 			gv::NeedLevelTrigger deathByStarvation;
-			deathByStarvation.GreaterThanLevel = true;
-			deathByStarvation.Level = 300.f;
+			deathByStarvation.Condition = gv::NeedLevelTrigger::ConditionType::GreaterThanLevel;
+			deathByStarvation.Level = 290.f;
 			deathByStarvation.DieNow = true;
 			TestHungerNeed.LevelTriggers.push_back(deathByStarvation);
 		}
 
 		gv::g_NeedDefDictionary.AddResource(RESKEY("Hunger"), &TestHungerNeed);
+	}
+
+	// Blood Need
+	{
+		static gv::NeedDef BloodNeed;
+		BloodNeed.Type = gv::NeedType::Blood;
+		BloodNeed.Name = "Blood";
+		BloodNeed.InitialLevel = 100.f;
+		BloodNeed.MaxLevel = 100.f;
+		BloodNeed.MinLevel = 0.f;
+		// Agents will only gain blood over time, but there's a maximum and they start at max
+		BloodNeed.UpdateRate = 10.f;
+		BloodNeed.AddPerUpdate = 10.f;
+
+		// Blood Need Triggers
+		{
+			gv::NeedLevelTrigger deathByBleedingOut;
+			deathByBleedingOut.Condition = gv::NeedLevelTrigger::ConditionType::Zero;
+			deathByBleedingOut.DieNow = true;
+			BloodNeed.LevelTriggers.push_back(deathByBleedingOut);
+		}
+
+		gv::g_NeedDefDictionary.AddResource(RESKEY("Blood"), &BloodNeed);
 	}
 
 	{
@@ -161,7 +187,14 @@ void AGalavantUnrealMain::InitializeEntityTests()
 	// Setup agent components for all of them and give them a need
 	{
 		gv::Need hungerNeed;
+		gv::Need bloodNeed;
 		hungerNeed.Def = gv::g_NeedDefDictionary.GetResource(RESKEY("Hunger"));
+		bloodNeed.Def = gv::g_NeedDefDictionary.GetResource(RESKEY("Blood"));
+
+		// TODO: Will eventually need a thing which creates agents based on a creation def and sets
+		// up the needs accordingly
+		hungerNeed.Level = hungerNeed.Def->InitialLevel;
+		bloodNeed.Level = bloodNeed.Def->InitialLevel;
 
 		gv::AgentComponentManager::AgentComponentList newAgentComponents(numTestEntities);
 
@@ -171,6 +204,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 		{
 			currentAgentComponent.entity = testEntities[i++];
 			currentAgentComponent.data.Needs.push_back(hungerNeed);
+			currentAgentComponent.data.Needs.push_back(bloodNeed);
 		}
 
 		AgentComponentManager.SubscribeEntities(newAgentComponents);

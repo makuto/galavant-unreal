@@ -15,6 +15,7 @@
 #include "game/agent/AgentComponentManager.hpp"
 #include "game/InteractComponentManager.hpp"
 #include "entityComponentSystem/EntitySharedData.hpp"
+#include "game/agent/Needs.hpp"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -110,28 +111,14 @@ void AGalavantUnrealFPCharacter::BeginPlay()
 
 			newAgentComponents[0].entity = PlayerEntity;
 
-			// TODO: This is horrible, remove
-			{
-				// Hunger Need
-				{
-					PlayerHungerNeed.Type = gv::NeedType::Hunger;
-					PlayerHungerNeed.Name = "PlayerHunger";
-					PlayerHungerNeed.UpdateRate = 10.f;
-					PlayerHungerNeed.AddPerUpdate = 10.f;
-
-					// Hunger Need Triggers
-					{
-						gv::NeedLevelTrigger deathByStarvation;
-						deathByStarvation.GreaterThanLevel = true;
-						deathByStarvation.Level = 300.f;
-						deathByStarvation.DieNow = true;
-						PlayerHungerNeed.LevelTriggers.push_back(deathByStarvation);
-					}
-				}
-			}
 			gv::Need hungerNeed;
-			hungerNeed.Def = &PlayerHungerNeed;
+			gv::Need bloodNeed;
+			hungerNeed.Def = gv::g_NeedDefDictionary.GetResource(RESKEY("Hunger"));
+			bloodNeed.Def = gv::g_NeedDefDictionary.GetResource(RESKEY("Blood"));
+			hungerNeed.Level = hungerNeed.Def->InitialLevel;
+			bloodNeed.Level = bloodNeed.Def->InitialLevel;
 			newAgentComponents[0].data.Needs.push_back(hungerNeed);
+			newAgentComponents[0].data.Needs.push_back(bloodNeed);
 
 			LOGD << "Registering Player AgentComponent";
 			agentComponentManager->SubscribeEntities(newAgentComponents);
