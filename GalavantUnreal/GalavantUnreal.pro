@@ -9,7 +9,7 @@ CONFIG -= qt
 
 TARGET = UE4 
 
-unrealRootPath=/home/macoy/Downloads/UnrealEngine
+unrealRootPath=/home/macoy/Development/code/3rdParty/repositories/UnrealEngine
 GalavantUnrealRootPath=/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal
 
 gameProjectFile=/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject

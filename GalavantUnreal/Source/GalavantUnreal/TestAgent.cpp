@@ -17,10 +17,6 @@ ATestAgent::ATestAgent()
 	RootComponent = SceneComponent;
 	if (SceneComponent->CanAttachAsChild(Mesh, "Mesh"))
 	{
-		/*FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
-		                                          EAttachmentRule::SnapToTarget,
-		                                          EAttachmentRule::SnapToTarget, false);*/
-		// Mesh->AttachToComponent(SceneComponent, attachmentRules, TEXT("Mesh"));
 		Mesh->SetupAttachment(SceneComponent, TEXT("Mesh"));
 	}
 

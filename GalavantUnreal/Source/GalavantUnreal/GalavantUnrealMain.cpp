@@ -39,7 +39,10 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 			    /*TEXT("Pawn'/Game/Blueprints/"
 			         "GalavantUnrealFPPlayerCharacter.GalavantUnrealFPPlayerCharacter_C'"));*/
 			    TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
-			         "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));
+			         "GalavantUnrealFPCharacterTrueBPFullBody."
+			         "GalavantUnrealFPCharacterTrueBPFullBody_C'"));
+			// TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
+			//      "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));
 			if (PlayerPawnBPClass.Class)
 			{
 				DefaultPawnClass = PlayerPawnBPClass.Class;
@@ -186,15 +189,11 @@ void AGalavantUnrealMain::InitializeEntityTests()
 
 	// Setup agent components for all of them and give them a need
 	{
-		gv::Need hungerNeed;
-		gv::Need bloodNeed;
-		hungerNeed.Def = gv::g_NeedDefDictionary.GetResource(RESKEY("Hunger"));
-		bloodNeed.Def = gv::g_NeedDefDictionary.GetResource(RESKEY("Blood"));
+		gv::Need hungerNeed(RESKEY("Hunger"));
+		gv::Need bloodNeed(RESKEY("Blood"));
 
 		// TODO: Will eventually need a thing which creates agents based on a creation def and sets
 		// up the needs accordingly
-		hungerNeed.Level = hungerNeed.Def->InitialLevel;
-		bloodNeed.Level = bloodNeed.Def->InitialLevel;
 
 		gv::AgentComponentManager::AgentComponentList newAgentComponents(numTestEntities);
 

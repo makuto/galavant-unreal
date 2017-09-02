@@ -16,7 +16,7 @@ AGalavantUnrealGameMode::AGalavantUnrealGameMode() : Super()
 	// set default pawn class to our Blueprinted character
 	// static ConstructorHelpers::FClassFinder<APawn>
 	// PlayerPawnBPClass(TEXT("/Game/TopDownCPP/Blueprints/TopDownCharacter"));
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(
+	/*static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(
 	    TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
 	         "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));
 	// TEXT("/Game/FirstPersonCPP/Blueprints/GalavantUnrealFPCharacterTrueBP"));
@@ -28,5 +28,5 @@ AGalavantUnrealGameMode::AGalavantUnrealGameMode() : Super()
 	{
 		UE_LOG(LogGalavantUnreal, Log, TEXT("Player Pawn is NULL!"));
 		DefaultPawnClass = AGalavantUnrealFPCharacter::StaticClass();
-	}
+	}*/
 }

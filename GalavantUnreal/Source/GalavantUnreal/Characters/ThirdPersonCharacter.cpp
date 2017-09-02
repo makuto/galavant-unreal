@@ -30,11 +30,7 @@ AThirdPersonCharacter::AThirdPersonCharacter()
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	{
-		/*FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
-		                                          EAttachmentRule::SnapToTarget,
-		                                          EAttachmentRule::SnapToTarget, false);*/
 		CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-		// CameraBoom->AttachToComponent(RootComponent, attachmentRules, TEXT("CameraBoom"));
 		CameraBoom->SetupAttachment(RootComponent, TEXT("CameraBoom"));
 		// The camera follows at this distance behind the character
 		CameraBoom->TargetArmLength = 300.0f;
@@ -43,12 +39,7 @@ AThirdPersonCharacter::AThirdPersonCharacter()
 
 	// Create a follow camera
 	{
-		/*FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
-		                                          EAttachmentRule::SnapToTarget,
-		                                          EAttachmentRule::SnapToTarget, false);*/
 		FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-		/*FollowCamera->AttachToComponent(CameraBoom, attachmentRules,
-		                                USpringArmComponent::SocketName);*/
 		FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 		FollowCamera->bUsePawnControlRotation = false;  // Camera does not rotate relative to arm
 	}

@@ -6,7 +6,7 @@ using System.IO; 		// Path
 
 public class GalavantUnreal : ModuleRules
 {
-	public GalavantUnreal(TargetInfo Target)
+	public GalavantUnreal(ReadOnlyTargetRules ROTargetRules) : base(ROTargetRules) 
 	{
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
 

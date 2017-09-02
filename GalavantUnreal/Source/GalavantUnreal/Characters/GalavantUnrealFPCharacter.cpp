@@ -51,10 +51,6 @@ AGalavantUnrealFPCharacter::AGalavantUnrealFPCharacter()
 	FP_Gun->SetOnlyOwnerSee(true);  // only the owning player will see this mesh
 	FP_Gun->bCastDynamicShadow = false;
 	FP_Gun->CastShadow = false;
-	/*FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
-	                                          EAttachmentRule::SnapToTarget,
-	                                          EAttachmentRule::SnapToTarget, false);*/
-	// FP_Gun->AttachToComponent(Mesh1P, attachmentRules, TEXT("GripPoint"));
 	FP_Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
 
 	// Default offset from the character location for projectiles to spawn
@@ -111,12 +107,8 @@ void AGalavantUnrealFPCharacter::BeginPlay()
 
 			newAgentComponents[0].entity = PlayerEntity;
 
-			gv::Need hungerNeed;
-			gv::Need bloodNeed;
-			hungerNeed.Def = gv::g_NeedDefDictionary.GetResource(RESKEY("Hunger"));
-			bloodNeed.Def = gv::g_NeedDefDictionary.GetResource(RESKEY("Blood"));
-			hungerNeed.Level = hungerNeed.Def->InitialLevel;
-			bloodNeed.Level = bloodNeed.Def->InitialLevel;
+			gv::Need hungerNeed(RESKEY("Hunger"));
+			gv::Need bloodNeed(RESKEY("Blood"));
 			newAgentComponents[0].data.Needs.push_back(hungerNeed);
 			newAgentComponents[0].data.Needs.push_back(bloodNeed);
 
@@ -176,12 +168,7 @@ void AGalavantUnrealFPCharacter::SetupPlayerInputComponent(class UInputComponent
 	InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	// InputComponent->BindTouch(EInputEvent::IE_Pressed, this,
-	// &AGalavantUnrealFPCharacter::TouchStarted);
-	if (EnableTouchscreenMovement(InputComponent) == false)
-	{
-		InputComponent->BindAction("Fire", IE_Pressed, this, &AGalavantUnrealFPCharacter::OnFire);
-	}
+	InputComponent->BindAction("Fire", IE_Pressed, this, &AGalavantUnrealFPCharacter::OnFire);
 
 	InputComponent->BindAxis("MoveForward", this, &AGalavantUnrealFPCharacter::MoveForward);
 	InputComponent->BindAxis("MoveRight", this, &AGalavantUnrealFPCharacter::MoveRight);
@@ -199,13 +186,19 @@ void AGalavantUnrealFPCharacter::SetupPlayerInputComponent(class UInputComponent
 	{
 		InputComponent->BindAction("Interact", IE_Pressed, this,
 		                           &AGalavantUnrealFPCharacter::OnInteract);
+		InputComponent->BindAction("UsePrimary", IE_Pressed, this,
+		                           &AGalavantUnrealFPCharacter::OnUsePrimary);
+		InputComponent->BindAction("UseSecondary", IE_Pressed, this,
+		                           &AGalavantUnrealFPCharacter::OnUseSecondary);
+		InputComponent->BindAction("UseTertiary", IE_Pressed, this,
+		                           &AGalavantUnrealFPCharacter::OnUseTertiary);
 	}
 }
 
 void AGalavantUnrealFPCharacter::OnFire()
 {
 	/*// try and fire a projectile
-	if (ProjectileClass != NULL)
+	if (ProjectileClass != nullptr)
 	{
 	    const FRotator SpawnRotation = GetControlRotation();
 	    // MuzzleOffset is in camera space, so transform it to world space before offsetting from
@@ -213,7 +206,7 @@ void AGalavantUnrealFPCharacter::OnFire()
 	    const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
 
 	    UWorld* const World = GetWorld();
-	    if (World != NULL)
+	    if (World != nullptr)
 	    {
 	        // spawn the projectile at the muzzle
 	        World->SpawnActor<GalavantUnrealFPProjectile>(ProjectileClass, SpawnLocation,
@@ -222,17 +215,17 @@ void AGalavantUnrealFPCharacter::OnFire()
 	}
 
 	// try and play the sound if specified
-	if (FireSound != NULL)
+	if (FireSound != nullptr)
 	{
 	    UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 	}
 
 	// try and play a firing animation if specified
-	if(FireAnimation != NULL)
+	if(FireAnimation != nullptr)
 	{
 	    // Get the animation object for the arms mesh
 	    UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-	    if(AnimInstance != NULL)
+	    if(AnimInstance != nullptr)
 	    {
 	        AnimInstance->Montage_Play(FireAnimation, 1.f);
 	    }
@@ -264,67 +257,59 @@ void AGalavantUnrealFPCharacter::OnInteract()
 	}
 }
 
-void AGalavantUnrealFPCharacter::BeginTouch(const ETouchIndex::Type FingerIndex,
-                                            const FVector Location)
-{
-	if (TouchItem.bIsPressed == true)
-	{
-		return;
-	}
-	TouchItem.bIsPressed = true;
-	TouchItem.FingerIndex = FingerIndex;
-	TouchItem.Location = Location;
-	TouchItem.bMoved = false;
-}
+static float s_lastActionTime = 0.f;
 
-void AGalavantUnrealFPCharacter::EndTouch(const ETouchIndex::Type FingerIndex,
-                                          const FVector Location)
+bool AGalavantUnrealFPCharacter::CombatAttemptAction(CombatAction& action)
 {
-	if (TouchItem.bIsPressed == false)
-	{
-		return;
-	}
-	if ((FingerIndex == TouchItem.FingerIndex) && (TouchItem.bMoved == false))
-	{
-		OnFire();
-	}
-	TouchItem.bIsPressed = false;
-}
+	UWorld* world = GetWorld();
+	if (!world)
+		return false;
 
-void AGalavantUnrealFPCharacter::TouchUpdate(const ETouchIndex::Type FingerIndex,
-                                             const FVector Location)
-{
-	if ((TouchItem.bIsPressed == true) && (TouchItem.FingerIndex == FingerIndex))
+	float currentTime = world->GetTimeSeconds();
+
+	// Can only do so many actions per second
+	if (currentTime - s_lastActionTime < 0.5f)
+		return false;
+
+	LOGD << "Performing combat action of type " << (int)action.Type;
+
+	s_lastActionTime = currentTime;
+
+	if (action.Animation)
 	{
-		if (TouchItem.bIsPressed)
+		// Get the animation object for the arms mesh
+		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+		if (AnimInstance != nullptr)
 		{
-			if (GetWorld() != nullptr)
-			{
-				UGameViewportClient* ViewportClient = GetWorld()->GetGameViewport();
-				if (ViewportClient != nullptr)
-				{
-					FVector MoveDelta = Location - TouchItem.Location;
-					FVector2D ScreenSize;
-					ViewportClient->GetViewportSize(ScreenSize);
-					FVector2D ScaledDelta = FVector2D(MoveDelta.X, MoveDelta.Y) / ScreenSize;
-					if (ScaledDelta.X != 0.0f)
-					{
-						TouchItem.bMoved = true;
-						float Value = ScaledDelta.X * BaseTurnRate;
-						AddControllerYawInput(Value);
-					}
-					if (ScaledDelta.Y != 0.0f)
-					{
-						TouchItem.bMoved = true;
-						float Value = ScaledDelta.Y * BaseTurnRate;
-						AddControllerPitchInput(Value);
-					}
-					TouchItem.Location = Location;
-				}
-				TouchItem.Location = Location;
-			}
+			AnimInstance->Montage_Play(action.Animation, 1.f);
 		}
 	}
+
+	return true;
+}
+
+void AGalavantUnrealFPCharacter::OnUsePrimary()
+{
+	LOGD << "Player Use Primary!";
+	CombatAction attemptAction = {CombatAction::ActionType::MeleeAttack,
+	                              TempPrimaryAttackAnimation};
+	CombatAttemptAction(attemptAction);
+}
+
+void AGalavantUnrealFPCharacter::OnUseSecondary()
+{
+	LOGD << "Player Use Secondary!";
+	CombatAction attemptAction = {CombatAction::ActionType::MeleeBlock,
+	                              TempSecondaryAttackAnimation};
+	CombatAttemptAction(attemptAction);
+}
+
+void AGalavantUnrealFPCharacter::OnUseTertiary()
+{
+	LOGD << "Player Use Tertiary!";
+	CombatAction attemptAction = {CombatAction::ActionType::MeleeAttack,
+	                              TempTertiaryAttackAnimation};
+	CombatAttemptAction(attemptAction);
 }
 
 void AGalavantUnrealFPCharacter::MoveForward(float Value)
@@ -355,20 +340,4 @@ void AGalavantUnrealFPCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-}
-
-bool AGalavantUnrealFPCharacter::EnableTouchscreenMovement(class UInputComponent* InputComponent)
-{
-	bool bResult = false;
-	if (FPlatformMisc::GetUseVirtualJoysticks() || GetDefault<UInputSettings>()->bUseMouseForTouch)
-	{
-		bResult = true;
-		InputComponent->BindTouch(EInputEvent::IE_Pressed, this,
-		                          &AGalavantUnrealFPCharacter::BeginTouch);
-		InputComponent->BindTouch(EInputEvent::IE_Released, this,
-		                          &AGalavantUnrealFPCharacter::EndTouch);
-		InputComponent->BindTouch(EInputEvent::IE_Repeat, this,
-		                          &AGalavantUnrealFPCharacter::TouchUpdate);
-	}
-	return bResult;
 }

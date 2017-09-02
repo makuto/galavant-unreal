@@ -22,11 +22,7 @@ AGalavantUnrealCharacter::AGalavantUnrealCharacter()
 
 	// Create a camera boom...
 	{
-		/*FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
-		                                          EAttachmentRule::SnapToTarget,
-		                                          EAttachmentRule::SnapToTarget, false);*/
 		CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-		// CameraBoom->AttachToComponent(RootComponent, attachmentRules, TEXT("CameraBoom"));
 		CameraBoom->SetupAttachment(RootComponent, TEXT("CameraBoom"));
 		CameraBoom->bAbsoluteRotation = true;  // Don't want arm to rotate when character does
 		CameraBoom->TargetArmLength = 800.f;
@@ -37,12 +33,7 @@ AGalavantUnrealCharacter::AGalavantUnrealCharacter()
 
 	// Create a camera...
 	{
-		/*FAttachmentTransformRules attachmentRules(EAttachmentRule::SnapToTarget,
-		                                          EAttachmentRule::SnapToTarget,
-		                                          EAttachmentRule::SnapToTarget, false);*/
 		TopDownCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
-		// TopDownCameraComponent->AttachToComponent(CameraBoom, attachmentRules,
-		// TEXT("CameraBoom"));
 		TopDownCameraComponent->SetupAttachment(CameraBoom, TEXT("CameraBoom"));
 		TopDownCameraComponent->bUsePawnControlRotation =
 		    false;  // Camera does not rotate relative to arm
