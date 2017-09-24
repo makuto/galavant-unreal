@@ -70,3 +70,5 @@ GalavantUnreal/Content/MedievalTown/*
 
 # Ignore core dumps
 core
+
+*.blend1

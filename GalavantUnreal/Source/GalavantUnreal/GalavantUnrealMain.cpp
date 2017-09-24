@@ -38,11 +38,11 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 			static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(
 			    /*TEXT("Pawn'/Game/Blueprints/"
 			         "GalavantUnrealFPPlayerCharacter.GalavantUnrealFPPlayerCharacter_C'"));*/
-			    TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
+			    /*TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
 			         "GalavantUnrealFPCharacterTrueBPFullBody."
-			         "GalavantUnrealFPCharacterTrueBPFullBody_C'"));
-			// TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
-			//      "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));
+			         "GalavantUnrealFPCharacterTrueBPFullBody_C'"));*/
+			TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
+			     "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));
 			if (PlayerPawnBPClass.Class)
 			{
 				DefaultPawnClass = PlayerPawnBPClass.Class;

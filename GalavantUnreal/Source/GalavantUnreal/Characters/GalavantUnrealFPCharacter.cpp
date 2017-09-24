@@ -267,6 +267,12 @@ bool AGalavantUnrealFPCharacter::CombatAttemptAction(CombatAction& action)
 
 	float currentTime = world->GetTimeSeconds();
 
+	// Somewhat stupid special case: If you've done play in editor twice, the second time will have
+	// the static time way larger than current time, so you'll never be able to use any actions.
+	// Detect that here and reset the last action time
+	if (s_lastActionTime > currentTime)
+		s_lastActionTime = 0.f;
+
 	// Can only do so many actions per second
 	if (currentTime - s_lastActionTime < 0.5f)
 		return false;
@@ -281,7 +287,10 @@ bool AGalavantUnrealFPCharacter::CombatAttemptAction(CombatAction& action)
 		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
 		if (AnimInstance != nullptr)
 		{
-			AnimInstance->Montage_Play(action.Animation, 1.f);
+			if (AnimInstance->Montage_Play(action.Animation, 1.f))
+				LOGD << "Played animation";
+			else
+				LOGD << "Animation failed to play";
 		}
 	}
 
