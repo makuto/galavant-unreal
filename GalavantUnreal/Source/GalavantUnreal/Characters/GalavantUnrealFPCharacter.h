@@ -10,7 +10,7 @@
 
 class UInputComponent;
 
-struct CombatAction
+struct PlayerCombatAction
 {
 	enum class ActionType
 	{
@@ -133,7 +133,7 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	bool CombatAttemptAction(CombatAction& action);
+	bool CombatAttemptAction(PlayerCombatAction& action);
 
 protected:
 	// APawn interface

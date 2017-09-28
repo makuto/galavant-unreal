@@ -11,7 +11,6 @@
 
 #include "entityComponentSystem/PooledComponentManager.hpp"
 #include "entityComponentSystem/EntitySharedData.hpp"
-#include "entityComponentSystem/ComponentTypes.hpp"
 
 #include "world/WorldResourceLocator.hpp"
 #include "world/ProceduralWorld.hpp"
@@ -19,10 +18,12 @@
 
 #include <functional>
 
+UnrealMovementComponent g_UnrealMovementComponentManager;
+
 UnrealMovementComponent::UnrealMovementComponent()
     : gv::PooledComponentManager<UnrealMovementComponentData>(100)
 {
-	Type = gv::ComponentType::Movement;
+	DebugName = "UnrealMovementComponent";
 }
 
 UnrealMovementComponent::~UnrealMovementComponent()

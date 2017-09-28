@@ -13,9 +13,14 @@
 #include "world/WorldResourceLocator.hpp"
 #include "world/ProceduralWorld.hpp"
 #include "entityComponentSystem/EntityTypes.hpp"
+#include "entityComponentSystem/EntityComponentManager.hpp"
+#include "game/agent/PlanComponentManager.hpp"
+#include "game/agent/AgentComponentManager.hpp"
+#include "game/agent/combat/CombatComponentManager.hpp"
+#include "game/InteractComponentManager.hpp"
 #include "game/agent/Needs.hpp"
+#include "ai/htn/HTNTasks.hpp"
 #include "game/EntityLevelOfDetail.hpp"
-#include "ai/htn/HTNTaskDb.hpp"
 #include "util/StringHashing.hpp"
 
 static gv::Logging::Logger s_UnrealLogger(gv::Logging::Severity::debug, &UnrealLogOutput);
@@ -41,8 +46,8 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 			    /*TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
 			         "GalavantUnrealFPCharacterTrueBPFullBody."
 			         "GalavantUnrealFPCharacterTrueBPFullBody_C'"));*/
-			TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
-			     "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));
+			    TEXT("Pawn'/Game/FirstPersonCPP/Blueprints/"
+			         "GalavantUnrealFPCharacterTrueBP.GalavantUnrealFPCharacterTrueBP_C'"));
 			if (PlayerPawnBPClass.Class)
 			{
 				DefaultPawnClass = PlayerPawnBPClass.Class;
@@ -108,14 +113,37 @@ void InitializeResources()
 		TestHungerNeed.UpdateRate = 10.f;
 		TestHungerNeed.AddPerUpdate = 10.f;
 
+		// Find food goal def
+		{
+			Htn::Parameter resourceToFind;
+			resourceToFind.IntValue = gv::WorldResourceType::Food;
+			resourceToFind.Type = Htn::Parameter::ParamType::Int;
+			Htn::ParameterList parameters = {resourceToFind};
+			Htn::TaskCall getResourceCall{Htn::g_TaskDictionary.GetResource(RESKEY("GetResource")),
+			                              parameters};
+			Htn::TaskCall pickupResourceCall{
+			    Htn::g_TaskDictionary.GetResource(RESKEY("InteractPickup")), parameters};
+			Htn::TaskCallList getResourceTasks = {getResourceCall, pickupResourceCall};
+			static gv::AgentGoalDef s_findFoodGoalDef{gv::AgentGoalDef::GoalType::HtnPlan,
+			                                          /*NumRetriesIfFailed=*/2};
+			gv::g_AgentGoalDefDictionary.AddResource(RESKEY("FindFood"), &s_findFoodGoalDef);
+		}
+
 		// Hunger Need Triggers
 		{
 			gv::NeedLevelTrigger lookForFood;
 			lookForFood.Condition = gv::NeedLevelTrigger::ConditionType::GreaterThanLevel;
-			lookForFood.Level = 10.f;
+			lookForFood.Level = 100.f;
 			lookForFood.NeedsResource = true;
 			lookForFood.WorldResource = gv::WorldResourceType::Food;
 			TestHungerNeed.LevelTriggers.push_back(lookForFood);
+
+			gv::NeedLevelTrigger desperateLookForFood;
+			desperateLookForFood.Condition = gv::NeedLevelTrigger::ConditionType::GreaterThanLevel;
+			desperateLookForFood.Level = 200.f;
+			desperateLookForFood.GoalDef =
+			    gv::g_AgentGoalDefDictionary.GetResource(RESKEY("FindFood"));
+			TestHungerNeed.LevelTriggers.push_back(desperateLookForFood);
 
 			gv::NeedLevelTrigger deathByStarvation;
 			deathByStarvation.Condition = gv::NeedLevelTrigger::ConditionType::GreaterThanLevel;
@@ -150,10 +178,25 @@ void InitializeResources()
 		gv::g_NeedDefDictionary.AddResource(RESKEY("Blood"), &BloodNeed);
 	}
 
+	// Goals
 	{
 		static gv::AgentGoalDef s_getResourceGoalDef{gv::AgentGoalDef::GoalType::GetResource,
 		                                             /*NumRetriesIfFailed=*/2};
 		gv::g_AgentGoalDefDictionary.AddResource(RESKEY("GetResource"), &s_getResourceGoalDef);
+	}
+
+	// CombatActionDefs
+	{
+		// Punch
+		{
+			static gv::CombatActionDef s_punchAction;
+			s_punchAction.Type = gv::CombatActionDef::CombatActionType::Attack;
+			s_punchAction.Duration = .75f;
+			s_punchAction.Damage = {RESKEY("Blood"), 10.f, 50.f};
+			s_punchAction.Knockback = {1.f, 500.f};
+
+			gv::g_CombatActionDefDictionary.AddResource(RESKEY("Punch"), &s_punchAction);
+		}
 	}
 }
 
@@ -163,7 +206,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 	int numTestEntities = 20;
 	gv::EntityList testEntities;
 	testEntities.reserve(numTestEntities);
-	EntityComponentSystem.GetNewEntities(testEntities, numTestEntities);
+	gv::g_EntityComponentManager.GetNewEntities(testEntities, numTestEntities);
 
 	// Add Movement components to all of them
 	{
@@ -184,7 +227,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 			newEntityMovementComponents[i].data.MaxSpeed = 500.f;
 		}
 
-		UnrealMovementComponentManager.SubscribeEntities(newEntityMovementComponents);
+		g_UnrealMovementComponentManager.SubscribeEntities(newEntityMovementComponents);
 	}
 
 	// Setup agent components for all of them and give them a need
@@ -206,7 +249,7 @@ void AGalavantUnrealMain::InitializeEntityTests()
 			currentAgentComponent.data.Needs.push_back(bloodNeed);
 		}
 
-		AgentComponentManager.SubscribeEntities(newAgentComponents);
+		gv::g_AgentComponentManager.SubscribeEntities(newAgentComponents);
 	}
 
 	// Add food
@@ -215,12 +258,12 @@ void AGalavantUnrealMain::InitializeEntityTests()
 
 		gv::EntityList testFoodEntities;
 		testFoodEntities.reserve(numFood);
-		EntityComponentSystem.GetNewEntities(testFoodEntities, numFood);
+		gv::g_EntityComponentManager.GetNewEntities(testFoodEntities, numFood);
 
 		UnrealMovementComponent::UnrealMovementComponentList newFood(numFood);
 		gv::PickupRefList newPickups;
 		newPickups.reserve(numFood);
-		InteractComponentManager.CreatePickups(testFoodEntities, newPickups);
+		gv::g_InteractComponentManager.CreatePickups(testFoodEntities, newPickups);
 
 		float spacing = 2000.f;
 		int i = 0;
@@ -239,13 +282,14 @@ void AGalavantUnrealMain::InitializeEntityTests()
 			}
 
 			// Pickup component
+			if (i < newPickups.size())
 			{
 				newPickups[i]->AffectsNeed = gv::NeedType::Hunger;
 				newPickups[i]->DestroySelfOnPickup = true;
 			}
 		}
 
-		UnrealMovementComponentManager.SubscribeEntities(newFood);
+		g_UnrealMovementComponentManager.SubscribeEntities(newFood);
 	}
 }
 
@@ -275,48 +319,40 @@ void AGalavantUnrealMain::InitializeGalavant()
 {
 	LOGI << "Initializing Galavant...";
 
-	InitializeResources();
-
 	InitializeProceduralWorld();
 
 	gv::WorldResourceLocator::ClearResources();
 
 	// Initialize Entity Components
 	{
-		UnrealMovementComponentManager.Initialize(GetWorld(), &TaskEventCallbacks);
+		g_UnrealMovementComponentManager.Initialize(GetWorld(), &TaskEventCallbacks);
 
 		{
-			PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
+			gv::g_PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
 			// PlanComponentManager.DebugPrint = true;
 		}
 
 		{
-			AgentComponentManager.Initialize(&PlanComponentManager);
-			AgentComponentManager.DebugPrint = true;
+			gv::g_AgentComponentManager.Initialize(&gv::g_PlanComponentManager);
+			gv::g_AgentComponentManager.DebugPrint = true;
 		}
 
-		EntityComponentSystem.AddComponentManager(&UnrealMovementComponentManager);
-		EntityComponentSystem.AddComponentManager(&PlanComponentManager);
-		EntityComponentSystem.AddComponentManager(&AgentComponentManager);
-		// TODO: Figure out these ComponentManager type shenanigans
-		EntityComponentSystem.AddComponentManagerOfType(gv::ComponentType::Interact,
-		                                                &InteractComponentManager);
+		gv::g_CombatComponentManager.Initialize(&CombatFxHandler);
 	}
 
 	// Initialize Tasks
 	{
-		MoveToTask.Initialize(&UnrealMovementComponentManager);
+		MoveToTask.Initialize(&g_UnrealMovementComponentManager);
 		GetResourceTask.Initialize(&FindResourceTask, &MoveToTask);
-		InteractPickupTask.Initialize(&InteractComponentManager);
+		InteractPickupTask.Initialize(&gv::g_InteractComponentManager);
 
-		// Done to support Unreal hotreloading
-		Htn::TaskDb::ClearAllTasks();
-
-		Htn::TaskDb::AddTask(FindResourceTask.GetTask(), Htn::TaskName::FindResource);
-		Htn::TaskDb::AddTask(MoveToTask.GetTask(), Htn::TaskName::MoveTo);
-		Htn::TaskDb::AddTask(GetResourceTask.GetTask(), Htn::TaskName::GetResource);
-		Htn::TaskDb::AddTask(InteractPickupTask.GetTask(), Htn::TaskName::InteractPickup);
+		Htn::g_TaskDictionary.AddResource(RESKEY("FindResource"), FindResourceTask.GetTask());
+		Htn::g_TaskDictionary.AddResource(RESKEY("MoveTo"), MoveToTask.GetTask());
+		Htn::g_TaskDictionary.AddResource(RESKEY("GetResource"), GetResourceTask.GetTask());
+		Htn::g_TaskDictionary.AddResource(RESKEY("InteractPickup"), InteractPickupTask.GetTask());
 	}
+
+	InitializeResources();
 
 	// Initialize test levels
 	{
@@ -377,26 +413,38 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 	// This wouldn't be needed if Unreal would stop killing our Actors for strange reasons or if I
 	// added a ECS hookup to the AActor base class
 	ActorEntityManager::UpdateNotifyOnActorDestroy(world);
-	ActorEntityManager::DestroyEntitiesWithDestroyedActors(world, &EntityComponentSystem);
+	ActorEntityManager::DestroyEntitiesWithDestroyedActors(world, &gv::g_EntityComponentManager);
 
 	// Destroy entities now because Unreal might have destroyed actors, so we don't want our code to
 	// break not knowing that
-	EntityComponentSystem.DestroyEntitiesPendingDestruction();
+	gv::g_EntityComponentManager.DestroyEntitiesPendingDestruction();
 
 	GalavantMain.Update(DeltaTime);
 
-	AgentComponentManager.Update(DeltaTime);
-	PlanComponentManager.Update(DeltaTime);
-	UnrealMovementComponentManager.Update(DeltaTime);
+	gv::g_AgentComponentManager.Update(DeltaTime);
+	gv::g_PlanComponentManager.Update(DeltaTime);
+	g_UnrealMovementComponentManager.Update(DeltaTime);
 }
 
 void AGalavantUnrealMain::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	// This is because Unreal will begin destroying actors that our entities expected to have
-	EntityComponentSystem.DestroyAllEntities();
+	gv::g_EntityComponentManager.DestroyAllEntities();
 	LOGI << "Destroyed all entities";
 	ActorEntityManager::Clear();
 	gv::WorldResourceLocator::ClearResources();
-	gv::g_NeedDefDictionary.ClearResources();
-	gv::g_AgentGoalDefDictionary.ClearResources();
+	gv::ResourceDictionaryBase::ClearAllDictionaries();
+}
+
+// Latelinked functions
+namespace gv
+{
+float GetWorldTime()
+{
+	UWorld* world = GEngine->GetWorld();
+	if (!world)
+		return 0.f;
+
+	return world->GetTimeSeconds();
+}
 }

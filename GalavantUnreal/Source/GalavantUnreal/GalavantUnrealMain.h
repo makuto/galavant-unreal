@@ -6,15 +6,12 @@
 
 #include "GalavantMain.hpp"
 
-#include "entityComponentSystem/EntityComponentManager.hpp"
-#include "game/agent/PlanComponentManager.hpp"
-#include "game/agent/AgentComponentManager.hpp"
-#include "game/InteractComponentManager.hpp"
 #include "game/agent/htnTasks/MovementTasks.hpp"
 #include "game/agent/htnTasks/InteractTasks.hpp"
 #include "util/CallbackContainer.hpp"
 
 #include "GalaEntityComponents/UnrealMovementComponent.hpp"
+#include "CombatFx.hpp"
 
 #include "GalavantUnrealMain.generated.h"
 
@@ -51,13 +48,7 @@ class GALAVANTUNREAL_API AGalavantUnrealMain : public AGameMode
 	UPROPERTY(EditAnywhere)
 	float PlayerManhattanViewDistance;
 
-	// Entity Components
-	gv::EntityComponentManager EntityComponentSystem;
-
-	UnrealMovementComponent UnrealMovementComponentManager;
-	gv::PlanComponentManager PlanComponentManager;
-	gv::AgentComponentManager AgentComponentManager;
-	gv::InteractComponentManager InteractComponentManager;
+	UnrealCombatFxHandler CombatFxHandler;
 
 	//
 	// Agent

@@ -9,10 +9,12 @@
 
 #include "Utilities/ConversionHelpers.h"
 #include "HUDMinimapActor.h"
+#include "CombatFx.hpp"
 
 #include "util/Logging.hpp"
 #include "entityComponentSystem/EntityComponentManager.hpp"
 #include "game/agent/AgentComponentManager.hpp"
+#include "game/agent/combat/CombatComponentManager.hpp"
 #include "game/InteractComponentManager.hpp"
 #include "entityComponentSystem/EntitySharedData.hpp"
 #include "game/agent/Needs.hpp"
@@ -78,13 +80,8 @@ void AGalavantUnrealFPCharacter::BeginPlay()
 	// Setup player entity
 	if (!PlayerEntity)
 	{
-		gv::EntityComponentManager* entityComponentManager =
-		    gv::EntityComponentManager::GetSingleton();
-		if (!entityComponentManager)
-			return;
-
 		gv::EntityList newEntities;
-		entityComponentManager->GetNewEntities(newEntities, 1);
+		gv::g_EntityComponentManager.GetNewEntities(newEntities, 1);
 		PlayerEntity = newEntities[0];
 
 		// Setup player position
@@ -99,21 +96,34 @@ void AGalavantUnrealFPCharacter::BeginPlay()
 
 		// Setup components
 		{
-			gv::AgentComponentManager* agentComponentManager =
-			    gv::GetComponentManagerForType<gv::AgentComponentManager>(gv::ComponentType::Agent);
-			if (!agentComponentManager)
-				return;
-			gv::AgentComponentManager::AgentComponentList newAgentComponents(1);
+			// Agent component
+			{
+				gv::AgentComponentManager::AgentComponentList newAgentComponents(1);
 
-			newAgentComponents[0].entity = PlayerEntity;
+				newAgentComponents[0].entity = PlayerEntity;
 
-			gv::Need hungerNeed(RESKEY("Hunger"));
-			gv::Need bloodNeed(RESKEY("Blood"));
-			newAgentComponents[0].data.Needs.push_back(hungerNeed);
-			newAgentComponents[0].data.Needs.push_back(bloodNeed);
+				gv::Need hungerNeed(RESKEY("Hunger"));
+				gv::Need bloodNeed(RESKEY("Blood"));
+				newAgentComponents[0].data.Needs.push_back(hungerNeed);
+				newAgentComponents[0].data.Needs.push_back(bloodNeed);
 
-			LOGD << "Registering Player AgentComponent";
-			agentComponentManager->SubscribeEntities(newAgentComponents);
+				LOGD << "Registering Player AgentComponent";
+				gv::g_AgentComponentManager.SubscribeEntities(newAgentComponents);
+			}
+
+			// Combat component
+			{
+				gv::CombatantRefList newCombatants;
+				gv::g_CombatComponentManager.CreateCombatants(newEntities, newCombatants);
+
+				if (newCombatants.empty())
+					LOGE << "Could not create combatant component for player; maybe it has already "
+					        "been created?";
+				else
+				{
+					// No setup needed
+				}
+			}
 		}
 
 		// Register resource as player
@@ -133,12 +143,8 @@ void AGalavantUnrealFPCharacter::EndPlay(const EEndPlayReason::Type EndPlayReaso
 	// Remove the position we were tracking
 	gv::EntityPlayerUnregisterPosition();
 
-	gv::EntityComponentManager* entityComponentManager = gv::EntityComponentManager::GetSingleton();
-	if (entityComponentManager)
-	{
-		gv::EntityList entitiesToDestroy = {PlayerEntity};
-		entityComponentManager->MarkDestroyEntities(entitiesToDestroy);
-	}
+	gv::EntityList entitiesToDestroy = {PlayerEntity};
+	gv::g_EntityComponentManager.MarkDestroyEntities(entitiesToDestroy);
 }
 
 void AGalavantUnrealFPCharacter::Tick(float DeltaSeconds)
@@ -246,20 +252,13 @@ void AGalavantUnrealFPCharacter::OnInteract()
 	                                                  /*allowSameLocation*/ true, manhattanTo);
 	if (nearestFood && manhattanTo < MaxInteractManhattanDistance)
 	{
-		gv::InteractComponentManager* interactComponentManager =
-		    gv::GetComponentManagerForType<gv::InteractComponentManager>(
-		        gv::ComponentType::Interact);
-
-		if (interactComponentManager)
-		{
-			interactComponentManager->PickupDirect(nearestFood->entity, PlayerEntity);
-		}
+		gv::g_InteractComponentManager.PickupDirect(nearestFood->entity, PlayerEntity);
 	}
 }
 
 static float s_lastActionTime = 0.f;
 
-bool AGalavantUnrealFPCharacter::CombatAttemptAction(CombatAction& action)
+bool AGalavantUnrealFPCharacter::CombatAttemptAction(PlayerCombatAction& playerAction)
 {
 	UWorld* world = GetWorld();
 	if (!world)
@@ -277,22 +276,18 @@ bool AGalavantUnrealFPCharacter::CombatAttemptAction(CombatAction& action)
 	if (currentTime - s_lastActionTime < 0.5f)
 		return false;
 
-	LOGD << "Performing combat action of type " << (int)action.Type;
+	LOGD << "Performing combat action of type " << (int)playerAction.Type;
 
 	s_lastActionTime = currentTime;
 
-	if (action.Animation)
-	{
-		// Get the animation object for the arms mesh
-		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-		if (AnimInstance != nullptr)
-		{
-			if (AnimInstance->Montage_Play(action.Animation, 1.f))
-				LOGD << "Played animation";
-			else
-				LOGD << "Animation failed to play";
-		}
-	}
+	// TODO: This is not sustainable. Figure out CombatFx
+	static gv::CombatFx fx;
+	fx.AnimInstance = Mesh1P->GetAnimInstance();
+	fx.AnimMontage = playerAction.Animation;
+	gv::CombatAction action = {gv::g_CombatActionDefDictionary.GetResource(RESKEY("Punch")), &fx,
+	                           0.f};
+
+	gv::g_CombatComponentManager.ActivateCombatAction(PlayerEntity, action);
 
 	return true;
 }
@@ -300,24 +295,24 @@ bool AGalavantUnrealFPCharacter::CombatAttemptAction(CombatAction& action)
 void AGalavantUnrealFPCharacter::OnUsePrimary()
 {
 	LOGD << "Player Use Primary!";
-	CombatAction attemptAction = {CombatAction::ActionType::MeleeAttack,
-	                              TempPrimaryAttackAnimation};
+	PlayerCombatAction attemptAction = {PlayerCombatAction::ActionType::MeleeAttack,
+	                                    TempPrimaryAttackAnimation};
 	CombatAttemptAction(attemptAction);
 }
 
 void AGalavantUnrealFPCharacter::OnUseSecondary()
 {
 	LOGD << "Player Use Secondary!";
-	CombatAction attemptAction = {CombatAction::ActionType::MeleeBlock,
-	                              TempSecondaryAttackAnimation};
+	PlayerCombatAction attemptAction = {PlayerCombatAction::ActionType::MeleeBlock,
+	                                    TempSecondaryAttackAnimation};
 	CombatAttemptAction(attemptAction);
 }
 
 void AGalavantUnrealFPCharacter::OnUseTertiary()
 {
 	LOGD << "Player Use Tertiary!";
-	CombatAction attemptAction = {CombatAction::ActionType::MeleeAttack,
-	                              TempTertiaryAttackAnimation};
+	PlayerCombatAction attemptAction = {PlayerCombatAction::ActionType::MeleeAttack,
+	                                    TempTertiaryAttackAnimation};
 	CombatAttemptAction(attemptAction);
 }
 

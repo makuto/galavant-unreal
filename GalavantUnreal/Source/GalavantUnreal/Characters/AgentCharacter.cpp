@@ -8,7 +8,6 @@
 #include "util/Logging.hpp"
 
 #include "entityComponentSystem/EntityComponentManager.hpp"
-#include "entityComponentSystem/ComponentTypes.hpp"
 #include "game/agent/AgentComponentManager.hpp"
 
 // Sets default values
@@ -42,13 +41,8 @@ void AAgentCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (Entity)
 	{
-		gv::EntityComponentManager* entityComponentManager =
-		    gv::EntityComponentManager::GetSingleton();
-		if (entityComponentManager)
-		{
-			gv::EntityList entitiesToUnsubscribe{Entity};
-			entityComponentManager->MarkDestroyEntities(entitiesToUnsubscribe);
-		}
+		gv::EntityList entitiesToUnsubscribe{Entity};
+		gv::g_EntityComponentManager.MarkDestroyEntities(entitiesToUnsubscribe);
 	}
 }
 
@@ -60,64 +54,50 @@ void AAgentCharacter::Tick(float DeltaTime)
 	// Debugging: Show the state of the agent above head
 	if (Entity)
 	{
-		gv::EntityComponentManager* entityComponentManager =
-		    gv::EntityComponentManager::GetSingleton();
-		if (entityComponentManager)
+		gv::AgentConsciousStateList consciousStates;
+		gv::EntityList entities{Entity};
+		gv::g_AgentComponentManager.GetAgentConsciousStates(entities, consciousStates);
+		if (!consciousStates.empty() && (*consciousStates.begin()) != gv::AgentConsciousState::None)
 		{
-			gv::AgentComponentManager* agentComponentManager =
-			    static_cast<gv::AgentComponentManager*>(
-			        entityComponentManager->GetComponentManagerForType(gv::ComponentType::Agent));
+			gv::AgentConsciousState consciousState = (*consciousStates.begin());
 
-			if (agentComponentManager)
+			USceneComponent* sceneComponent = GetRootComponent();
+			FVector debugTextPosition;
+			if (sceneComponent)
+				debugTextPosition = sceneComponent->GetComponentLocation();
+			debugTextPosition.Z += 100.f;
+			// DrawDebugPoint(world, point, POINT_SCALE, FColor(255, 0, 0), true, 0.f);
+			switch (consciousState)
 			{
-				gv::AgentConsciousStateList consciousStates;
-				gv::EntityList entities{Entity};
-				agentComponentManager->GetAgentConsciousStates(entities, consciousStates);
-				if (!consciousStates.empty() &&
-				    (*consciousStates.begin()) != gv::AgentConsciousState::None)
-				{
-					gv::AgentConsciousState consciousState = (*consciousStates.begin());
+				case gv::AgentConsciousState::None:
+					DrawDebugString(GetWorld(), debugTextPosition, TEXT("None"), this,
+					                FColor(255, 0, 0), 0.f, false);
+					break;
 
-					USceneComponent* sceneComponent = GetRootComponent();
-					FVector debugTextPosition;
-					if (sceneComponent)
-						debugTextPosition = sceneComponent->GetComponentLocation();
-					debugTextPosition.Z += 100.f;
-					// DrawDebugPoint(world, point, POINT_SCALE, FColor(255, 0, 0), true, 0.f);
-					switch (consciousState)
-					{
-						case gv::AgentConsciousState::None:
-							DrawDebugString(GetWorld(), debugTextPosition, TEXT("None"), this,
-							                FColor(255, 0, 0), 0.f, false);
-							break;
+				case gv::AgentConsciousState::Conscious:
+					DrawDebugString(GetWorld(), debugTextPosition, TEXT("Conscious"), this,
+					                FColor(255, 0, 0), 0.f, false);
+					break;
 
-						case gv::AgentConsciousState::Conscious:
-							DrawDebugString(GetWorld(), debugTextPosition, TEXT("Conscious"), this,
-							                FColor(255, 0, 0), 0.f, false);
-							break;
+				case gv::AgentConsciousState::Unconscious:
+					DrawDebugString(GetWorld(), debugTextPosition, TEXT("Unconscious"), this,
+					                FColor(255, 0, 0), 0.f, false);
+					break;
 
-						case gv::AgentConsciousState::Unconscious:
-							DrawDebugString(GetWorld(), debugTextPosition, TEXT("Unconscious"),
-							                this, FColor(255, 0, 0), 0.f, false);
-							break;
+				case gv::AgentConsciousState::Sleeping:
+					DrawDebugString(GetWorld(), debugTextPosition, TEXT("Sleeping"), this,
+					                FColor(255, 0, 0), 0.f, false);
+					break;
 
-						case gv::AgentConsciousState::Sleeping:
-							DrawDebugString(GetWorld(), debugTextPosition, TEXT("Sleeping"), this,
-							                FColor(255, 0, 0), 0.f, false);
-							break;
+				case gv::AgentConsciousState::Dead:
+					DrawDebugString(GetWorld(), debugTextPosition, TEXT("Dead"), this,
+					                FColor(255, 0, 0), 0.f, false);
+					break;
 
-						case gv::AgentConsciousState::Dead:
-							DrawDebugString(GetWorld(), debugTextPosition, TEXT("Dead"), this,
-							                FColor(255, 0, 0), 0.f, false);
-							break;
-
-						default:
-							DrawDebugString(GetWorld(), debugTextPosition,
-							                TEXT("Unrecognized state"), this, FColor(255, 0, 0),
-							                0.f, false);
-							break;
-					}
-				}
+				default:
+					DrawDebugString(GetWorld(), debugTextPosition, TEXT("Unrecognized state"), this,
+					                FColor(255, 0, 0), 0.f, false);
+					break;
 			}
 		}
 	}

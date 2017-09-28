@@ -79,4 +79,7 @@ public:
 	virtual void PathEntitiesTo(const gv::EntityList& entities, const gv::PositionList& positions);
 
 	void OnActorDestroyed(const AActor* actor);
+
 };
+
+extern UnrealMovementComponent g_UnrealMovementComponentManager;

@@ -7048,6 +7048,7 @@ SOURCES += \
 	"$$unrealRootPath/Engine/Plugins/Tests/RuntimeTests/Source/RuntimeTests/Private/Slate/RichTextMarkupProcessingTest.cpp" \
 	"$$unrealRootPath/Engine/Plugins/Tests/ScreenshotTools/Source/ScreenshotTools/Private/ScreenshotTools.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ActorEntityManagement.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/CombatFx.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealGameMode.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealMain.cpp" \
