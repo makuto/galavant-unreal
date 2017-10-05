@@ -112,7 +112,7 @@ void InitializeResources()
 		static gv::NeedDef TestHungerNeed;
 		TestHungerNeed.Type = gv::NeedType::Hunger;
 		TestHungerNeed.Name = "Hunger";
-		TestHungerNeed.InitialLevel = 0.f;
+		TestHungerNeed.InitialLevel = 70.f;
 		TestHungerNeed.MaxLevel = 300.f;
 		TestHungerNeed.MinLevel = 0.f;
 		TestHungerNeed.UpdateRate = 10.f;
@@ -350,7 +350,7 @@ void AGalavantUnrealMain::InitializeGalavant()
 
 		{
 			gv::g_PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
-			// PlanComponentManager.DebugPrint = true;
+			//gv::g_PlanComponentManager.DebugPrint = true;
 		}
 
 		{

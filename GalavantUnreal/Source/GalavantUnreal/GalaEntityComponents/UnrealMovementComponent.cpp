@@ -319,6 +319,7 @@ void UnrealMovementComponent::SpawnActorIfNecessary(
 		FVector position(ToFVector(component->data.WorldPosition));
 		FActorSpawnParameters spawnParams;
 
+		bool hitWorld = false;
 		// Raycast to find the ground to spawn on
 		// TODO: Far future: If anything is ever flying, we'll need to not do this
 		{
@@ -333,7 +334,15 @@ void UnrealMovementComponent::SpawnActorIfNecessary(
 			                                    ECollisionChannel::ECC_WorldDynamic))
 			{
 				position.Z = hitResult.ImpactPoint.Z + 100.f;
+				hitWorld = true;
 			}
+		}
+
+		if (!hitWorld)
+		{
+			LOGD << "Entity " << component->entity
+			     << " will NOT spawn actor/character because it doesn't have a place to stand";
+			return;
 		}
 
 		LOGD << "Entity " << component->entity
