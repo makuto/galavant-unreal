@@ -98,6 +98,11 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 	}
 
 	InitializeProceduralWorld();
+
+	// This is a complete hack and should only be for Macoy's setup
+	// Scale everything (including the engine UI) to my DPI settings
+	// https://answers.unrealengine.com/questions/247475/why-would-setting-games-screen-resolution-in-gameu.html
+	FSlateApplication::Get().SetApplicationScale(1.53f);
 }
 
 void InitializeResources()
@@ -125,7 +130,7 @@ void InitializeResources()
 			    Htn::g_TaskDictionary.GetResource(RESKEY("InteractPickup")), parameters};
 			Htn::TaskCallList getResourceTasks = {getResourceCall, pickupResourceCall};
 			static gv::AgentGoalDef s_findFoodGoalDef{gv::AgentGoalDef::GoalType::HtnPlan,
-			                                          /*NumRetriesIfFailed=*/2};
+			                                          /*NumRetriesIfFailed=*/2, getResourceTasks};
 			gv::g_AgentGoalDefDictionary.AddResource(RESKEY("FindFood"), &s_findFoodGoalDef);
 		}
 
@@ -148,7 +153,7 @@ void InitializeResources()
 			gv::NeedLevelTrigger deathByStarvation;
 			deathByStarvation.Condition = gv::NeedLevelTrigger::ConditionType::GreaterThanLevel;
 			deathByStarvation.Level = 290.f;
-			deathByStarvation.DieNow = true;
+			deathByStarvation.SetConsciousState = gv::AgentConsciousState::Dead;
 			TestHungerNeed.LevelTriggers.push_back(deathByStarvation);
 		}
 
@@ -169,9 +174,15 @@ void InitializeResources()
 
 		// Blood Need Triggers
 		{
+			gv::NeedLevelTrigger lowBloodUnconscious;
+			lowBloodUnconscious.Condition = gv::NeedLevelTrigger::ConditionType::LessThanLevel;
+			lowBloodUnconscious.Level = 20.f;
+			lowBloodUnconscious.SetConsciousState = gv::AgentConsciousState::Unconscious;
+			BloodNeed.LevelTriggers.push_back(lowBloodUnconscious);
+
 			gv::NeedLevelTrigger deathByBleedingOut;
 			deathByBleedingOut.Condition = gv::NeedLevelTrigger::ConditionType::Zero;
-			deathByBleedingOut.DieNow = true;
+			deathByBleedingOut.SetConsciousState = gv::AgentConsciousState::Dead;
 			BloodNeed.LevelTriggers.push_back(deathByBleedingOut);
 		}
 
@@ -325,6 +336,16 @@ void AGalavantUnrealMain::InitializeGalavant()
 
 	// Initialize Entity Components
 	{
+		// I originally made this happen via static initialization, but using that in combination
+		// with A) split Galavant static library and GalavantUnreal library and B) Unreal
+		// Hotreloading caused issues (mainly that Unreal-specific ComponentManagers weren't being
+		// registered in the same list)
+		gv::g_EntityComponentManager.AddComponentManager(&gv::g_InteractComponentManager);
+		gv::g_EntityComponentManager.AddComponentManager(&gv::g_CombatComponentManager);
+		gv::g_EntityComponentManager.AddComponentManager(&gv::g_AgentComponentManager);
+		gv::g_EntityComponentManager.AddComponentManager(&gv::g_PlanComponentManager);
+		gv::g_EntityComponentManager.AddComponentManager(&g_UnrealMovementComponentManager);
+
 		g_UnrealMovementComponentManager.Initialize(GetWorld(), &TaskEventCallbacks);
 
 		{
@@ -408,19 +429,13 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 
 	UWorld* world = GetWorld();
 
-	// Make sure the Entity Component System knows if an Actor associated with an Entity has been
-	// destroyed. Component Managers should be able to trust that their Subscribers have valid data.
-	// This wouldn't be needed if Unreal would stop killing our Actors for strange reasons or if I
-	// added a ECS hookup to the AActor base class
-	ActorEntityManager::UpdateNotifyOnActorDestroy(world);
-	ActorEntityManager::DestroyEntitiesWithDestroyedActors(world, &gv::g_EntityComponentManager);
-
 	// Destroy entities now because Unreal might have destroyed actors, so we don't want our code to
 	// break not knowing that
 	gv::g_EntityComponentManager.DestroyEntitiesPendingDestruction();
 
 	GalavantMain.Update(DeltaTime);
 
+	gv::g_CombatComponentManager.Update(DeltaTime);
 	gv::g_AgentComponentManager.Update(DeltaTime);
 	gv::g_PlanComponentManager.Update(DeltaTime);
 	g_UnrealMovementComponentManager.Update(DeltaTime);

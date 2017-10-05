@@ -10,76 +10,37 @@
 
 namespace ActorEntityManager
 {
-struct ActorEntity
+struct TrackedActor
 {
-	AActor* Actor;
-	gv::Entity Entity;
+	bool IsBeingDestroyed;
+	TrackActorLifetimeCallback OnDestroyCallback;
+
+	void operator=(const TrackedActor& other)
+	{
+		IsBeingDestroyed = other.IsBeingDestroyed;
+		OnDestroyCallback = other.OnDestroyCallback;
+	}
 };
 
-typedef std::vector<ActorEntity> ActorEntityList;
-ActorEntityList s_ActorEntities;
-
-typedef std::vector<TrackActorLifetimeCallback> TrackActorLifetimeCallbackList;
-typedef std::map<const AActor*, TrackActorLifetimeCallbackList> ActorLifetimeCallbacks;
-ActorLifetimeCallbacks s_ActorLifetimeCallbacks;
+typedef std::map<const AActor*, TrackedActor> TrackedActorMap;
+TrackedActorMap s_TrackedActors;
 
 void Clear()
 {
-	s_ActorEntities.clear();
-	s_ActorLifetimeCallbacks.clear();
+	s_TrackedActors.clear();
 }
 
-void AddActorEntity(AActor* actor, gv::Entity entity)
-{
-	s_ActorEntities.push_back({actor, entity});
-}
+typedef std::vector<AActor*> ActiveActorList;
+ActiveActorList s_ActiveActors;
 
-void DestroyEntitiesWithDestroyedActors(UWorld* world,
-                                        gv::EntityComponentManager* entityComponentSystem)
+bool IsActorActive(AActor* actor)
 {
-	if (world && entityComponentSystem)
+	for (AActor* currentActor : s_ActiveActors)
 	{
-		const TArray<class ULevel*>& levels = world->GetLevels();
-		gv::EntityList entitiesToDestroy;
-
-		// This O(n * m) through all actors and entities is brutal. I should hook into Actor
-		// destruction (i.e. by adding some callback or something to AActor base class), but
-		// for now this is okay
-		int lastGoodActorEntityIndex = s_ActorEntities.size() - 1;
-		for (int i = lastGoodActorEntityIndex; i >= 0; i--)
-		{
-			ActorEntity& actorEntity = s_ActorEntities[i];
-			bool found = false;
-			for (const ULevel* level : levels)
-			{
-				for (const AActor* actor : level->Actors)
-				{
-					if (actorEntity.Actor == actor)
-					{
-						found = true;
-						break;
-					}
-				}
-				if (found)
-					break;
-			}
-
-			if (!found)
-			{
-				actorEntity = s_ActorEntities[lastGoodActorEntityIndex--];
-				entitiesToDestroy.push_back(actorEntity.Entity);
-			}
-		}
-
-		if (!entitiesToDestroy.empty())
-		{
-			LOGI << "Destroying " << entitiesToDestroy.size()
-			     << " entities because their Actors were destroyed";
-
-			s_ActorEntities.resize(lastGoodActorEntityIndex + 1);
-			entityComponentSystem->MarkDestroyEntities(entitiesToDestroy);
-		}
+		if (actor == currentActor)
+			return true;
 	}
+	return false;
 }
 
 void TrackActorLifetime(AActor* actor, TrackActorLifetimeCallback callback)
@@ -87,71 +48,32 @@ void TrackActorLifetime(AActor* actor, TrackActorLifetimeCallback callback)
 	if (!actor)
 		return;
 
-	ActorLifetimeCallbacks::iterator findIt = s_ActorLifetimeCallbacks.find(actor);
-	if (findIt != s_ActorLifetimeCallbacks.end())
-		findIt->second.push_back(callback);
-	else
-		s_ActorLifetimeCallbacks[actor] = {callback};
+	s_TrackedActors[actor] = {false, callback};
+	s_ActiveActors.push_back(actor);
 }
 
-void UpdateNotifyOnActorDestroy(UWorld* world)
+void UnrealActorEntityOnDestroy(AActor* actor, int entity)
 {
-	if (!world)
-		return;
+	LOGD << "Actor assigned to entity " << entity << " was destroyed";
 
-	std::vector<const AActor*> liveActors;
-
-	const ULevel* level = world->GetCurrentLevel();
-
-	if (!level)
-		return;
-
-	for (const AActor* actor : level->Actors)
+	TrackedActorMap::iterator findIt = s_TrackedActors.find(actor);
+	if (findIt == s_TrackedActors.end())
 	{
-		if (!actor)
-			continue;
-
-		liveActors.push_back(actor);
-
-		if (actor->IsPendingKillPending())
-		{
-			ActorLifetimeCallbacks::iterator findIt = s_ActorLifetimeCallbacks.find(actor);
-			if (findIt == s_ActorLifetimeCallbacks.end())
-				continue;
-
-			for (TrackActorLifetimeCallback callbackOnDestroy : findIt->second)
-				callbackOnDestroy(actor);
-
-			// The actor has been removed, so there's no reason to track its lifetime
-			s_ActorLifetimeCallbacks.erase(findIt);
-		}
+		LOGE << "Actor had entity but no lifetime callbacks! Something should be making sure their "
+		        "Actors are valid but aren't. The Entity will be destroyed";
+		gv::g_EntityComponentManager.MarkDestroyEntities({(unsigned int)entity});
+		return;
 	}
 
-	// If an actor has been removed before we've had a chance to check IsPendingKillPending(), we
-	// need to make sure we detect it
-	for (ActorLifetimeCallbacks::iterator trackingIt = s_ActorLifetimeCallbacks.begin();
-	     trackingIt != s_ActorLifetimeCallbacks.end();)
-	{
-		bool stillAlive = false;
-		for (const AActor* currentActor : liveActors)
-		{
-			if (trackingIt->first == currentActor)
-			{
-				stillAlive = true;
-				break;
-			}
-		}
+	findIt->second.IsBeingDestroyed = true;
 
-		if (!stillAlive)
-		{
-			for (TrackActorLifetimeCallback callbackOnDestroy : trackingIt->second)
-				callbackOnDestroy(trackingIt->first);
+	findIt->second.OnDestroyCallback(actor);
 
-			// The actor has been removed, so there's no reason to track its lifetime
-			trackingIt = s_ActorLifetimeCallbacks.erase(trackingIt);
-		}
-		else
-			++trackingIt;
-	}
+	// The actor has been removed, so there's no reason to track its lifetime
+	// Note that whatever happens in callbackOnDestroy() could spawn and track an Actor which has
+	// the same address as the last one (maybe, I'm not sure how Unreal manages Actor memory). Only
+	// destroy this TrackedActor if we are certain they didn't re-add the callback
+	if (findIt->second.IsBeingDestroyed)
+		s_TrackedActors.erase(findIt);
 }
 }

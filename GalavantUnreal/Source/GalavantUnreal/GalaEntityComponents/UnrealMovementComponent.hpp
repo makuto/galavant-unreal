@@ -26,8 +26,8 @@ struct UnrealMovementComponentData
 {
 	MovementComponentActorSpawnParams SpawnParams;
 
-	ACharacter* Character;
-	AActor* Actor;
+	ACharacter* Character = nullptr;
+	AActor* Actor = nullptr;
 
 	gv::Position WorldPosition;
 
@@ -36,7 +36,7 @@ struct UnrealMovementComponentData
 	float MaxSpeed = 500.f;
 
 	// If provided, this entity will be registered in the WorldResourceLocator under this type
-	gv::WorldResourceType ResourceType;
+	gv::WorldResourceType ResourceType = gv::WorldResourceType::None;
 
 	// The last position we told the ResourceLocator we were at (used so that when we move we can
 	// find the agent to move in ResourceLocator)
@@ -48,6 +48,7 @@ class UnrealMovementComponent : public gv::PooledComponentManager<UnrealMovement
 {
 private:
 	void SpawnActorIfNecessary(gv::PooledComponent<UnrealMovementComponentData>* component);
+	void DestroyActor(gv::PooledComponent<UnrealMovementComponentData>* component);
 
 	UWorld* World;
 
@@ -79,7 +80,6 @@ public:
 	virtual void PathEntitiesTo(const gv::EntityList& entities, const gv::PositionList& positions);
 
 	void OnActorDestroyed(const AActor* actor);
-
 };
 
 extern UnrealMovementComponent g_UnrealMovementComponentManager;

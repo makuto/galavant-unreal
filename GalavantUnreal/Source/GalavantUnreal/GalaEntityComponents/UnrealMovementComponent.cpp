@@ -52,8 +52,6 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 	     it != gv::PooledComponentManager<UnrealMovementComponentData>::NULL_POOL_ITERATOR;
 	     currentComponent = GetNextActivePooledComponent(it))
 	{
-		ACharacter* currentCharacter = currentComponent->data.Character;
-		AActor* currentActor = currentComponent->data.Actor;
 		gv::Position& worldPosition = currentComponent->data.WorldPosition;
 		gv::Position& goalWorldPosition = currentComponent->data.GoalWorldPosition;
 		float goalManDistanceTolerance = currentComponent->data.GoalManDistanceTolerance;
@@ -62,14 +60,46 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 		bool shouldActorExist = gv::EntityLOD::ShouldRenderForPlayer(worldPosition);
 		bool moveActor = false;
 
-		USceneComponent* sceneComponent = nullptr;
+		// Debug Actor/Entity lifetime
+		if (GEngine)
+		{
+			bool spawnDiscrepancy =
+			    (shouldActorExist &&
+			     (!currentComponent->data.Actor && !currentComponent->data.Character)) ||
+			    (!shouldActorExist &&
+			     (currentComponent->data.Actor || currentComponent->data.Character));
+			// Use entity as string key so it'll overwrite
+			GEngine->AddOnScreenDebugMessage(
+			    /*key=*/(uint64)currentComponent->entity, /*timeToDisplay=*/1.5f,
+			    spawnDiscrepancy ? FColor::Red : FColor::Green,
+			    FString::Printf(TEXT("Entity %d Actor: %d Character: %d Should Render: %d"),
+			                    currentComponent->entity, currentComponent->data.Actor,
+			                    currentComponent->data.Character, shouldActorExist));
+		}
 
 		SpawnActorIfNecessary(currentComponent);
 
-		if (currentActor)
-			sceneComponent = currentActor->GetRootComponent();
-		else if (currentCharacter)
-			sceneComponent = currentCharacter->GetRootComponent();
+		USceneComponent* sceneComponent = nullptr;
+		if (currentComponent->data.Actor)
+		{
+			if (!ActorEntityManager::IsActorActive(currentComponent->data.Actor))
+			{
+				currentComponent->data.Actor = nullptr;
+				LOGW << "Entity " << currentComponent->entity << " had pointer to inactive actor!";
+			}
+			else
+				sceneComponent = currentComponent->data.Actor->GetRootComponent();
+		}
+		else if (currentComponent->data.Character)
+		{
+			if (!ActorEntityManager::IsActorActive(currentComponent->data.Character))
+			{
+				currentComponent->data.Character = nullptr;
+				LOGW << "Entity " << currentComponent->entity << " had pointer to inactive actor!";
+			}
+			else
+				sceneComponent = currentComponent->data.Character->GetRootComponent();
+		}
 
 		if (!sceneComponent && shouldActorExist)
 		{
@@ -77,12 +107,23 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 			                                                 "was the actor destroyed? It should "
 			                                                 "be respawned later...";
 
+			// Nothing in this block below makes sense anymore
 			// If the actor/character has been destroyed for some reason, make sure we reset these
 			// so it'll be spawned. All actors/characters should have scene components
-			currentActor = nullptr;
-			currentCharacter = nullptr;
+			/*currentComponent->data.Actor = nullptr;
+			currentComponent->data.Character = nullptr;*/
+			// Don't destroy an entity just because it has lost its actor. Why was this code here?
 			// entitiesToUnsubscribe.push_back(currentComponent->entity);
-			continue;
+			// continue;
+		}
+		// Destroy the actor if we are far away
+		else if (!shouldActorExist &&
+		         (currentComponent->data.Actor || currentComponent->data.Character))
+		{
+			DestroyActor(currentComponent);
+
+			LOGD << "Entity " << currentComponent->entity
+			     << " destroyed its actor because it shouldn't be rendered to the player";
 		}
 		else
 			moveActor = true;
@@ -91,27 +132,15 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 		if (moveActor && sceneComponent)
 		{
 			// TODO: This motherfucker is still crashing
+			/*LOGD << "Entity " << currentComponent->entity << " actor "
+			     << &currentComponent->data.Actor << " Character "
+			     << &currentComponent->data.Character;*/
 			trueWorldPosition = sceneComponent->GetComponentLocation();
 			worldPosition = ToPosition(trueWorldPosition);
+			// LOGD << "Done retrieving position";
 		}
 		else
 			trueWorldPosition = ToFVector(worldPosition);
-
-		// Destroy the actor if we are far away
-		if (!shouldActorExist && (currentActor || currentCharacter))
-		{
-			if (currentActor)
-				currentActor->Destroy();
-			if (currentCharacter)
-				currentCharacter->Destroy();
-
-			currentActor = currentCharacter = nullptr;
-
-			moveActor = false;
-
-			LOGD << "Entity " << currentComponent->entity
-			     << " destroyed its actor because it shouldn't be rendered to the player";
-		}
 
 		// Decide where we're going to go
 		{
@@ -164,11 +193,11 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 
 			if (moveActor)
 			{
-				if (currentActor)
+				if (currentComponent->data.Actor)
 					sceneComponent->AddLocalOffset(deltaVelocity, false, nullptr,
 					                               ETeleportType::None);
-				else if (currentCharacter)
-					currentCharacter->AddMovementInput(deltaVelocity, 1.f);
+				else if (currentComponent->data.Character)
+					currentComponent->data.Character->AddMovementInput(deltaVelocity, 1.f);
 			}
 
 			worldPosition += ToPosition(deltaVelocity);
@@ -224,10 +253,7 @@ void UnrealMovementComponent::UnsubscribePoolEntitiesInternal(
 		if (!currentComponent)
 			continue;
 
-		if (currentComponent->data.Character)
-			currentComponent->data.Character->Destroy();
-		if (currentComponent->data.Actor)
-			currentComponent->data.Actor->Destroy();
+		DestroyActor(currentComponent);
 
 		if (currentComponent->data.ResourceType != gv::WorldResourceType::None)
 		{
@@ -289,7 +315,7 @@ void UnrealMovementComponent::SpawnActorIfNecessary(
 		ACharacter* newCharacter = nullptr;
 
 		// TODO: Store rotation
-		FRotator defaultRotation(0.f, 0.f, 0.f);
+		// FRotator defaultRotation(0.f, 0.f, 0.f);
 		FVector position(ToFVector(component->data.WorldPosition));
 		FActorSpawnParameters spawnParams;
 
@@ -315,14 +341,17 @@ void UnrealMovementComponent::SpawnActorIfNecessary(
 
 		if (component->data.SpawnParams.ActorToSpawn)
 		{
-			newActor = (AActor*)World->SpawnActor<AActor>(component->data.SpawnParams.ActorToSpawn,
-			                                              position, defaultRotation, spawnParams);
+			newActor = ActorEntityManager::CreateActorForEntity<AActor>(
+			    World, component->data.SpawnParams.ActorToSpawn, component->entity,
+			    ToPosition(position),
+			    std::bind(&UnrealMovementComponent::OnActorDestroyed, this, std::placeholders::_1));
 		}
 		else if (component->data.SpawnParams.CharacterToSpawn)
 		{
-			newCharacter = (ACharacter*)World->SpawnActor<ACharacter>(
-			    component->data.SpawnParams.CharacterToSpawn, position, defaultRotation,
-			    spawnParams);
+			newCharacter = ActorEntityManager::CreateActorForEntity<ACharacter>(
+			    World, component->data.SpawnParams.CharacterToSpawn, component->entity,
+			    ToPosition(position),
+			    std::bind(&UnrealMovementComponent::OnActorDestroyed, this, std::placeholders::_1));
 		}
 		else
 		{
@@ -334,14 +363,24 @@ void UnrealMovementComponent::SpawnActorIfNecessary(
 			LOGE << "Unable to spawn entity " << component->entity << "!";
 		else
 		{
-			ActorEntityManager::TrackActorLifetime(
-			    newCharacter ? newCharacter : newActor,
-			    std::bind(&UnrealMovementComponent::OnActorDestroyed, this, std::placeholders::_1));
-
 			component->data.Actor = newActor;
 			component->data.Character = newCharacter;
+
+			if (newActor)
+				newActor->Entity = component->entity;
 		}
 	}
+}
+
+void UnrealMovementComponent::DestroyActor(
+    gv::PooledComponent<UnrealMovementComponentData>* component)
+{
+	if (component->data.Actor)
+		component->data.Actor->Destroy();
+	if (component->data.Character)
+		component->data.Character->Destroy();
+
+	component->data.Actor = component->data.Character = nullptr;
 }
 
 // @Callback: TrackActorLifetimeCallback
@@ -356,12 +395,16 @@ void UnrealMovementComponent::OnActorDestroyed(const AActor* actor)
 	{
 		if (currentComponent->data.Actor == actor || currentComponent->data.Character == actor)
 		{
-			LOGD << "Entity " << currentComponent->entity << " had its actor " << actor
-			     << " destroyed (possibly against its will)";
+			if (gv::EntityLOD::ShouldRenderForPlayer(currentComponent->data.WorldPosition))
+			{
+				LOGD << "Entity " << currentComponent->entity << " had its actor " << actor
+				     << " destroyed (possibly against its will); it is in player view";
+			}
 			currentComponent->data.Actor = nullptr;
 			currentComponent->data.Character = nullptr;
 
-			SpawnActorIfNecessary(currentComponent);
+			// Actors will be respawned during Update() if necessary
+			// SpawnActorIfNecessary(currentComponent);
 		}
 	}
 }
