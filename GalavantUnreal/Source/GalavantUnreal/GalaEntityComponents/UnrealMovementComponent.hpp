@@ -26,8 +26,8 @@ struct UnrealMovementComponentData
 {
 	MovementComponentActorSpawnParams SpawnParams;
 
-	TWeakPtr<ACharacter> Character = nullptr;
-	TWeakPtr<AActor> Actor = nullptr;
+	TWeakObjectPtr<ACharacter> Character = nullptr;
+	TWeakObjectPtr<AActor> Actor = nullptr;
 
 	gv::Position WorldPosition;
 
@@ -62,6 +62,8 @@ protected:
 	                                             UnrealMovementComponentRefList& components);
 
 public:
+	bool DebugPrint;
+
 	typedef std::vector<gv::PooledComponent<UnrealMovementComponentData>>
 	    UnrealMovementComponentList;
 

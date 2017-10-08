@@ -349,16 +349,13 @@ void AGalavantUnrealMain::InitializeGalavant()
 		gv::g_EntityComponentManager.AddComponentManager(&g_UnrealMovementComponentManager);
 
 		g_UnrealMovementComponentManager.Initialize(GetWorld(), &TaskEventCallbacks);
+		// g_UnrealMovementComponentManager.DebugPrint = true;
 
-		{
-			gv::g_PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
-			// gv::g_PlanComponentManager.DebugPrint = true;
-		}
+		gv::g_PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
+		// gv::g_PlanComponentManager.DebugPrint = true;
 
-		{
-			gv::g_AgentComponentManager.Initialize(&gv::g_PlanComponentManager);
-			gv::g_AgentComponentManager.DebugPrint = true;
-		}
+		gv::g_AgentComponentManager.Initialize(&gv::g_PlanComponentManager);
+		gv::g_AgentComponentManager.DebugPrint = true;
 
 		gv::g_CombatComponentManager.Initialize(&CombatFxHandler);
 	}
@@ -432,34 +429,6 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 	UWorld* world = GetWorld();
 
 	g_UnrealMovementComponentManager.Initialize(world, &TaskEventCallbacks);
-
-	static bool hasTicked = false;
-	if (!hasTicked)
-	{
-		struct bullshit
-		{
-			void OnActorDestroyed(gv::Entity ent)
-			{
-			}
-		};
-		gv::Position position;
-		bullshit someBullshit;
-		std::cout << "Spawning " << &DefaultAgentCharacter << " in world " << world <<  "\n";
-		TSharedPtr<ACharacter> newLockedCharacter(
-		    ActorEntityManager::CreateActorForEntity<ACharacter>(
-		        world, DefaultAgentCharacter, 0, position,
-		        std::bind(&bullshit::OnActorDestroyed, &someBullshit,
-		                  std::placeholders::_1)));
-
-		LOGD << "Spawned character. What the fuck";
-
-		TSharedPtr<ACharacter> newLockedCharacter2(
-		    ActorEntityManager::CreateActorForEntity<ACharacter>(
-		        world, DefaultAgentCharacter, 0, position,
-		        std::bind(&bullshit::OnActorDestroyed, &someBullshit,
-		                  std::placeholders::_1)));
-		LOGD << "Spawned another character. What the fuck";
-	}
 
 	// Destroy entities now because Unreal might have destroyed actors, so we don't want our code to
 	// break not knowing that
