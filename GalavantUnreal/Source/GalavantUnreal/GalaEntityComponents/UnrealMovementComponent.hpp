@@ -26,8 +26,8 @@ struct UnrealMovementComponentData
 {
 	MovementComponentActorSpawnParams SpawnParams;
 
-	ACharacter* Character = nullptr;
-	AActor* Actor = nullptr;
+	TWeakPtr<ACharacter> Character = nullptr;
+	TWeakPtr<AActor> Actor = nullptr;
 
 	gv::Position WorldPosition;
 
@@ -79,7 +79,7 @@ public:
 	// TODO: This should return whether it was actually successful (i.e. the entity exists)
 	virtual void PathEntitiesTo(const gv::EntityList& entities, const gv::PositionList& positions);
 
-	void OnActorDestroyed(const AActor* actor);
+	void OnActorDestroyed(gv::Entity entity);
 };
 
 extern UnrealMovementComponent g_UnrealMovementComponentManager;

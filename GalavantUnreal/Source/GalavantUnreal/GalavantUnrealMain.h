@@ -10,6 +10,8 @@
 #include "game/agent/htnTasks/InteractTasks.hpp"
 #include "util/CallbackContainer.hpp"
 
+#include "ActorEntityManagement.h"
+
 #include "GalaEntityComponents/UnrealMovementComponent.hpp"
 #include "CombatFx.hpp"
 
@@ -83,6 +85,14 @@ public:
 
 	virtual void InitGame(const FString& MapName, const FString& Options,
 	                      FString& ErrorMessage) override;
+
+	template <class T>
+	static T* CreateActorForEntity(UWorld* world, TSubclassOf<T> actorType, gv::Entity entity,
+	                               const gv::Position& position,
+	                               ActorEntityManager::TrackActorLifetimeCallback callback)
+	{
+		return ActorEntityManager::CreateActorForEntity<T>(world, actorType, 0, position, callback);
+	}
 
 private:
 	void InitializeEntityTests();

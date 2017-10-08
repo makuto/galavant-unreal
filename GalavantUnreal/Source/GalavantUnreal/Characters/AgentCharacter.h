@@ -8,7 +8,7 @@
 
 #include "AgentCharacter.generated.h"
 
-UCLASS()
+UCLASS(config = Game)
 class GALAVANTUNREAL_API AAgentCharacter : public ACharacter
 {
 	GENERATED_BODY()

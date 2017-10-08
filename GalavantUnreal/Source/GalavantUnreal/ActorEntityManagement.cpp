@@ -67,7 +67,7 @@ void UnrealActorEntityOnDestroy(AActor* actor, int entity)
 
 	findIt->second.IsBeingDestroyed = true;
 
-	findIt->second.OnDestroyCallback(actor);
+	findIt->second.OnDestroyCallback((gv::Entity)entity);
 
 	// The actor has been removed, so there's no reason to track its lifetime
 	// Note that whatever happens in callbackOnDestroy() could spawn and track an Actor which has
