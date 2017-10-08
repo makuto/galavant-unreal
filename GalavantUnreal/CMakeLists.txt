@@ -7059,6 +7059,7 @@ set(SOURCE_FILES
 	"${UE4_ROOT_PATH}/Engine/Plugins/Tests/RuntimeTests/Source/RuntimeTests/Private/Slate/RichTextMarkupProcessingTest.cpp"
 	"${UE4_ROOT_PATH}/Engine/Plugins/Tests/ScreenshotTools/Source/ScreenshotTools/Private/ScreenshotTools.cpp"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/ActorEntityManagement.cpp"
+	"${GAME_ROOT_PATH}/Source/GalavantUnreal/CombatFx.cpp"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnreal.cpp"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealGameMode.cpp"
 	"${GAME_ROOT_PATH}/Source/GalavantUnreal/GalavantUnrealMain.cpp"

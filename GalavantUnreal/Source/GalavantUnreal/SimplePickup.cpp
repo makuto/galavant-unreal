@@ -32,13 +32,8 @@ void ASimplePickup::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (Entity)
 	{
-		gv::EntityComponentManager* entityComponentManager =
-		    gv::EntityComponentManager::GetSingleton();
-		if (entityComponentManager)
-		{
-			gv::EntityList entitiesToUnsubscribe{Entity};
-			entityComponentManager->MarkDestroyEntities(entitiesToUnsubscribe);
-		}
+		gv::EntityList entitiesToUnsubscribe{Entity};
+		gv::g_EntityComponentManager.MarkDestroyEntities(entitiesToUnsubscribe);
 	}
 }
 

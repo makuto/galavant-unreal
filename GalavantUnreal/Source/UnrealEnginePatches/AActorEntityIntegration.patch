@@ -1,0 +1,65 @@
+From 48ddb51b9790eba1cee74bae9ddb12c202cf9a47 Mon Sep 17 00:00:00 2001
+From: Macoy Madson <macoymadson@gmail.com>
+Date: Thu, 28 Sep 2017 19:03:32 -0700
+Subject: [PATCH] Added very basic Entity integration and lifetime callback to
+ AActor
+
+---
+ Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h | 13 +++++++++++++
+ Engine/Source/Runtime/Engine/Private/Actor.cpp             |  2 ++
+ 2 files changed, 15 insertions(+)
+
+diff --git a/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h b/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h
+index 43f7768..e00a273 100644
+--- a/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h
++++ b/Engine/Source/Runtime/Engine/Classes/GameFramework/Actor.h
+@@ -90,6 +90,12 @@ class ENGINE_API AActor : public UObject
+ 	*/
+ 
+ 	GENERATED_BODY()
++
++/* Galavant-specific code */
++public:
++	UPROPERTY(BlueprintReadOnly, Category="Galavant")
++	int Entity;
++
+ public:
+ 
+ 	/**
+@@ -3045,6 +3051,9 @@ private:
+ 	}
+ };
+ 
++/* Galavant-specific code */
++using ActorEntityOnDestroyFunc = void (*)(AActor* actor, int entity);
++extern ActorEntityOnDestroyFunc ActorEntityOnDestroy;
+ 
+ struct FMarkActorIsBeingDestroyed
+ {
+@@ -3052,6 +3061,10 @@ private:
+ 	FMarkActorIsBeingDestroyed(AActor* InActor)
+ 	{
+ 		InActor->bActorIsBeingDestroyed = true;
++
++		/* Galavant-specific code */
++		if (InActor->Entity && ActorEntityOnDestroy)
++			ActorEntityOnDestroy(InActor, InActor->Entity);
+ 	}
+ 
+ 	friend UWorld;
+diff --git a/Engine/Source/Runtime/Engine/Private/Actor.cpp b/Engine/Source/Runtime/Engine/Private/Actor.cpp
+index 48ad3cd..55c71ff 100644
+--- a/Engine/Source/Runtime/Engine/Private/Actor.cpp
++++ b/Engine/Source/Runtime/Engine/Private/Actor.cpp
+@@ -61,6 +61,8 @@ FUObjectAnnotationSparseBool GSelectedActorAnnotation;
+ FOnProcessEvent AActor::ProcessEventDelegate;
+ #endif
+ 
++ActorEntityOnDestroyFunc ActorEntityOnDestroy = nullptr;
++
+ uint32 AActor::BeginPlayCallDepth = 0;
+ 
+ AActor::AActor()
+-- 
+2.7.4
+
