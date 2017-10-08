@@ -8,6 +8,8 @@
 
 #include <functional>
 
+#include <iostream>
+
 // This module tracks Actor-Entity pairs and ensures that if an Actor was destroyed the components
 // for the associated Entity will know about it. This is to fix the problem where Unreal can destroy
 // an Actor without our Entity system knowing about it
@@ -16,7 +18,7 @@ namespace ActorEntityManager
 void Clear();
 
 // Advanced setup: if actor is destroyed, call callback
-typedef std::function<void(const AActor*)> TrackActorLifetimeCallback;
+typedef std::function<void(gv::Entity)> TrackActorLifetimeCallback;
 void TrackActorLifetime(AActor* actor, TrackActorLifetimeCallback callback);
 
 bool IsActorActive(AActor* actor);
@@ -29,6 +31,10 @@ T* CreateActorForEntity(UWorld* world, TSubclassOf<T> actorType, gv::Entity enti
 {
 	if (!world)
 		return nullptr;
+
+	std::cout << "UWorld* world " << world << " TSubclassOf<T> actorType " << actorType.Get()
+	          << " gv::Entity entity " << entity << " const gv::Position& position " << position.X
+	          << ", " << position.Y << ", " << position.Z << "\n";
 
 	FActorSpawnParameters spawnParams;
 	FVector positionVector(ToFVector(position));

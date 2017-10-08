@@ -23,6 +23,8 @@
 #include "game/EntityLevelOfDetail.hpp"
 #include "util/StringHashing.hpp"
 
+#include <iostream>
+
 static gv::Logging::Logger s_UnrealLogger(gv::Logging::Severity::debug, &UnrealLogOutput);
 
 // Sets default values
@@ -347,16 +349,13 @@ void AGalavantUnrealMain::InitializeGalavant()
 		gv::g_EntityComponentManager.AddComponentManager(&g_UnrealMovementComponentManager);
 
 		g_UnrealMovementComponentManager.Initialize(GetWorld(), &TaskEventCallbacks);
+		// g_UnrealMovementComponentManager.DebugPrint = true;
 
-		{
-			gv::g_PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
-			//gv::g_PlanComponentManager.DebugPrint = true;
-		}
+		gv::g_PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
+		// gv::g_PlanComponentManager.DebugPrint = true;
 
-		{
-			gv::g_AgentComponentManager.Initialize(&gv::g_PlanComponentManager);
-			gv::g_AgentComponentManager.DebugPrint = true;
-		}
+		gv::g_AgentComponentManager.Initialize(&gv::g_PlanComponentManager);
+		gv::g_AgentComponentManager.DebugPrint = true;
 
 		gv::g_CombatComponentManager.Initialize(&CombatFxHandler);
 	}
@@ -428,6 +427,8 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UWorld* world = GetWorld();
+
+	g_UnrealMovementComponentManager.Initialize(world, &TaskEventCallbacks);
 
 	// Destroy entities now because Unreal might have destroyed actors, so we don't want our code to
 	// break not knowing that
