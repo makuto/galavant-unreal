@@ -23,8 +23,6 @@
 #include "game/EntityLevelOfDetail.hpp"
 #include "util/StringHashing.hpp"
 
-#include <iostream>
-
 static gv::Logging::Logger s_UnrealLogger(gv::Logging::Severity::debug, &UnrealLogOutput);
 
 // Sets default values
@@ -143,6 +141,8 @@ void InitializeResources()
 			lookForFood.Level = 100.f;
 			lookForFood.NeedsResource = true;
 			lookForFood.WorldResource = gv::WorldResourceType::Food;
+			// Temporary
+			lookForFood.SetConsciousState = gv::AgentConsciousState::Dead;
 			TestHungerNeed.LevelTriggers.push_back(lookForFood);
 
 			gv::NeedLevelTrigger desperateLookForFood;

@@ -9,8 +9,17 @@ namespace gv
 {
 struct CombatFx
 {
-	UAnimInstance* AnimInstance;
-	UAnimMontage* AnimMontage;
+	// TODO: @Stability: Make these TWeakPtrs? TWeakObjectPtrs?
+	UAnimInstance* AnimInstance = nullptr;
+	UAnimMontage* AnimMontage = nullptr;
+
+	enum class RagdollState
+	{
+		Unaffected = 0,
+		Disable,
+		Enable
+	};
+	RagdollState SetRagdollState = RagdollState::Unaffected;
 };
 }
 

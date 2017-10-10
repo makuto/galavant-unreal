@@ -10,6 +10,22 @@
 
 namespace ActorEntityManager
 {
+typedef std::map<gv::Entity, TWeakObjectPtr<AActor>> EntityActorMap;
+static EntityActorMap s_EntityActors;
+
+void AddActorEntityPair(gv::Entity entity, TWeakObjectPtr<AActor> actor)
+{
+	s_EntityActors[entity] = actor;
+}
+
+TWeakObjectPtr<AActor> GetActorFromEntity(gv::Entity entity)
+{
+	EntityActorMap::iterator findIt = s_EntityActors.find(entity);
+	if (findIt == s_EntityActors.end())
+		return nullptr;
+	return findIt->second;
+}
+
 struct TrackedActor
 {
 	bool IsBeingDestroyed;
@@ -30,26 +46,12 @@ void Clear()
 	s_TrackedActors.clear();
 }
 
-typedef std::vector<AActor*> ActiveActorList;
-ActiveActorList s_ActiveActors;
-
-bool IsActorActive(AActor* actor)
-{
-	for (AActor* currentActor : s_ActiveActors)
-	{
-		if (actor == currentActor)
-			return true;
-	}
-	return false;
-}
-
 void TrackActorLifetime(AActor* actor, TrackActorLifetimeCallback callback)
 {
 	if (!actor)
 		return;
 
 	s_TrackedActors[actor] = {false, callback};
-	s_ActiveActors.push_back(actor);
 }
 
 void UnrealActorEntityOnDestroy(AActor* actor, int entity)

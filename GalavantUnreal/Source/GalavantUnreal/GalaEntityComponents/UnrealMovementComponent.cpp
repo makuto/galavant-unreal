@@ -18,8 +18,6 @@
 
 #include <functional>
 
-#include <iostream>
-
 #include "GalavantUnrealMain.h"
 
 UnrealMovementComponent g_UnrealMovementComponentManager;
