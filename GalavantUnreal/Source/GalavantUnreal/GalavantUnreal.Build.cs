@@ -17,6 +17,12 @@ public class GalavantUnreal : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] {"CustomMeshComponent"});
 		PrivateIncludePathModuleNames.AddRange(new string[] {"CustomMeshComponent"});
 
+		// Make debug game builds work
+		// See https://answers.unrealengine.com/questions/607072/unreal-4161-debug-game-build-error-icu-data-direct.html
+		// This isn't needed if you package first!
+		//Definitions.Add("UE_ENGINE_DIRECTORY=/home/macoy/Development/code/3rdParty/repositories/UnrealEngine/Engine/");
+		//Definitions.Add("UE_ENGINE_DIRECTORY=/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Saved/Cooked/LinuxNoEditor/Engine/");
+
 
 		////////////////////////
 		// External libraries //

@@ -87,4 +87,14 @@ public:
 private:
 	void InitializeEntityTests();
 	void InitializeProceduralWorld();
+
+	//
+	// Commands
+	//
+public:
+	UFUNCTION(Exec, Category = "Gala")
+	void PauseGalaUpdate(bool pause);
+
+	UFUNCTION(Exec, Category = "Gala")
+	void HighDPI();
 };

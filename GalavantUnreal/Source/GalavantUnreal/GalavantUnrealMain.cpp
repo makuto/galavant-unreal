@@ -10,6 +10,9 @@
 #include "Utilities/GalavantUnrealLog.h"
 #include "util/Logging.hpp"
 
+#include "util/StringHashing.hpp"
+#include "util/Time.hpp"
+
 #include "world/WorldResourceLocator.hpp"
 #include "world/ProceduralWorld.hpp"
 #include "entityComponentSystem/EntityTypes.hpp"
@@ -21,7 +24,7 @@
 #include "game/agent/Needs.hpp"
 #include "ai/htn/HTNTasks.hpp"
 #include "game/EntityLevelOfDetail.hpp"
-#include "util/StringHashing.hpp"
+
 
 static gv::Logging::Logger s_UnrealLogger(gv::Logging::Severity::debug, &UnrealLogOutput);
 
@@ -98,11 +101,6 @@ AGalavantUnrealMain::AGalavantUnrealMain()
 	}
 
 	InitializeProceduralWorld();
-
-	// This is a complete hack and should only be for Macoy's setup
-	// Scale everything (including the engine UI) to my DPI settings
-	// https://answers.unrealengine.com/questions/247475/why-would-setting-games-screen-resolution-in-gameu.html
-	FSlateApplication::Get().SetApplicationScale(1.53f);
 }
 
 void InitializeResources()
@@ -332,6 +330,8 @@ void AGalavantUnrealMain::InitializeGalavant()
 {
 	LOGI << "Initializing Galavant...";
 
+	gv::ResetGameplayTime();
+
 	InitializeProceduralWorld();
 
 	gv::WorldResourceLocator::ClearResources();
@@ -348,16 +348,23 @@ void AGalavantUnrealMain::InitializeGalavant()
 		gv::g_EntityComponentManager.AddComponentManager(&gv::g_PlanComponentManager);
 		gv::g_EntityComponentManager.AddComponentManager(&g_UnrealMovementComponentManager);
 
-		g_UnrealMovementComponentManager.Initialize(GetWorld(), &TaskEventCallbacks);
-		// g_UnrealMovementComponentManager.DebugPrint = true;
+		// I've put this here only because of paranoia involving Unreal Play In Editor/hotreloading
+		gv::g_EntityComponentManager.ClearUnsubscribeOnlyManagers();
 
-		gv::g_PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
-		// gv::g_PlanComponentManager.DebugPrint = true;
+		// Initialize managers
+		{
+			g_UnrealMovementComponentManager.Initialize(GetWorld(), &TaskEventCallbacks);
+			// g_UnrealMovementComponentManager.DebugPrint = true;
 
-		gv::g_AgentComponentManager.Initialize(&gv::g_PlanComponentManager);
-		gv::g_AgentComponentManager.DebugPrint = true;
+			gv::g_PlanComponentManager.Initialize(&WorldStateManager, &TaskEventCallbacks);
+			// gv::g_PlanComponentManager.DebugPrint = true;
 
-		gv::g_CombatComponentManager.Initialize(&CombatFxHandler);
+			gv::g_AgentComponentManager.Initialize(&gv::g_PlanComponentManager,
+			                                       &g_UnrealMovementComponentManager);
+			gv::g_AgentComponentManager.DebugPrint = true;
+
+			gv::g_CombatComponentManager.Initialize(&CombatFxHandler);
+		}
 	}
 
 	// Initialize Tasks
@@ -426,20 +433,28 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UWorld* world = GetWorld();
-
-	g_UnrealMovementComponentManager.Initialize(world, &TaskEventCallbacks);
-
 	// Destroy entities now because Unreal might have destroyed actors, so we don't want our code to
 	// break not knowing that
 	gv::g_EntityComponentManager.DestroyEntitiesPendingDestruction();
 
-	GalavantMain.Update(DeltaTime);
+	if (gv::GameIsPlaying())
+	{
+		GalavantMain.Update(DeltaTime);
 
-	gv::g_CombatComponentManager.Update(DeltaTime);
-	gv::g_AgentComponentManager.Update(DeltaTime);
-	gv::g_PlanComponentManager.Update(DeltaTime);
-	g_UnrealMovementComponentManager.Update(DeltaTime);
+		gv::g_CombatComponentManager.Update(DeltaTime);
+		gv::g_AgentComponentManager.Update(DeltaTime);
+		gv::g_PlanComponentManager.Update(DeltaTime);
+		g_UnrealMovementComponentManager.Update(DeltaTime);
+	}
+	else
+	{
+		//
+		// Paused
+		//
+
+		// Exception: update UnrealMovementComponentManager because we want LOD etc. to work
+		g_UnrealMovementComponentManager.Update(0.f);
+	}
 }
 
 void AGalavantUnrealMain::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -452,9 +467,29 @@ void AGalavantUnrealMain::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	gv::ResourceDictionaryBase::ClearAllDictionaries();
 }
 
+void AGalavantUnrealMain::PauseGalaUpdate(bool pause)
+{
+	if (pause)
+		LOGI << "Pausing Galavant Update";
+	else
+		LOGI << "Resuming Galavant Update";
+	
+	gv::GameSetPlaying(!pause);
+}
+
+void AGalavantUnrealMain::HighDPI()
+{
+	// This is a complete hack and should only be for Macoy's setup
+	// Scale everything (including the engine UI) to my DPI settings
+	// https://answers.unrealengine.com/questions/247475/why-would-setting-games-screen-resolution-in-gameu.html
+	// Note that this breaks during cooking
+	FSlateApplication::Get().SetApplicationScale(1.53f);
+}
+
 // Latelinked functions
 namespace gv
 {
+// @LatelinkDef
 float GetWorldTime()
 {
 	UWorld* world = GEngine->GetWorld();

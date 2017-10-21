@@ -134,6 +134,15 @@ void AGalavantUnrealFPCharacter::BeginPlay()
 	}
 
 	LOGI << "Initializing Player done";
+
+	// Create HUD
+	{
+		/*template< class T >
+		T* CreateWidget(APlayerController* OwningPlayer, UClass* UserWidgetClass = T::StaticClass())
+		{
+			return Cast<T>(UUserWidget::CreateWidgetOfClass(UserWidgetClass, nullptr, nullptr, OwningPlayer));
+		}*/
+	}
 }
 
 void AGalavantUnrealFPCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -199,6 +208,12 @@ void AGalavantUnrealFPCharacter::SetupPlayerInputComponent(class UInputComponent
 		InputComponent->BindAction("UseTertiary", IE_Pressed, this,
 		                           &AGalavantUnrealFPCharacter::OnUseTertiary);
 	}
+
+	// Game bindings (not gameplay related)
+	{
+		// InputComponent->BindAction("ExitGalavant", IE_Pressed, this, );
+		// InputComponent->BindAction("TogglePlayGalavant", IE_Pressed, this, );
+	} 
 }
 
 void AGalavantUnrealFPCharacter::OnFire()
@@ -276,8 +291,6 @@ bool AGalavantUnrealFPCharacter::CombatAttemptAction(PlayerCombatAction& playerA
 	if (currentTime - s_lastActionTime < 0.5f)
 		return false;
 
-	LOGD << "Performing combat action of type " << (int)playerAction.Type;
-
 	s_lastActionTime = currentTime;
 
 	// TODO: This is not sustainable. Figure out CombatFx
@@ -294,7 +307,6 @@ bool AGalavantUnrealFPCharacter::CombatAttemptAction(PlayerCombatAction& playerA
 
 void AGalavantUnrealFPCharacter::OnUsePrimary()
 {
-	LOGD << "Player Use Primary!";
 	PlayerCombatAction attemptAction = {PlayerCombatAction::ActionType::MeleeAttack,
 	                                    TempPrimaryAttackAnimation};
 	CombatAttemptAction(attemptAction);
@@ -302,7 +314,6 @@ void AGalavantUnrealFPCharacter::OnUsePrimary()
 
 void AGalavantUnrealFPCharacter::OnUseSecondary()
 {
-	LOGD << "Player Use Secondary!";
 	PlayerCombatAction attemptAction = {PlayerCombatAction::ActionType::MeleeBlock,
 	                                    TempSecondaryAttackAnimation};
 	CombatAttemptAction(attemptAction);
@@ -310,7 +321,6 @@ void AGalavantUnrealFPCharacter::OnUseSecondary()
 
 void AGalavantUnrealFPCharacter::OnUseTertiary()
 {
-	LOGD << "Player Use Tertiary!";
 	PlayerCombatAction attemptAction = {PlayerCombatAction::ActionType::MeleeAttack,
 	                                    TempTertiaryAttackAnimation};
 	CombatAttemptAction(attemptAction);

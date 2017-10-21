@@ -7,6 +7,7 @@ typedef class UAnimMontage UAnimMontage;
 
 namespace gv
 {
+// @LatelinkDef
 struct CombatFx
 {
 	// TODO: @Stability: Make these TWeakPtrs? TWeakObjectPtrs?

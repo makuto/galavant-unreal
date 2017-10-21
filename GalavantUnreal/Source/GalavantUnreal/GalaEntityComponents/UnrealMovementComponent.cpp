@@ -5,6 +5,7 @@
 #include "Characters/AgentCharacter.h"
 #include "RandomStream.h"
 #include "ActorEntityManagement.h"
+#include "CharacterManager.hpp"
 #include "Utilities/ConversionHelpers.h"
 
 #include "util/Logging.hpp"
@@ -15,6 +16,8 @@
 #include "world/WorldResourceLocator.hpp"
 #include "world/ProceduralWorld.hpp"
 #include "game/EntityLevelOfDetail.hpp"
+
+#include "util/Math.hpp"
 
 #include <functional>
 
@@ -272,6 +275,24 @@ void UnrealMovementComponent::PathEntitiesTo(const gv::EntityList& entities,
 	}
 }
 
+void UnrealMovementComponent::SetEntitySpeeds(const gv::EntityList& entities,
+                                              const std::vector<float>& speeds)
+{
+	gv::PooledComponentManager<UnrealMovementComponentData>::FragmentedPoolIterator it =
+	    gv::PooledComponentManager<UnrealMovementComponentData>::NULL_POOL_ITERATOR;
+	for (gv::PooledComponent<UnrealMovementComponentData>* currentComponent = ActivePoolBegin(it);
+	     currentComponent != nullptr &&
+	     it != gv::PooledComponentManager<UnrealMovementComponentData>::NULL_POOL_ITERATOR;
+	     currentComponent = GetNextActivePooledComponent(it))
+	{
+		for (size_t i = 0; i < MIN(entities.size(), speeds.size()); i++)
+		{
+			if (currentComponent->entity == entities[i])
+				currentComponent->data.MaxSpeed = speeds[i];
+		}
+	}
+}
+
 void UnrealMovementComponent::SpawnActorIfNecessary(
     gv::PooledComponent<UnrealMovementComponentData>* component)
 {
@@ -327,7 +348,7 @@ void UnrealMovementComponent::SpawnActorIfNecessary(
 		}
 		else if (component->data.SpawnParams.CharacterToSpawn)
 		{
-			component->data.Character = ActorEntityManager::CreateActorForEntity<ACharacter>(
+			component->data.Character = CharacterManager::CreateCharacterForEntity(
 			    World, component->data.SpawnParams.CharacterToSpawn, component->entity,
 			    ToPosition(position),
 			    std::bind(&UnrealMovementComponent::OnActorDestroyed, this, std::placeholders::_1));
