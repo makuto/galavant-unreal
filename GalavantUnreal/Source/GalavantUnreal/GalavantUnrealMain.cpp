@@ -6,6 +6,7 @@
 #include "Characters/GalavantUnrealFPCharacter.h"
 #include "Characters/AgentCharacter.h"
 #include "ActorEntityManagement.h"
+#include "CharacterManager.hpp"
 
 #include "Utilities/GalavantUnrealLog.h"
 #include "util/Logging.hpp"
@@ -445,6 +446,7 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 		gv::g_AgentComponentManager.Update(DeltaTime);
 		gv::g_PlanComponentManager.Update(DeltaTime);
 		g_UnrealMovementComponentManager.Update(DeltaTime);
+		CharacterManager::Update(DeltaTime);
 	}
 	else
 	{

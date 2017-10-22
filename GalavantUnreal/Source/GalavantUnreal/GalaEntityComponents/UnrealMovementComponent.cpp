@@ -16,6 +16,7 @@
 #include "world/WorldResourceLocator.hpp"
 #include "world/ProceduralWorld.hpp"
 #include "game/EntityLevelOfDetail.hpp"
+#include "game/agent/AgentComponentManager.hpp"
 
 #include "util/Math.hpp"
 
@@ -50,6 +51,8 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 	Htn::TaskEventList eventList;
 	gv::EntityList entitiesToUnsubscribe;
 
+	const gv::EntityList& unconsciousAgents = gv::g_AgentComponentManager.GetUnconsciousAgents();
+
 	// TODO: Adding true iterator support to pool will drastically help damning this to hell
 	gv::PooledComponentManager<UnrealMovementComponentData>::FragmentedPoolIterator it =
 	    gv::PooledComponentManager<UnrealMovementComponentData>::NULL_POOL_ITERATOR;
@@ -78,9 +81,11 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 			GEngine->AddOnScreenDebugMessage(
 			    /*key=*/(uint64)currentComponent->entity, /*timeToDisplay=*/1.5f,
 			    spawnDiscrepancy ? FColor::Red : FColor::Green,
-			    FString::Printf(TEXT("Entity %d Actor: %d Character: %d Should Render: %d"),
-			                    currentComponent->entity, currentComponent->data.Actor.IsValid(),
-			                    currentComponent->data.Character.IsValid(), shouldActorExist));
+			    FString::Printf(
+			        TEXT("Entity %d Actor: %d Character: %d Should Render: %d Can Move: %d"),
+			        currentComponent->entity, currentComponent->data.Actor.IsValid(),
+			        currentComponent->data.Character.IsValid(), shouldActorExist,
+			        !gv::EntityListFindEntity(unconsciousAgents, currentComponent->entity)));
 		}
 
 		SpawnActorIfNecessary(currentComponent);
@@ -156,6 +161,10 @@ void UnrealMovementComponent::Update(float deltaSeconds)
 			    currentComponent->data.ResourcePosition, worldPosition);
 			currentComponent->data.ResourcePosition = worldPosition;
 		}
+
+		// Disallow movement if unconsious
+		if (gv::EntityListFindEntity(unconsciousAgents, currentComponent->entity))
+			continue;
 
 		// Perform movement
 		if (targetPosition)

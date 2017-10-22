@@ -6,60 +6,61 @@
 
 #include "ActorEntityManagement.h"
 
+#include "util/CppHelperMacros.hpp"
+
 namespace CharacterManager
 {
 struct CharacterManager
 {
-	gv::EntityList Subscribers;
-
 	typedef std::vector<TWeakObjectPtr<ACharacter>> CharacterList;
 	CharacterList Characters;
 };
 
 static CharacterManager s_Characters;
 
-// void UnsubscribeEntities(const gv::EntityList& entitiesToUnsubscribe)
-// {
-// 	// TODO: Why did I make this callback thing if I just copy paste ComponentManager
-// 	// UnsubscribeEntities? This is dumb
-// 	if (!entities.empty())
-// 	{
-// 		// Copy for modification
-// 		EntityList entitiesToUnsubscribe;
-// 		EntityListAppendList(entitiesToUnsubscribe, entities);
-
-// 		// Make sure they're actually subscribed
-// 		EntityListRemoveUniqueEntitiesInSuspect(Subscribers, entitiesToUnsubscribe);
-
-// 		if (!entitiesToUnsubscribe.empty())
-// 		{
-// 			UnsubscribeEntitiesInternal(entitiesToUnsubscribe);
-
-// 			// Remove from subscribers
-// 			EntityListRemoveNonUniqueEntitiesInSuspect(entitiesToUnsubscribe, Subscribers);
-
-// 			LOGD << "Manager "
-// 			     << " unsubscribed " << entitiesToUnsubscribe.size() << " entities";
-// 		}
-// 	}
-
-// 	UnsubscribeEntities(Subscribers, UnsubscribeEntitiesInternal);
-// }
-
 void Update(float deltaTime)
 {
-	gv::AgentConsciousStateList subscriberConsciousStates;
+	const gv::EntityList& unconsciousAgents = gv::g_AgentComponentManager.GetUnconsciousAgents();
 
-	gv::g_AgentComponentManager.GetAgentConsciousStates(s_Characters.Subscribers,
-	                                                    subscriberConsciousStates);
-
-	for (TWeakObjectPtr<ACharacter>& character : s_Characters.Characters)
+	FOR_ITERATE_NO_INCR(CharacterManager::CharacterList, s_Characters.Characters, it)
 	{
-		if (character.IsValid())
+		if ((*it).IsValid())
 		{
+			// Ragdoll if unconscious
+			{
+				const FName Ragdoll_ProfileName = FName(TEXT("Ragdoll"));
+				const FName CharacterMesh_ProfileName = FName(TEXT("CharacterMesh"));
+
+				UMeshComponent* mesh =
+				    (UMeshComponent*)(*it)->FindComponentByClass<UMeshComponent>();
+				if (!mesh)
+					continue;
+
+				bool IsConscious = !gv::EntityListFindEntity(unconsciousAgents, (*it)->Entity);
+				bool IsRagdoll = mesh->GetCollisionProfileName() == Ragdoll_ProfileName;
+				if (!IsConscious && !IsRagdoll)
+				{
+					LOGD << "Setting ragdoll on entity " << (*it)->Entity;
+
+					mesh->SetSimulatePhysics(true);
+					mesh->SetCollisionProfileName(Ragdoll_ProfileName);
+				}
+				// Back to normal
+				else if (IsConscious && IsRagdoll)
+				{
+					LOGD << "Disabling ragdoll on entity " << (*it)->Entity;
+
+					mesh->SetSimulatePhysics(false);
+					mesh->SetCollisionProfileName(CharacterMesh_ProfileName);
+				}
+			}
+
+			++it;
 		}
 		else
-			character = nullptr;
+		{
+			it = s_Characters.Characters.erase(it);
+		}
 	}
 }
 
@@ -70,34 +71,10 @@ TWeakObjectPtr<ACharacter> CreateCharacterForEntity(
 	if (!world)
 		return nullptr;
 
-	/*gv::EntityListIterator findIt = std::find(s_Characters.Subscribers.begin(), s_Characters.Subscribers.end(), entity);
-
-	TWeakObjectPtr<ACharacter>* entityAssociatedCharacter = nullptr; 
-
-	if (findIt != s_Characters.Subscribers.end())
-	{
-		for (TWeakObjectPtr<ACharacter>* character : s_Characters.Characters)
-		{
-			if (character->IsValid())
-			{
-				if ((*character)->Entity == entity)
-					return character;
-				else
-				{
-					entityAssociatedCharacter = character;
-					break;
-				}
-			}
-		}
-	}*/
-
 	TWeakObjectPtr<ACharacter> newCharacter = ActorEntityManager::CreateActorForEntity<ACharacter>(
 	    world, characterType, entity, position, callback);
 
-	/*if (entityAssociatedCharacter)
-		find
-
-	newCharacter*/
+	s_Characters.Characters.push_back(newCharacter);
 
 	return newCharacter;
 }

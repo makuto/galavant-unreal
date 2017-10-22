@@ -20,7 +20,9 @@ void UnrealCombatFxHandler::OnActivateCombatAction(gv::Entity combatant, gv::Com
 			LOGD << "Animation failed to play";
 	}
 
-	TWeakObjectPtr<AActor> entityActor = ActorEntityManager::GetActorFromEntity(combatant);
+	// This code no longer works now that CharacterManager handles ragdoll states. Should this still
+	//  be an option in CombatFx? I'll figure that out going forwards
+	/*TWeakObjectPtr<AActor> entityActor = ActorEntityManager::GetActorFromEntity(combatant);
 	if (entityActor.IsValid())
 	{
 		if ((actionFx && actionFx->SetRagdollState != gv::CombatFx::RagdollState::Unaffected) ||
@@ -42,5 +44,5 @@ void UnrealCombatFxHandler::OnActivateCombatAction(gv::Entity combatant, gv::Com
 				                                  UCollisionProfile::NoCollision_ProfileName);
 			}
 		}
-	}
+	}*/
 }
