@@ -26,7 +26,6 @@
 #include "ai/htn/HTNTasks.hpp"
 #include "game/EntityLevelOfDetail.hpp"
 
-
 static gv::Logging::Logger s_UnrealLogger(gv::Logging::Severity::debug, &UnrealLogOutput);
 
 // Sets default values
@@ -140,8 +139,6 @@ void InitializeResources()
 			lookForFood.Level = 100.f;
 			lookForFood.NeedsResource = true;
 			lookForFood.WorldResource = gv::WorldResourceType::Food;
-			// Temporary
-			lookForFood.SetConsciousState = gv::AgentConsciousState::Dead;
 			TestHungerNeed.LevelTriggers.push_back(lookForFood);
 
 			gv::NeedLevelTrigger desperateLookForFood;
@@ -454,6 +451,13 @@ void AGalavantUnrealMain::Tick(float DeltaTime)
 		// Paused
 		//
 
+		// Debug text
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(
+			    /*key=*/0, /*timeToDisplay=*/0.2f, FColor::Blue, TEXT("Galavant Paused"));
+		}
+
 		// Exception: update UnrealMovementComponentManager because we want LOD etc. to work
 		g_UnrealMovementComponentManager.Update(0.f);
 	}
@@ -475,7 +479,7 @@ void AGalavantUnrealMain::PauseGalaUpdate(bool pause)
 		LOGI << "Pausing Galavant Update";
 	else
 		LOGI << "Resuming Galavant Update";
-	
+
 	gv::GameSetPlaying(!pause);
 }
 

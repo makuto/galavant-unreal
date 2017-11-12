@@ -39,8 +39,12 @@ class AGalavantUnrealFPCharacter : public ACharacter
 	UPROPERTY(VisibleDefaultsOnly, Category = Mesh)
 	class USkeletalMeshComponent* FP_Gun;
 
+	UPROPERTY(VisibleDefaultsOnly)
+	class USphereComponent* LeftFist;
+
 	/** First person camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera,
+	          meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FirstPersonCameraComponent;
 
 	/** Chunk Manager - this actor will spawn chunks within the radius of our character */
@@ -107,6 +111,11 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 protected:
+	UFUNCTION()
+	void OnLeftFistHit(UPrimitiveComponent* component, AActor* otherActor,
+	                   UPrimitiveComponent* otherComponent, FVector normalImpulse,
+	                   const FHitResult& hit);
+
 	/** Fires a projectile. */
 	void OnFire();
 
@@ -139,6 +148,10 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	// End of APawn interface
+
+	void ExitGalavant();
+	void TogglePlayGalavant();
+	void ToggleMouseLock();
 
 public:
 	/** Returns Mesh1P subobject **/

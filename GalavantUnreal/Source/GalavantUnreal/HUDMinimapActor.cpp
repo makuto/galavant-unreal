@@ -167,7 +167,7 @@ void AHUDMinimapActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	static float lastMinimapUpdate = 0.f;
-	const float minimapUpdateRate = 0.1f;
+	const float minimapUpdateRate = 15.f;
 	lastMinimapUpdate += DeltaTime;
 	if (lastMinimapUpdate >= minimapUpdateRate)
 	{

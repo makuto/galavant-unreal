@@ -18,6 +18,7 @@
 #include "game/InteractComponentManager.hpp"
 #include "entityComponentSystem/EntitySharedData.hpp"
 #include "game/agent/Needs.hpp"
+#include "util/Time.hpp"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
 
@@ -54,6 +55,12 @@ AGalavantUnrealFPCharacter::AGalavantUnrealFPCharacter()
 	FP_Gun->bCastDynamicShadow = false;
 	FP_Gun->CastShadow = false;
 	FP_Gun->SetupAttachment(Mesh1P, TEXT("GripPoint"));
+
+	LeftFist = CreateDefaultSubobject<USphereComponent>(TEXT("LeftFist"));
+	LeftFist->SetSphereRadius(25.f);
+	LeftFist->SetNotifyRigidBodyCollision(true);
+	LeftFist->OnComponentHit.AddDynamic(this, &AGalavantUnrealFPCharacter::OnLeftFistHit);
+	LeftFist->SetupAttachment(Mesh1P, TEXT("GripPoint_l"));
 
 	// Default offset from the character location for projectiles to spawn
 	GunOffset = FVector(100.0f, 30.0f, 10.0f);
@@ -140,7 +147,8 @@ void AGalavantUnrealFPCharacter::BeginPlay()
 		/*template< class T >
 		T* CreateWidget(APlayerController* OwningPlayer, UClass* UserWidgetClass = T::StaticClass())
 		{
-			return Cast<T>(UUserWidget::CreateWidgetOfClass(UserWidgetClass, nullptr, nullptr, OwningPlayer));
+		    return Cast<T>(UUserWidget::CreateWidgetOfClass(UserWidgetClass, nullptr, nullptr,
+		OwningPlayer));
 		}*/
 	}
 }
@@ -211,9 +219,49 @@ void AGalavantUnrealFPCharacter::SetupPlayerInputComponent(class UInputComponent
 
 	// Game bindings (not gameplay related)
 	{
-		// InputComponent->BindAction("ExitGalavant", IE_Pressed, this, );
-		// InputComponent->BindAction("TogglePlayGalavant", IE_Pressed, this, );
-	} 
+		InputComponent->BindAction("ExitGalavant", IE_Pressed, this,
+		                           &AGalavantUnrealFPCharacter::ExitGalavant);
+		InputComponent->BindAction("TogglePlayGalavant", IE_Pressed, this,
+		                           &AGalavantUnrealFPCharacter::TogglePlayGalavant);
+		InputComponent->BindAction("ToggleMouseLock", IE_Pressed, this,
+		                           &AGalavantUnrealFPCharacter::ToggleMouseLock);
+	}
+}
+
+void AGalavantUnrealFPCharacter::ExitGalavant()
+{
+	LOGI << "Requesting exit";
+	FGenericPlatformMisc::RequestExit(/*Force=*/false);
+}
+
+void AGalavantUnrealFPCharacter::TogglePlayGalavant()
+{
+	LOGI << "Setting Galavant IsPlaying to " << !gv::GameIsPlaying();
+	gv::GameSetPlaying(!gv::GameIsPlaying());
+}
+
+void AGalavantUnrealFPCharacter::ToggleMouseLock()
+{
+	// TODO: @Broken: This doesn't seem to actually release the mouse
+	if (GEngine && GEngine->GameViewport && GEngine->GameViewport->Viewport)
+	{
+		bool isMouseCaptured = GEngine->GameViewport->Viewport->HasMouseCapture();
+		LOGI << "Setting mouse capture to " << !isMouseCaptured;
+		GEngine->GameViewport->Viewport->CaptureMouse(!isMouseCaptured);
+	}
+}
+
+void AGalavantUnrealFPCharacter::OnLeftFistHit(UPrimitiveComponent* component, AActor* otherActor,
+                                               UPrimitiveComponent* otherComponent,
+                                               FVector normalImpulse, const FHitResult& hit)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(85005, 1.f, FColor::Red,
+		                                 FString::Printf(TEXT("Left Fist Hit")));
+	}
+
+	LOGI << "Player left fist hit";
 }
 
 void AGalavantUnrealFPCharacter::OnFire()
