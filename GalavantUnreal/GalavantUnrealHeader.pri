@@ -9119,6 +9119,14 @@ HEADERS += \
 	"$$unrealRootPath/Engine/Plugins/Tests/FunctionalTestingEditor/Source/Public/EditorAutomationModule.h" \
 	"$$unrealRootPath/Engine/Plugins/Tests/RuntimeTests/Source/RuntimeTests/Public/RuntimeTests.h" \
 	"$$unrealRootPath/Engine/Plugins/Tests/ScreenshotTools/Source/ScreenshotTools/Public/ScreenshotTools.h" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Private/NativizedAssets.h" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Public/BP_Sky_Sphere__pf1379775596.h" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Public/FirstPerson_AnimBP__pf2002337985.h" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Public/FoodPlaceholder_Pickup__pf2132744816.h" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Public/GalavantUnrealFPCharacterTrueBP__pf2841129700.h" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Public/NativizedAssets_Dependencies.h" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Public/SimplePlayerHUD__pf3053510930.h" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Public/ThirdPerson_AnimBP__pf2404374163.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ActorEntityManagement.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnrealGameMode.h" \
@@ -9126,7 +9134,9 @@ HEADERS += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/HUDMinimapActor.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/SimplePickup.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestAgent.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Actors/GalavantUnrealSimpleProjectile.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/AgentCharacter.h" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/CharacterAudio.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/GalavantUnrealCharacter.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/GalavantUnrealFPCharacter.h" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/ThirdPersonCharacter.h" \

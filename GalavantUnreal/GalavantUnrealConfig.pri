@@ -603,6 +603,7 @@ OTHER_FILES += \
 	"$$unrealRootPath/Engine/Plugins/Tests/FunctionalTestingEditor/Source/FunctionalTestingEditor.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Tests/RuntimeTests/Source/RuntimeTests/RuntimeTests.Build.cs" \
 	"$$unrealRootPath/Engine/Plugins/Tests/ScreenshotTools/Source/ScreenshotTools/ScreenshotTools.Build.cs" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/NativizedAssets.Build.cs" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/GalavantUnreal.Build.cs" \
  
 

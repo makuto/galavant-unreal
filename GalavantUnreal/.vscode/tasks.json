@@ -1,0 +1,1093 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"taskName": "GalavantUnreal Mac Debug Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Mac",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Mac Debug Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Mac",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Mac DebugGame Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Mac",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Mac DebugGame Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Mac",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Mac Development Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Mac",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Mac Development Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Mac",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Mac Shipping Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Mac",
+				"Shipping",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Mac Shipping Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Mac",
+				"Shipping",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Mac Test Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Mac",
+				"Test",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Mac Test Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Mac",
+				"Test",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal IOS Debug Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"IOS",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal IOS Debug Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"IOS",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal IOS DebugGame Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"IOS",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal IOS DebugGame Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"IOS",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal IOS Development Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"IOS",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal IOS Development Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"IOS",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal IOS Shipping Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"IOS",
+				"Shipping",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal IOS Shipping Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"IOS",
+				"Shipping",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal IOS Test Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"IOS",
+				"Test",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal IOS Test Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"IOS",
+				"Test",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal HTML5 Debug Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"HTML5",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal HTML5 Debug Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"HTML5",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal HTML5 DebugGame Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"HTML5",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal HTML5 DebugGame Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"HTML5",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal HTML5 Development Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"HTML5",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal HTML5 Development Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"HTML5",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal HTML5 Shipping Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"HTML5",
+				"Shipping",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal HTML5 Shipping Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"HTML5",
+				"Shipping",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal HTML5 Test Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"HTML5",
+				"Test",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal HTML5 Test Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"HTML5",
+				"Test",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Linux Debug Build",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Linux",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Linux Debug Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Linux",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Linux DebugGame Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Linux",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Linux DebugGame Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Linux",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Linux Development Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Linux",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Linux Development Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Linux",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Linux Shipping Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Linux",
+				"Shipping",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Linux Shipping Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Linux",
+				"Shipping",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Linux Test Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Linux",
+				"Test",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal Linux Test Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"Linux",
+				"Test",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal TVOS Debug Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"TVOS",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal TVOS Debug Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"TVOS",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal TVOS DebugGame Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"TVOS",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal TVOS DebugGame Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"TVOS",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal TVOS Development Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"TVOS",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal TVOS Development Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"TVOS",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal TVOS Shipping Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"TVOS",
+				"Shipping",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal TVOS Shipping Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"TVOS",
+				"Shipping",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal TVOS Test Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"TVOS",
+				"Test",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnreal TVOS Test Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnreal",
+				"TVOS",
+				"Test",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Linux Debug Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Linux",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Linux Debug Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Linux",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Linux DebugGame Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Linux",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Linux DebugGame Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Linux",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Linux Development Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Linux",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Linux Development Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Linux",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Mac Debug Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Mac",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Mac Debug Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Mac",
+				"Debug",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Mac DebugGame Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Mac",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Mac DebugGame Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Mac",
+				"DebugGame",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Mac Development Build",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Mac",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		},
+		{
+			"taskName": "GalavantUnrealEditor Mac Development Clean",
+			"group": "build",
+			"command": "Engine/Build/BatchFiles/Linux/Build.sh",
+			"args": [
+				"GalavantUnrealEditor",
+				"Mac",
+				"Development",
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-waitmutex",
+				"-clean"
+			],
+			"problemMatcher": "$msCompile",
+			"type": "shell",
+			"options": {
+				"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine"
+			}
+		}
+	]
+}

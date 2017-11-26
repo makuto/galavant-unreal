@@ -55,6 +55,12 @@ class AGalavantUnrealFPCharacter : public ACharacter
 	UPROPERTY(VisibleDefaultsOnly)
 	class UChildActorComponent* Minimap;
 
+	UPROPERTY(EditAnywhere, Category = Audio)
+	class USoundBase* Footstep;
+
+	UPROPERTY(EditAnywhere, Category = Audio)
+	float FootstepPlayRate;
+
 	gv::Entity PlayerEntity;
 
 	// This will be the position referred to by the entire game when querying player position
@@ -76,9 +82,8 @@ public:
 	FVector GunOffset;
 
 	/** Projectile class to spawn */
-	/*
 	UPROPERTY(EditDefaultsOnly, Category=Projectile)
-	TSubclassOf<class AGalavantUnrealFPProjectile> ProjectileClass;*/
+	TSubclassOf<class AGalavantUnrealSimpleProjectile> ProjectileClass;
 
 	/** Sound to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)

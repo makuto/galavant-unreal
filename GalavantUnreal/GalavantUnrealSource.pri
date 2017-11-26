@@ -7047,6 +7047,14 @@ SOURCES += \
 	"$$unrealRootPath/Engine/Plugins/Tests/RuntimeTests/Source/RuntimeTests/Private/Scripting/ScriptFuzzingTests.cpp" \
 	"$$unrealRootPath/Engine/Plugins/Tests/RuntimeTests/Source/RuntimeTests/Private/Slate/RichTextMarkupProcessingTest.cpp" \
 	"$$unrealRootPath/Engine/Plugins/Tests/ScreenshotTools/Source/ScreenshotTools/Private/ScreenshotTools.cpp" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Private/BP_Sky_Sphere__pf1379775596.cpp" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Private/FirstPerson_AnimBP__pf2002337985.cpp" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Private/FoodPlaceholder_Pickup__pf2132744816.cpp" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Private/GalavantUnrealFPCharacterTrueBP__pf2841129700.cpp" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Private/NativizedAssets.cpp" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Private/NativizedAssets_Dependencies.cpp" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Private/SimplePlayerHUD__pf3053510930.cpp" \
+	"$$GalavantUnrealRootPath/Intermediate/Plugins/LinuxNoEditor/NativizedAssets/Source/NativizedAssets/Private/ThirdPerson_AnimBP__pf2404374163.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/ActorEntityManagement.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/CharacterManager.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/CombatFx.cpp" \
@@ -7056,7 +7064,9 @@ SOURCES += \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/HUDMinimapActor.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/SimplePickup.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/TestAgent.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Actors/GalavantUnrealSimpleProjectile.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/AgentCharacter.cpp" \
+	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/CharacterAudio.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/GalavantUnrealCharacter.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/GalavantUnrealFPCharacter.cpp" \
 	"$$GalavantUnrealRootPath/Source/GalavantUnreal/Characters/ThirdPersonCharacter.cpp" \

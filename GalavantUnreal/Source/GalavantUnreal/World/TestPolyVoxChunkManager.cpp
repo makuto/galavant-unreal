@@ -28,6 +28,8 @@ ATestPolyVoxChunkManager::ATestPolyVoxChunkManager()
 	Use3dNoise = false;
 
 	TimeSinceLastUpdate = 9999.f;  // Mark as needing update
+
+	EnableChunkCreation = true;
 }
 
 void ATestPolyVoxChunkManager::Destroyed()
@@ -207,6 +209,9 @@ void ATestPolyVoxChunkManager::Tick(float DeltaTime)
 	FVector worldPosition = GetChunkManagerLocation();
 
 	TimeSinceLastUpdate += DeltaTime;
+
+	if (!EnableChunkCreation)
+		return;
 
 	if ((TimeSinceLastUpdate > UPDATE_FREQUENCY &&
 	     worldPosition.Equals(LastUpdatedPosition, 0.1f) == false) ||

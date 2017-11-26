@@ -4,20 +4,21 @@
 
 #include "GalavantUnrealFPCharacter.h"
 
+#include "Actors/GalavantUnrealSimpleProjectile.h"
 #include "Animation/AnimInstance.h"
 #include "GameFramework/InputSettings.h"
 
-#include "Utilities/ConversionHelpers.h"
-#include "HUDMinimapActor.h"
 #include "CombatFx.hpp"
+#include "HUDMinimapActor.h"
+#include "Utilities/ConversionHelpers.h"
 
-#include "util/Logging.hpp"
 #include "entityComponentSystem/EntityComponentManager.hpp"
-#include "game/agent/AgentComponentManager.hpp"
-#include "game/agent/combat/CombatComponentManager.hpp"
-#include "game/InteractComponentManager.hpp"
 #include "entityComponentSystem/EntitySharedData.hpp"
+#include "game/InteractComponentManager.hpp"
+#include "game/agent/AgentComponentManager.hpp"
 #include "game/agent/Needs.hpp"
+#include "game/agent/combat/CombatComponentManager.hpp"
+#include "util/Logging.hpp"
 #include "util/Time.hpp"
 
 DEFINE_LOG_CATEGORY_STATIC(LogFPChar, Warning, All);
@@ -67,10 +68,14 @@ AGalavantUnrealFPCharacter::AGalavantUnrealFPCharacter()
 
 	ChunkManager = CreateDefaultSubobject<UChildActorComponent>(TEXT("ChunkManager"));
 	ChunkManager->SetupAttachment(FirstPersonCameraComponent);
+	// For testing
+	// ChunkManager->EnableChunkCreation = false;
 
 	Minimap = CreateDefaultSubobject<UChildActorComponent>(TEXT("Minimap"));
 	Minimap->SetupAttachment(FirstPersonCameraComponent);
 	Minimap->SetChildActorClass(AHUDMinimapActor::StaticClass());
+
+	FootstepPlayRate = 0.25f;
 
 	// Note: The ProjectileClass and the skeletal mesh/anim blueprints for Mesh1P are set in the
 	// derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -102,34 +107,32 @@ void AGalavantUnrealFPCharacter::BeginPlay()
 		}
 
 		// Setup components
+		// Agent component
 		{
-			// Agent component
+			gv::AgentComponentManager::AgentComponentList newAgentComponents(1);
+
+			newAgentComponents[0].entity = PlayerEntity;
+
+			gv::Need hungerNeed(RESKEY("Hunger"));
+			gv::Need bloodNeed(RESKEY("Blood"));
+			newAgentComponents[0].data.Needs.push_back(hungerNeed);
+			newAgentComponents[0].data.Needs.push_back(bloodNeed);
+
+			LOGD << "Registering Player AgentComponent";
+			gv::g_AgentComponentManager.SubscribeEntities(newAgentComponents);
+		}
+		
+		// Combat component
+		{
+			gv::CombatantRefList newCombatants;
+			gv::g_CombatComponentManager.CreateCombatants(newEntities, newCombatants);
+
+			if (newCombatants.empty())
+				LOGE << "Could not create combatant component for player; maybe it has already "
+				        "been created?";
+			else
 			{
-				gv::AgentComponentManager::AgentComponentList newAgentComponents(1);
-
-				newAgentComponents[0].entity = PlayerEntity;
-
-				gv::Need hungerNeed(RESKEY("Hunger"));
-				gv::Need bloodNeed(RESKEY("Blood"));
-				newAgentComponents[0].data.Needs.push_back(hungerNeed);
-				newAgentComponents[0].data.Needs.push_back(bloodNeed);
-
-				LOGD << "Registering Player AgentComponent";
-				gv::g_AgentComponentManager.SubscribeEntities(newAgentComponents);
-			}
-
-			// Combat component
-			{
-				gv::CombatantRefList newCombatants;
-				gv::g_CombatComponentManager.CreateCombatants(newEntities, newCombatants);
-
-				if (newCombatants.empty())
-					LOGE << "Could not create combatant component for player; maybe it has already "
-					        "been created?";
-				else
-				{
-					// No setup needed
-				}
+				// No setup needed
 			}
 		}
 
@@ -142,7 +145,7 @@ void AGalavantUnrealFPCharacter::BeginPlay()
 
 	LOGI << "Initializing Player done";
 
-	// Create HUD
+	// Create HUD (doing this in blueprint, so it's commented here (and this code doesn't work)
 	{
 		/*template< class T >
 		T* CreateWidget(APlayerController* OwningPlayer, UClass* UserWidgetClass = T::StaticClass())
@@ -178,6 +181,26 @@ void AGalavantUnrealFPCharacter::Tick(float DeltaSeconds)
 
 	// Updating PlayerPosition here updates it for anyone watching
 	PlayerPosition = trueWorldPosition;
+
+	// Play walking audio
+	// TODO: @Purity: This should eventually be handled by notifies in the animation system, but for
+	// now just do it here while we don't have a full body model hooked up
+	UCharacterMovementComponent* characterMovement = GetCharacterMovement();
+	if (characterMovement && Footstep && characterMovement->IsWalking() &&
+	    characterMovement->IsMovingOnGround() &&
+	    !characterMovement->GetCurrentAcceleration().IsZero())
+	{
+		static float s_timeSinceLastPlay = 0.f;
+		s_timeSinceLastPlay += DeltaSeconds;
+		// TODO: This should eventually factor in actual velocity for axis input (play slower when
+		//  walking slower
+		if (s_timeSinceLastPlay >= FootstepPlayRate)
+		{
+			s_timeSinceLastPlay = 0.f;
+
+			UGameplayStatics::PlaySoundAtLocation(this, Footstep, GetActorLocation());
+		}
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -266,40 +289,39 @@ void AGalavantUnrealFPCharacter::OnLeftFistHit(UPrimitiveComponent* component, A
 
 void AGalavantUnrealFPCharacter::OnFire()
 {
-	/*// try and fire a projectile
+	// try and fire a projectile
 	if (ProjectileClass != nullptr)
 	{
-	    const FRotator SpawnRotation = GetControlRotation();
-	    // MuzzleOffset is in camera space, so transform it to world space before offsetting from
-	the character location to find the final muzzle position
-	    const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
+		const FRotator SpawnRotation = GetControlRotation();
+		// MuzzleOffset is in camera space, so transform it to world space before offsetting from
+		// the character location to find the final muzzle position
+		const FVector SpawnLocation = GetActorLocation() + SpawnRotation.RotateVector(GunOffset);
 
-	    UWorld* const World = GetWorld();
-	    if (World != nullptr)
-	    {
-	        // spawn the projectile at the muzzle
-	        World->SpawnActor<GalavantUnrealFPProjectile>(ProjectileClass, SpawnLocation,
-	SpawnRotation);
-	    }
+		UWorld* const World = GetWorld();
+		if (World != nullptr)
+		{
+			// spawn the projectile at the muzzle
+			World->SpawnActor<AGalavantUnrealSimpleProjectile>(ProjectileClass, SpawnLocation,
+			                                                   SpawnRotation);
+		}
 	}
 
 	// try and play the sound if specified
 	if (FireSound != nullptr)
 	{
-	    UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 	}
 
 	// try and play a firing animation if specified
-	if(FireAnimation != nullptr)
+	if (FireAnimation != nullptr)
 	{
-	    // Get the animation object for the arms mesh
-	    UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
-	    if(AnimInstance != nullptr)
-	    {
-	        AnimInstance->Montage_Play(FireAnimation, 1.f);
-	    }
+		// Get the animation object for the arms mesh
+		UAnimInstance* AnimInstance = Mesh1P->GetAnimInstance();
+		if (AnimInstance != nullptr)
+		{
+			AnimInstance->Montage_Play(FireAnimation, 1.f);
+		}
 	}
-	*/
 }
 
 void AGalavantUnrealFPCharacter::OnInteract()

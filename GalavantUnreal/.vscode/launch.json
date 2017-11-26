@@ -1,96 +1,90 @@
 {
-        "version": "0.2.0",
-        "configurations": [
-            { 
-                "name": "(gdb) Attach",
-                "type": "cppdbg",
-                "request": "attach",
-                "program": "/home/macoy/Development/code/3rdParty/repositories/UnrealEngine/Engine/Binaries/Linux/UE4Editor",
-                "processId": "${command:pickProcess}",
-                "MIMode": "gdb",
-                "setupCommands": [
-                    {
-                        "description": "Enable pretty-printing for gdb",
-                        "text": "-enable-pretty-printing",
-                        "ignoreFailures": true
-                    }
-                ]
-            },
-            {
-                "name": "(gdb) Launch No Debug",
-                "type": "cppdbg",
-                "request": "launch",
-                "program": "/home/macoy/Development/code/3rdParty/repositories/UnrealEngine/Engine/Binaries/Linux/UE4Editor",
-                "args": ["/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject"],
-                "stopAtEntry": false,
-                "cwd": "${workspaceRoot}",
-                "environment": [],
-                "externalConsole": true,
-                "MIMode": "gdb",
-                "setupCommands": [
-                    {
-                        "description": "Enable pretty-printing for gdb",
-                        "text": "-enable-pretty-printing",
-                        "ignoreFailures": true
-                    }
-                ]
-            },
-            {
-                "name": "(gdb) Launch Debug",
-                "type": "cppdbg",
-                "request": "launch",
-                "program": "/home/macoy/Development/code/3rdParty/repositories/UnrealEngine/Engine/Binaries/Linux/UE4Editor-Linux-Debug",
-                "args": ["/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject"],
-                "stopAtEntry": false,
-                "cwd": "${workspaceRoot}",
-                "environment": [],
-                "externalConsole": true,
-                "MIMode": "gdb",
-                "setupCommands": [
-                    {
-                        "description": "Enable pretty-printing for gdb",
-                        "text": "-enable-pretty-printing",
-                        "ignoreFailures": true
-                    }
-                ]
-            },
-            {
-                "name": "(gdb) Launch Standalone",
-                "type": "cppdbg",
-                "request": "launch",
-                "program": "/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/LOCAL_package/package/LinuxNoEditor/GalavantUnreal/Binaries/Linux/GalavantUnreal",
-                "args": ["-windowed", "-resx=1920", "-resy=1080"],
-                "stopAtEntry": false,
-                "cwd": "${workspaceRoot}",
-                "environment": [],
-                "externalConsole": true,
-                "MIMode": "gdb",
-                "setupCommands": [
-                    {
-                        "description": "Enable pretty-printing for gdb",
-                        "text": "-enable-pretty-printing",
-                        "ignoreFailures": true
-                    }
-                ]
-            },
-            {
-                "name": "(gdb) Launch Standalone Debug",
-                "type": "cppdbg",
-                "request": "launch",
-                "program": "/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/LOCAL_package/package/LinuxNoEditor/GalavantUnreal/Binaries/Linux/GalavantUnreal-Linux-Debug",
-                "args": ["-windowed", "-resx=1920", "-resy=1080"],
-                "stopAtEntry": false,
-                "cwd": "${workspaceRoot}",
-                "environment": [],
-                "externalConsole": true,
-                "MIMode": "gdb",
-                "setupCommands": [
-                    {
-                        "description": "Enable pretty-printing for gdb",
-                        "text": "-enable-pretty-printing",
-                        "ignoreFailures": true
-                    }
-                ]
-            },
-        ]
-    }
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "GalavantUnreal (Debug)",
+			"request": "launch",
+			"preLaunchTask": "GalavantUnreal Linux Debug Build",
+			"program": "/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Binaries/Linux/GalavantUnreal-Linux-Debug",
+			"args": [
+			],
+			"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine",
+			"type": "lldb"
+		},
+		{
+			"name": "GalavantUnreal (DebugGame)",
+			"request": "launch",
+			"preLaunchTask": "GalavantUnreal Linux DebugGame Build",
+			"program": "/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Binaries/Linux/GalavantUnreal-Linux-DebugGame",
+			"args": [
+			],
+			"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine",
+			"type": "lldb"
+		},
+		{
+			"name": "GalavantUnreal (Development)",
+			"request": "launch",
+			"preLaunchTask": "GalavantUnreal Linux Development Build",
+			"program": "/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Binaries/Linux/GalavantUnreal",
+			"args": [
+			],
+			"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine",
+			"type": "lldb"
+		},
+		{
+			"name": "GalavantUnreal (Shipping)",
+			"request": "launch",
+			"preLaunchTask": "GalavantUnreal Linux Shipping Build",
+			"program": "/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Binaries/Linux/GalavantUnreal-Linux-Shipping",
+			"args": [
+			],
+			"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine",
+			"type": "lldb"
+		},
+		{
+			"name": "GalavantUnreal (Test)",
+			"request": "launch",
+			"preLaunchTask": "GalavantUnreal Linux Test Build",
+			"program": "/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Binaries/Linux/GalavantUnreal-Linux-Test",
+			"args": [
+			],
+			"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine",
+			"type": "lldb"
+		},
+		{
+			"name": "GalavantUnrealEditor (Debug)",
+			"request": "launch",
+			"preLaunchTask": "GalavantUnrealEditor Linux Debug Build",
+			"program": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine/Engine/Binaries/Linux/UE4Editor-Linux-Debug",
+			"args": [
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-debug"
+			],
+			"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine",
+			"type": "lldb"
+		},
+		{
+			"name": "GalavantUnrealEditor (DebugGame)",
+			"request": "launch",
+			"preLaunchTask": "GalavantUnrealEditor Linux DebugGame Build",
+			"program": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine/Engine/Binaries/Linux/UE4Editor",
+			"args": [
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject",
+				"-debug"
+			],
+			"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine",
+			"type": "lldb"
+		},
+		{
+			"name": "GalavantUnrealEditor (Development)",
+			"request": "launch",
+			"preLaunchTask": "GalavantUnrealEditor Linux Development Build",
+			"program": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine/Engine/Binaries/Linux/UE4Editor",
+			"args": [
+				"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/GalavantUnreal.uproject"
+			],
+			"cwd": "/media/macoy/SSD/Development/code/3rdParty/repositories/UnrealEngine",
+			"type": "lldb"
+		}
+	]
+}

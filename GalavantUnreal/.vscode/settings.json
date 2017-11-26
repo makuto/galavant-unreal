@@ -1,0 +1,14 @@
+{
+	"typescript.tsc.autoDetect": "off",
+	"files.exclude": {
+		"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/.kdev4": true,
+		"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/.vscode": true,
+		"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Assets": true,
+		"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Content": true,
+		"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/DerivedDataCache": true,
+		"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Intermediate": true,
+		"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/LOCAL_package": true,
+		"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/Saved": true,
+		"/home/macoy/Development/code/repositories/galavant-unreal/GalavantUnreal/ThirdParty": true
+	}
+}

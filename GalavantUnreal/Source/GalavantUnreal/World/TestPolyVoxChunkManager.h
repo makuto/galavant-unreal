@@ -37,6 +37,11 @@ class GALAVANTUNREAL_API ATestPolyVoxChunkManager : public AActor
 	FVector ChunkSize;
 
 public:
+
+	// Completely enable/disable procedural chunk generation
+	UPROPERTY(EditAnywhere)
+	bool EnableChunkCreation;
+
 	// Sets default values for this actor's properties
 	ATestPolyVoxChunkManager();
 

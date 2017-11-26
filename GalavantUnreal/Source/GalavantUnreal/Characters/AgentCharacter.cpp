@@ -1,6 +1,6 @@
 // The MIT License (MIT) Copyright (c) 2016 Macoy Madson
-
 #include "GalavantUnreal.h"
+
 #include "AgentCharacter.h"
 
 #include "Controllers/AgentAIController.h"
